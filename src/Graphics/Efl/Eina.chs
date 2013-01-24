@@ -38,3 +38,8 @@ type EinaBool = CUChar
 -- | Convert a Eina bool into a Bool
 toBool :: EinaBool -> Bool
 toBool e = (e /= 0)
+
+-- | Convert a Bool into an Eina bool
+fromBool :: Bool -> EinaBool
+fromBool True = 1
+fromBool False = 0

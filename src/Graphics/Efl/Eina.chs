@@ -34,3 +34,7 @@ toList el = do
    return (x:xs)
 
 type EinaBool = CUChar
+
+-- | Convert a Eina bool into a Bool
+toBool :: EinaBool -> Bool
+toBool e = (e /= 0)

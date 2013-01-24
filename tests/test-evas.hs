@@ -32,6 +32,7 @@ main = do
    check_object_layer canvas
    check_object_name canvas
    check_object_ref canvas
+   check_object_size canvas
 
    exitSuccess
 
@@ -94,3 +95,14 @@ check_object_ref canvas = do
       object_unref r1
       t2 <- object_ref_get r1
       return (t2 == t0 && t1 == t0 + 1)
+
+check_object_size canvas = do
+   r1 <- evas_object_rectangle_add canvas
+
+   assertM "Moving object" $ do
+      (x0,y0,w0,h0) <- object_geometry_get r1
+      let (x1,y1,w1,h1) = (x0+100, y0+150, w0+200, h0+250)
+      object_resize r1 w1 h1
+      object_move r1 x1 y1
+      (x2,y2,w2,h2) <- object_geometry_get r1
+      return (x1 == x2 && y1 == y2 && w1 == w2 && h1 == h2)

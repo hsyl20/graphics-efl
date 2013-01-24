@@ -16,6 +16,7 @@ import Graphics.Efl.Eina
 
 
 type EvasObject = Ptr ()
+type Coord = Int
 
 {-----------------------------
  - Basic Object Manipulation -
@@ -93,18 +94,41 @@ foreign import ccall "evas_object_del" object_del :: EvasObject -> IO ()
 
 
 
+-- | Move the given Evas object to the given location inside its canvas' viewport
+foreign import ccall "evas_object_move" object_move :: EvasObject -> Coord -> Coord -> IO ()
+
+-- | Change the size of the given Evas object
+foreign import ccall "evas_object_resize" object_resize :: EvasObject -> Coord -> Coord -> IO ()
+
+-- | Retrieve the position and (rectangular) size of the given Evas object
+object_geometry_get :: EvasObject -> IO (Coord,Coord,Coord,Coord)
+object_geometry_get obj = geometry_get_helper (_object_geometry_get obj)
+
+foreign import ccall "evas_object_geometry_get" _object_geometry_get :: EvasObject -> Ptr Coord -> Ptr Coord -> Ptr Coord -> Ptr Coord -> IO ()
+
+
+
+-- | Make the given Evas object visible
+foreign import ccall "evas_object_show" object_show :: EvasObject -> IO ()
+
+-- | Make the given Evas object invisible
+foreign import ccall "evas_object_hide" object_hide :: EvasObject -> IO ()
+
+-- | Retrieve whether or not the given Evas object is visible
+object_visible_get :: EvasObject -> IO Bool
+object_visible_get obj = toBool <$> object_visible_get_ obj
+
+foreign import ccall "evas_object_visible_get" object_visible_get_ :: EvasObject -> IO EinaBool
+
+
+
+
 foreign import ccall "evas_object_rectangle_add" evas_object_rectangle_add :: Evas -> IO EvasObject
 foreign import ccall "evas_object_image_add" evas_object_image_add :: Evas -> IO EvasObject
 
 foreign import ccall "evas_object_color_set" evas_object_color_set :: EvasObject -> Int -> Int -> Int -> Int -> IO ()
-foreign import ccall "evas_object_resize" evas_object_resize :: EvasObject -> Int -> Int -> IO ()
-foreign import ccall "evas_object_move" evas_object_move :: EvasObject -> Int -> Int -> IO ()
-foreign import ccall "evas_object_show" evas_object_show :: EvasObject -> IO ()
 
-foreign import ccall "evas_object_geometry_get" evas_object_geometry_get_ :: EvasObject -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int-> IO ()
 
-evas_object_geometry_get :: EvasObject -> IO (Int,Int,Int,Int)
-evas_object_geometry_get obj = geometry_get_helper (evas_object_geometry_get_ obj)
 
 foreign import ccall "evas_object_pass_events_set" evas_object_pass_events_set :: EvasObject -> Bool -> IO ()
 

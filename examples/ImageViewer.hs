@@ -38,7 +38,7 @@ main = do
 
   img <- evas_object_image_add canvas
   evas_object_pass_events_set img True
-  evas_object_show img
+  object_show img
 
   showImage img $ images ! 0
 
@@ -107,7 +107,7 @@ showImage img path = do
     _ -> putStrLn =<< peekCString =<< evas_load_error_str err
   (w,h) <- evas_object_image_size_get img
   evas_object_image_fill_set img 0 0 w h
-  evas_object_resize img w h
+  object_resize img w h
 
 
 -- Zoom the image so that it fits in the canvas
@@ -122,18 +122,18 @@ zoomFit img canvas = do
       w = floor $ (ratio * fromIntegral iw :: Double)
       h = floor $ (ratio * fromIntegral ih :: Double)
 
-  evas_object_resize img w h
+  object_resize img w h
   evas_object_image_fill_set img 0 0 w h
 
 -- Center the image on the canvas
 centerImage :: EvasObject -> Evas -> IO ()
 centerImage img canvas = do
   (cw,ch) <- evas_output_size_get canvas
-  (_,_,iw,ih) <- evas_object_geometry_get img
+  (_,_,iw,ih) <- object_geometry_get img
   let w = floor $ (fromIntegral cw - fromIntegral iw :: Double) / 2
       h = floor $ (fromIntegral ch - fromIntegral ih :: Double) / 2
   
-  evas_object_move img w h
+  object_move img w h
 
 onMouseDown :: EvasObject -> IO () -> IO ()
 onMouseDown = onEvent EvasCallbackMouseDown
@@ -162,12 +162,12 @@ configureBackground ee canvas = do
   let (alpha, red, green, blue) = backgroundColor
   evas_object_color_set bg alpha red green blue
   (w,h) <- evas_output_size_get canvas
-  evas_object_resize bg w h
-  evas_object_show bg
+  object_resize bg w h
+  object_show bg
   object_focus_set bg True
 
   onCanvasResize ee $ do
     (lw,lh) <- evas_output_size_get canvas
-    evas_object_resize bg lw lh
+    object_resize bg lw lh
 
   return bg

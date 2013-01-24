@@ -56,6 +56,43 @@ foreign import ccall "evas_object_focus_get" _object_focus_get :: EvasObject -> 
 
 
 
+-- | Sets the layer of its canvas that the given object will be part of
+foreign import ccall "evas_object_layer_set" object_layer_set :: EvasObject -> CShort -> IO ()
+-- | Retrieves the layer of its canvas that the given object is part of
+foreign import ccall "evas_object_layer_get" object_layer_get :: EvasObject -> IO CShort
+
+
+
+-- | Set the name of the given Evas object to the given name
+object_name_set :: EvasObject -> String -> IO ()
+object_name_set obj name = withCString name (_object_name_set obj)
+
+foreign import ccall "evas_object_name_set" _object_name_set :: EvasObject -> CString -> IO ()
+
+-- | Retrieve the name of the given Evas object
+object_name_get :: EvasObject -> IO String
+object_name_get obj = peekCString =<< _object_name_get obj
+
+foreign import ccall "evas_object_name_get" _object_name_get :: EvasObject -> IO CString
+
+
+
+-- | Increment object reference count to defer its deletion
+foreign import ccall "evas_object_ref" object_ref :: EvasObject -> IO ()
+
+-- | Decrement object reference count
+foreign import ccall "evas_object_unref" object_unref :: EvasObject -> IO ()
+
+-- | Get the object reference count
+foreign import ccall "evas_object_ref_get" object_ref_get :: EvasObject -> IO Int
+
+
+
+-- | Mark the given Evas object for deletion (when Evas will free its memory)
+foreign import ccall "evas_object_del" object_del :: EvasObject -> IO ()
+
+
+
 foreign import ccall "evas_object_rectangle_add" evas_object_rectangle_add :: Evas -> IO EvasObject
 foreign import ccall "evas_object_image_add" evas_object_image_add :: Evas -> IO EvasObject
 

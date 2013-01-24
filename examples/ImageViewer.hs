@@ -70,13 +70,13 @@ shutdown ee = do
   exitSuccess
 
 -- Refresh current display
-refresh :: EvasObject -> Evas -> IO ()
+refresh :: Object -> Evas -> IO ()
 refresh img canvas = do
   zoomFit img canvas
   centerImage img canvas
 
 -- Switch to next image
-nextImage :: EvasObject -> MVar Int -> Vector String -> IO ()
+nextImage :: Object -> MVar Int -> Vector String -> IO ()
 nextImage img current images = do
   c <- takeMVar current
   if Vector.length images >= c
@@ -87,7 +87,7 @@ nextImage img current images = do
       ecore_main_loop_quit
 
 -- Switch to previous image
-previousImage :: EvasObject -> MVar Int -> Vector String -> IO ()
+previousImage :: Object -> MVar Int -> Vector String -> IO ()
 previousImage img current images = do
   c <- takeMVar current
   if c > 0 then do
@@ -97,7 +97,7 @@ previousImage img current images = do
       return ()
 
 -- Show the image whose path is given as a parameter
-showImage :: EvasObject -> String -> IO ()
+showImage :: Object -> String -> IO ()
 showImage img path = do
   putStrLn $ "Show image " ++ path
   withCString path $ flip (evas_object_image_file_set img) nullPtr
@@ -111,7 +111,7 @@ showImage img path = do
 
 
 -- Zoom the image so that it fits in the canvas
-zoomFit :: EvasObject -> Evas -> IO ()
+zoomFit :: Object -> Evas -> IO ()
 zoomFit img canvas = do
   (cw,ch) <- evas_output_size_get canvas
   (iw,ih) <- evas_object_image_size_get img
@@ -126,7 +126,7 @@ zoomFit img canvas = do
   evas_object_image_fill_set img 0 0 w h
 
 -- Center the image on the canvas
-centerImage :: EvasObject -> Evas -> IO ()
+centerImage :: Object -> Evas -> IO ()
 centerImage img canvas = do
   (cw,ch) <- evas_output_size_get canvas
   (_,_,iw,ih) <- object_geometry_get img
@@ -135,17 +135,17 @@ centerImage img canvas = do
   
   object_move img w h
 
-onMouseDown :: EvasObject -> IO () -> IO ()
+onMouseDown :: Object -> IO () -> IO ()
 onMouseDown = onEvent EvasCallbackMouseDown
 
-onKeyDown :: EvasObject -> (String -> IO ()) -> IO ()
+onKeyDown :: Object -> (String -> IO ()) -> IO ()
 onKeyDown obj cb = do 
   wcb <- evas_object_event_wrap_callback $ \_ _ _ info -> do
     keyName <- keyDownKey info
     cb keyName
   void $ evas_object_event_callback_add obj (fromEnum EvasCallbackKeyDown) wcb nullPtr
   
-onEvent :: EvasCallbackType -> EvasObject -> IO () -> IO ()
+onEvent :: EvasCallbackType -> Object -> IO () -> IO ()
 onEvent evType obj cb = do
   wcb <- evas_object_event_wrap_callback $ \_ _ _ _ -> cb
   void $ evas_object_event_callback_add obj (fromEnum evType) wcb nullPtr
@@ -156,7 +156,7 @@ onCanvasResize ee cb = do
   ecore_evas_callback_resize_set ee wcb
 
 -- Configure background with "backgroundColor"
-configureBackground :: EcoreEvas -> Evas -> IO EvasObject
+configureBackground :: EcoreEvas -> Evas -> IO Object
 configureBackground ee canvas = do
   bg <- evas_object_rectangle_add canvas
   let (alpha, red, green, blue) = backgroundColor

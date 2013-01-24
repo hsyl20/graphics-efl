@@ -1,7 +1,5 @@
 {-# Language MultiWayIf,LambdaCase #-}
 
-import Prelude hiding ((!))
-
 import System.Environment (getArgs)
 import System.Exit
 
@@ -11,8 +9,6 @@ import Control.Applicative ((<$>))
 
 import Foreign.Ptr
 import Foreign.C.String
-import Foreign.Marshal.Alloc
-import Foreign.Storable
 
 
 import Graphics.Efl.Ecore
@@ -22,8 +18,10 @@ import Graphics.Efl.Evas
 import qualified Data.Vector as Vector
 import Data.Vector ((!), Vector)
 
+backgroundColor :: (Int,Int,Int,Int)
 backgroundColor = (0,0,0,0)
 
+main :: IO ()
 main = do
   ecore_evas_init
   ee <- ecore_evas_new nullPtr 0 0 800 600 nullPtr
@@ -54,6 +52,9 @@ main = do
     "p" -> previousImage img currentImage images >> refresh img canvas
     "q" -> ecore_main_loop_quit
     _ -> return ()
+
+  onMouseDown bg $ do
+    putStrLn "Mouse down"
 
   ecore_main_loop_begin
 
@@ -118,8 +119,8 @@ zoomFit img canvas = do
   let ratioH = (fromIntegral ch) / (fromIntegral ih)
       ratioW = (fromIntegral cw) / (fromIntegral iw)
       ratio = min 1.0 (min ratioH ratioW)
-      w = floor $ ratio * fromIntegral iw
-      h = floor $ ratio * fromIntegral ih
+      w = floor $ (ratio * fromIntegral iw :: Double)
+      h = floor $ (ratio * fromIntegral ih :: Double)
 
   evas_object_resize img w h
   evas_object_image_fill_set img 0 0 w h
@@ -129,8 +130,8 @@ centerImage :: EvasObject -> Evas -> IO ()
 centerImage img canvas = do
   (cw,ch) <- evas_output_size_get canvas
   (_,_,iw,ih) <- evas_object_geometry_get img
-  let w = floor $ (fromIntegral cw - fromIntegral iw) / 2
-      h = floor $ (fromIntegral ch - fromIntegral ih) / 2
+  let w = floor $ (fromIntegral cw - fromIntegral iw :: Double) / 2
+      h = floor $ (fromIntegral ch - fromIntegral ih :: Double) / 2
   
   evas_object_move img w h
 
@@ -166,7 +167,7 @@ configureBackground ee canvas = do
   object_focus_set bg True
 
   onCanvasResize ee $ do
-    (w,h) <- evas_output_size_get canvas
-    evas_object_resize bg w h
+    (lw,lh) <- evas_output_size_get canvas
+    evas_object_resize bg lw lh
 
   return bg

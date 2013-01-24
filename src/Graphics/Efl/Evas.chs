@@ -169,11 +169,28 @@ object_below_get obj = maybePtr <$> _object_below_get obj
 foreign import ccall "evas_object_below_get" _object_below_get :: EvasObject -> IO EvasObject
 
 
+{-------------
+ - Rectangle -
+ -------------}
 
-
-
+-- | Add a rectangle to the given evas
 foreign import ccall "evas_object_rectangle_add" evas_object_rectangle_add :: Evas -> IO EvasObject
-foreign import ccall "evas_object_image_add" evas_object_image_add :: Evas -> IO EvasObject
+
+
+{---------
+ - Image -
+ ---------}
+
+-- | Create a new image object on the given Evas e canvas
+foreign import ccall "evas_object_image_add" object_image_add :: Evas -> IO EvasObject
+
+-- | Create a new image object that automatically scales its bound image to the object's area, on both axis
+foreign import ccall "evas_object_image_filled_add" object_image_filled_add :: Evas -> IO EvasObject
+
+
+
+
+
 
 foreign import ccall "evas_object_pass_events_set" evas_object_pass_events_set :: EvasObject -> Bool -> IO ()
 

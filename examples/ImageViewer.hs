@@ -36,7 +36,7 @@ main = do
 
   if Vector.length images == 0 then shutdown ee else return ()
 
-  img <- evas_object_image_add canvas
+  img <- object_image_add canvas
   evas_object_pass_events_set img True
   object_show img
 

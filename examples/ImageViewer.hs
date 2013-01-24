@@ -163,7 +163,7 @@ configureBackground ee canvas = do
   (w,h) <- evas_output_size_get canvas
   evas_object_resize bg w h
   evas_object_show bg
-  evas_object_focus_set bg True
+  object_focus_set bg True
 
   onCanvasResize ee $ do
     (w,h) <- evas_output_size_get canvas

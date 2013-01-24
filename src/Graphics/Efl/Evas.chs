@@ -41,6 +41,21 @@ foreign import ccall "evas_object_clipees_get" _object_clipees_get :: EvasObject
 
 
 
+-- | Set or unset a given object as the currently focused one on its canvas
+object_focus_set :: EvasObject -> Bool -> IO ()
+object_focus_set obj True = _object_focus_set obj 1
+object_focus_set obj False = _object_focus_set obj 0
+
+foreign import ccall "evas_object_focus_set" _object_focus_set :: EvasObject -> EinaBool -> IO ()
+
+-- | Retrieve whether an object has the focus 
+object_focus_get :: EvasObject -> IO Bool
+object_focus_get obj = (/= 0) <$> _object_focus_get obj
+
+foreign import ccall "evas_object_focus_get" _object_focus_get :: EvasObject -> IO EinaBool
+
+
+
 foreign import ccall "evas_object_rectangle_add" evas_object_rectangle_add :: Evas -> IO EvasObject
 foreign import ccall "evas_object_image_add" evas_object_image_add :: Evas -> IO EvasObject
 
@@ -48,7 +63,6 @@ foreign import ccall "evas_object_color_set" evas_object_color_set :: EvasObject
 foreign import ccall "evas_object_resize" evas_object_resize :: EvasObject -> Int -> Int -> IO ()
 foreign import ccall "evas_object_move" evas_object_move :: EvasObject -> Int -> Int -> IO ()
 foreign import ccall "evas_object_show" evas_object_show :: EvasObject -> IO ()
-foreign import ccall "evas_object_focus_set" evas_object_focus_set :: EvasObject -> Bool -> IO ()
 
 foreign import ccall "evas_object_geometry_get" evas_object_geometry_get_ :: EvasObject -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int-> IO ()
 

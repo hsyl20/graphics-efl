@@ -4,6 +4,7 @@ module Graphics.Efl.Eina where
 
 import Foreign.Ptr
 import Foreign.Storable
+import Foreign.C.Types
 
 import Control.Applicative
 
@@ -31,3 +32,5 @@ toList el = do
    x <- list_data_get el
    xs <- toList =<< list_next el
    return (x:xs)
+
+type EinaBool = CUChar

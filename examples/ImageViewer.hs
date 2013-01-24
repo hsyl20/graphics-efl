@@ -160,7 +160,7 @@ configureBackground :: EcoreEvas -> Evas -> IO EvasObject
 configureBackground ee canvas = do
   bg <- evas_object_rectangle_add canvas
   let (alpha, red, green, blue) = backgroundColor
-  evas_object_color_set bg alpha red green blue
+  object_color_set bg alpha red green blue
   (w,h) <- evas_output_size_get canvas
   object_resize bg w h
   object_show bg

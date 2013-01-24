@@ -4,8 +4,8 @@ import Foreign.Ptr
 import Foreign.Storable
 import Foreign.Marshal.Alloc
 
-size_get_helper :: (Ptr Int -> Ptr Int -> IO ()) -> IO (Int,Int)
-size_get_helper f = do
+get2_helper :: (Storable a, Storable b) => (Ptr a -> Ptr b -> IO ()) -> IO (a,b)
+get2_helper f = do
   alloca $ \w ->
     alloca $ \h -> do
       f w h
@@ -13,8 +13,8 @@ size_get_helper f = do
       rh <- peek h
       return (rw,rh)
 
-geometry_get_helper :: (Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()) -> IO (Int,Int,Int,Int)
-geometry_get_helper f = do
+get4_helper :: (Storable a, Storable b, Storable c, Storable d) => (Ptr a -> Ptr b -> Ptr c -> Ptr d -> IO ()) -> IO (a,b,c,d)
+get4_helper f = do
   alloca $ \w ->
     alloca $ \h ->
       alloca $ \x ->

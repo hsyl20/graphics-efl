@@ -33,6 +33,7 @@ main = do
    check_object_name canvas
    check_object_ref canvas
    check_object_size canvas
+   check_object_color canvas
 
    exitSuccess
 
@@ -106,3 +107,12 @@ check_object_size canvas = do
       object_move r1 x1 y1
       (x2,y2,w2,h2) <- object_geometry_get r1
       return (x1 == x2 && y1 == y2 && w1 == w2 && h1 == h2)
+
+check_object_color canvas = do
+   rect1 <- evas_object_rectangle_add canvas
+
+   assertM "Coloring object" $ do
+      let (r0,g0,b0,a0) = (10,20,30,40)
+      object_color_set rect1 r0 g0 b0 a0
+      (r1,g1,b1,a1) <- object_color_get rect1
+      return (r0 == r1 && g0 == g1 && b0 == b1 && a0 == a1)

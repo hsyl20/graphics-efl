@@ -102,7 +102,7 @@ foreign import ccall "evas_object_resize" object_resize :: EvasObject -> Coord -
 
 -- | Retrieve the position and (rectangular) size of the given Evas object
 object_geometry_get :: EvasObject -> IO (Coord,Coord,Coord,Coord)
-object_geometry_get obj = geometry_get_helper (_object_geometry_get obj)
+object_geometry_get obj = get4_helper (_object_geometry_get obj)
 
 foreign import ccall "evas_object_geometry_get" _object_geometry_get :: EvasObject -> Ptr Coord -> Ptr Coord -> Ptr Coord -> Ptr Coord -> IO ()
 
@@ -122,13 +122,21 @@ foreign import ccall "evas_object_visible_get" object_visible_get_ :: EvasObject
 
 
 
+-- | Set the general/main color of the given Evas object to the given one
+foreign import ccall "evas_object_color_set" object_color_set :: EvasObject -> Int -> Int -> Int -> Int -> IO ()
+
+-- | Set the general/main color of the given Evas object to the given one
+object_color_get :: EvasObject -> IO (Int,Int,Int,Int)
+object_color_get obj = get4_helper (_object_color_get obj)
+
+foreign import ccall "evas_object_color_get" _object_color_get :: EvasObject -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
+
+
+
+
 
 foreign import ccall "evas_object_rectangle_add" evas_object_rectangle_add :: Evas -> IO EvasObject
 foreign import ccall "evas_object_image_add" evas_object_image_add :: Evas -> IO EvasObject
-
-foreign import ccall "evas_object_color_set" evas_object_color_set :: EvasObject -> Int -> Int -> Int -> Int -> IO ()
-
-
 
 foreign import ccall "evas_object_pass_events_set" evas_object_pass_events_set :: EvasObject -> Bool -> IO ()
 
@@ -139,7 +147,7 @@ foreign import ccall "evas_object_image_fill_set" evas_object_image_fill_set :: 
 foreign import ccall "evas_object_image_size_get" evas_object_image_size_get_ :: EvasObject -> Ptr Int -> Ptr Int -> IO ()
 
 evas_object_image_size_get :: EvasObject -> IO (Int,Int)
-evas_object_image_size_get obj = size_get_helper (evas_object_image_size_get_ obj)
+evas_object_image_size_get obj = get2_helper (evas_object_image_size_get_ obj)
 
 foreign import ccall "evas_object_event_callback_add" evas_object_event_callback_add :: EvasObject -> Int -> EvasObjectEventCb -> Ptr () -> IO ()
 
@@ -155,7 +163,7 @@ type EvasObjectEventCb = FunPtr (Ptr () -> Evas -> EvasObject -> Ptr () -> IO ()
 foreign import ccall "evas_output_size_get" evas_output_size_get_ :: Evas -> Ptr Int -> Ptr Int -> IO ()
 
 evas_output_size_get :: Evas -> IO (Int,Int)
-evas_output_size_get ev = size_get_helper (evas_output_size_get_ ev)
+evas_output_size_get ev = get2_helper (evas_output_size_get_ ev)
 
 
 foreign import ccall "evas_event_callback_add" evas_event_callback_add :: Evas -> Int -> EvasObjectEventCb -> Ptr () -> IO ()

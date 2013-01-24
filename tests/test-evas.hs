@@ -9,6 +9,7 @@ import Foreign.Ptr
 import Graphics.Efl.Ecore
 import Graphics.Efl.EcoreEvas
 import Graphics.Efl.Evas
+import Graphics.Efl.Evas.Rectangle
 import Graphics.Efl.Eina
 
 assert :: String -> Bool -> IO ()

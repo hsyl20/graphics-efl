@@ -3,8 +3,6 @@
 module Graphics.Efl.Ecore where
 
 import Foreign.Ptr
-import Foreign.C.String
-import Foreign.Storable
 
 #include <Ecore.h>
 

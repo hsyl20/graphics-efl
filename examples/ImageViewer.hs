@@ -101,12 +101,12 @@ showImage :: Object -> String -> IO ()
 showImage img path = do
   putStrLn $ "Show image " ++ path
   withCString path $ flip (object_image_file_set img) nullPtr
-  err <- evas_object_image_load_error_get img
+  err <- object_image_load_error_get img
   case err of
-    0 -> return ()
-    _ -> putStrLn =<< peekCString =<< evas_load_error_str err
-  (w,h) <- evas_object_image_size_get img
-  evas_object_image_fill_set img 0 0 w h
+    EvasLoadErrorNone -> return ()
+    _ -> putStrLn =<< peekCString =<< evas_load_error_str (fromEnum err)
+  (w,h) <- object_image_size_get img
+  object_image_fill_set img 0 0 w h
   object_resize img w h
 
 
@@ -114,7 +114,7 @@ showImage img path = do
 zoomFit :: Object -> Evas -> IO ()
 zoomFit img canvas = do
   (cw,ch) <- evas_output_size_get canvas
-  (iw,ih) <- evas_object_image_size_get img
+  (iw,ih) <- object_image_size_get img
   
   let ratioH = (fromIntegral ch) / (fromIntegral ih)
       ratioW = (fromIntegral cw) / (fromIntegral iw)
@@ -123,7 +123,7 @@ zoomFit img canvas = do
       h = floor $ (ratio * fromIntegral ih :: Double)
 
   object_resize img w h
-  evas_object_image_fill_set img 0 0 w h
+  object_image_fill_set img 0 0 w h
 
 -- Center the image on the canvas
 centerImage :: Object -> Evas -> IO ()
@@ -145,7 +145,7 @@ onKeyDown obj cb = do
     cb keyName
   void $ evas_object_event_callback_add obj (fromEnum EvasCallbackKeyDown) wcb nullPtr
   
-onEvent :: EvasCallbackType -> Object -> IO () -> IO ()
+onEvent :: CallbackType -> Object -> IO () -> IO ()
 onEvent evType obj cb = do
   wcb <- evas_object_event_wrap_callback $ \_ _ _ _ -> cb
   void $ evas_object_event_callback_add obj (fromEnum evType) wcb nullPtr

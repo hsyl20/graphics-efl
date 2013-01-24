@@ -199,3 +199,95 @@ foreign import ccall "evas_object_image_preload" _object_image_preload :: Object
 
 -- | Reload an image object's image data
 foreign import ccall "evas_object_image_reload" object_image_reload :: Object -> IO ()
+
+
+
+-- | Save the given image object's contents to an (image) file
+object_image_save :: Object -> String -> String -> String -> IO Bool
+object_image_save obj file key flags = 
+   withCString file $ \cfile ->
+   withCString key $ \ckey ->
+   withCString flags $ \cflags -> toBool <$> _object_image_save obj cfile ckey cflags
+
+foreign import ccall "evas_object_image_save" _object_image_save :: Object -> CString -> CString -> CString -> IO EinaBool
+
+-- | Import pixels from given source to a given canvas image object
+foreign import ccall "evas_object_image_pixels_imports" _object_image_pixels_import :: Object -> PixelImportSource -> IO EinaBool
+
+
+{- TODO 
+
+void  evas_object_image_pixels_get_callback_set (Evas_Object *obj, Evas_Object_Image_Pixels_Get_Cb func, void *data)
+   Set the callback function to get pixels from a canvas' image.
+void  evas_object_image_pixels_dirty_set (Evas_Object *obj, Eina_Bool dirty)
+   Mark whether the given image object is dirty and needs to request its pixels.
+Eina_Bool   evas_object_image_pixels_dirty_get (const Evas_Object *obj)
+   Retrieves whether the given image object is dirty (needs to be redrawn).
+void  evas_object_image_load_dpi_set (Evas_Object *obj, double dpi)
+   Set the DPI resolution of an image object's source image.
+double   evas_object_image_load_dpi_get (const Evas_Object *obj)
+   Get the DPI resolution of a loaded image object in the canvas.
+void  evas_object_image_load_size_set (Evas_Object *obj, int w, int h)
+   Set the size of a given image object's source image, when loading it.
+void  evas_object_image_load_size_get (const Evas_Object *obj, int *w, int *h)
+   Get the size of a given image object's source image, when loading it.
+void  evas_object_image_load_scale_down_set (Evas_Object *obj, int scale_down)
+   Set the scale down factor of a given image object's source image, when loading it.
+int   evas_object_image_load_scale_down_get (const Evas_Object *obj)
+   get the scale down factor of a given image object's source image, when loading it.
+void  evas_object_image_load_region_set (Evas_Object *obj, int x, int y, int w, int h)
+   Inform a given image object to load a selective region of its source image.
+void  evas_object_image_load_region_get (const Evas_Object *obj, int *x, int *y, int *w, int *h)
+   Retrieve the coordinates of a given image object's selective (source image) load region.
+void  evas_object_image_load_orientation_set (Evas_Object *obj, Eina_Bool enable)
+   Define if the orientation information in the image file should be honored.
+Eina_Bool   evas_object_image_load_orientation_get (const Evas_Object *obj)
+   Get if the orientation information in the image file should be honored.
+void  evas_object_image_colorspace_set (Evas_Object *obj, Evas_Colorspace cspace)
+   Set the colorspace of a given image of the canvas.
+Evas_Colorspace   evas_object_image_colorspace_get (const Evas_Object *obj)
+   Get the colorspace of a given image of the canvas.
+Eina_Bool   evas_object_image_region_support_get (const Evas_Object *obj)
+   Get the support state of a given image.
+void  evas_object_image_native_surface_set (Evas_Object *obj, Evas_Native_Surface *surf)
+   Set the native surface of a given image of the canvas.
+Evas_Native_Surface *   evas_object_image_native_surface_get (const Evas_Object *obj)
+   Get the native surface of a given image of the canvas.
+void  evas_object_image_video_surface_set (Evas_Object *obj, Evas_Video_Surface *surf)
+   Set the video surface linked to a given image of the canvas.
+const Evas_Video_Surface *    evas_object_image_video_surface_get (const Evas_Object *obj)
+   Get the video surface linekd to a given image of the canvas.
+void  evas_object_image_scale_hint_set (Evas_Object *obj, Evas_Image_Scale_Hint hint)
+   Set the scale hint of a given image of the canvas.
+Evas_Image_Scale_Hint   evas_object_image_scale_hint_get (const Evas_Object *obj)
+   Get the scale hint of a given image of the canvas.
+void  evas_object_image_content_hint_set (Evas_Object *obj, Evas_Image_Content_Hint hint)
+   Set the content hint setting of a given image object of the canvas.
+Evas_Image_Content_Hint    evas_object_image_content_hint_get (const Evas_Object *obj)
+   Get the content hint setting of a given image object of the canvas.
+void  evas_object_image_alpha_mask_set (Evas_Object *obj, Eina_Bool ismask)
+   Enable an image to be used as an alpha mask.
+Eina_Bool   evas_object_image_source_set (Evas_Object *obj, Evas_Object *src)
+   Set the source object on an image object to used as a proxy.
+Evas_Object *  evas_object_image_source_get (const Evas_Object *obj)
+   Get the current source object of an image object.
+Eina_Bool   evas_object_image_source_unset (Evas_Object *obj)
+   Clear the source object on a proxy image object.
+Eina_Bool   evas_object_image_extension_can_load_get (const char *file)
+   Check if a file extension may be supported by Image Object Functions.
+Eina_Bool   evas_object_image_extension_can_load_fast_get (const char *file)
+   Check if a file extension may be supported by Image Object Functions.
+Eina_Bool   evas_object_image_animated_get (const Evas_Object *obj)
+   Check if an image object can be animated (have multiple frames)
+int   evas_object_image_animated_frame_count_get (const Evas_Object *obj)
+   Get the total number of frames of the image object.
+Evas_Image_Animated_Loop_Hint    evas_object_image_animated_loop_type_get (const Evas_Object *obj)
+   Get the kind of looping the image object does.
+int   evas_object_image_animated_loop_count_get (const Evas_Object *obj)
+   Get the number times the animation of the object loops.
+double   evas_object_image_animated_frame_duration_get (const Evas_Object *obj, int start_frame, int fram_num)
+   Get the duration of a sequence of frames.
+void  evas_object_image_animated_frame_set (Evas_Object *obj, int frame_num)
+   Set the frame to current frame of an image object. 
+
+-}

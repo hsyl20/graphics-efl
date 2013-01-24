@@ -23,9 +23,6 @@ foreign import ccall "wrapper" evas_object_event_wrap_callback :: (Ptr () -> Eva
 
 
 
-type ObjectEventCb = FunPtr (Ptr () -> Evas -> Object -> Ptr () -> IO ())
-
-
 foreign import ccall "evas_output_size_get" evas_output_size_get_ :: Evas -> Ptr Int -> Ptr Int -> IO ()
 
 evas_output_size_get :: Evas -> IO (Int,Int)

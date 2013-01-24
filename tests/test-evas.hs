@@ -83,13 +83,13 @@ check_object_layer canvas = do
       object_layer_set r1 10
       object_layer_set r2 10
       object_stack_above r1 r2
-      (== r1) <$> object_above_get r2
+      (== Just r1) <$> object_above_get r2
 
    assertM "Layer object below" $ do
       object_layer_set r1 10
       object_layer_set r2 10
       object_stack_below r1 r2
-      (== r1) <$> object_below_get r2
+      (== Just r1) <$> object_below_get r2
 
 
 check_object_name canvas = do

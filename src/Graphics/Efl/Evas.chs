@@ -157,10 +157,16 @@ foreign import ccall "evas_object_stack_above" object_stack_above :: EvasObject 
 foreign import ccall "evas_object_stack_below" object_stack_below :: EvasObject -> EvasObject -> IO ()
 
 -- | Get the Evas object stacked right above an object
-foreign import ccall "evas_object_above_get" object_above_get :: EvasObject -> IO EvasObject
+object_above_get :: EvasObject -> IO (Maybe EvasObject)
+object_above_get obj = maybePtr <$> _object_above_get obj
+
+foreign import ccall "evas_object_above_get" _object_above_get :: EvasObject -> IO EvasObject
 
 -- | Get the Evas object stacked right below an object
-foreign import ccall "evas_object_below_get" object_below_get :: EvasObject -> IO EvasObject
+object_below_get :: EvasObject -> IO (Maybe EvasObject)
+object_below_get obj = maybePtr <$> _object_below_get obj
+
+foreign import ccall "evas_object_below_get" _object_below_get :: EvasObject -> IO EvasObject
 
 
 

@@ -132,6 +132,37 @@ object_color_get obj = get4_helper (_object_color_get obj)
 foreign import ccall "evas_object_color_get" _object_color_get :: EvasObject -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
 
 
+-- | Retrieve the Evas canvas that the given object lives on
+foreign import ccall "evas_object_evas_get" object_evas_get :: EvasObject -> IO Evas
+
+
+-- | Retrieve the type of the given Evas object
+object_type_get :: EvasObject -> IO String
+object_type_get obj = peekCString =<< _object_type_get obj
+
+foreign import ccall "evas_object_type_get" _object_type_get :: EvasObject -> IO CString
+
+
+
+-- | Raise object to the top of its layer
+foreign import ccall "evas_object_raise" object_raise :: EvasObject -> IO ()
+
+-- | Lower object to the bottom of its layer
+foreign import ccall "evas_object_lower" object_lower :: EvasObject -> IO ()
+
+-- | Stack an object immediately above another object
+foreign import ccall "evas_object_stack_above" object_stack_above :: EvasObject -> EvasObject -> IO ()
+
+-- | Stack an object immediately below another object
+foreign import ccall "evas_object_stack_below" object_stack_below :: EvasObject -> EvasObject -> IO ()
+
+-- | Get the Evas object stacked right above an object
+foreign import ccall "evas_object_above_get" object_above_get :: EvasObject -> IO EvasObject
+
+-- | Get the Evas object stacked right below an object
+foreign import ccall "evas_object_below_get" object_below_get :: EvasObject -> IO EvasObject
+
+
 
 
 

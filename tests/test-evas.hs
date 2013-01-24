@@ -34,6 +34,7 @@ main = do
    check_object_ref canvas
    check_object_size canvas
    check_object_color canvas
+   check_object_evas canvas
 
    exitSuccess
 
@@ -72,10 +73,23 @@ check_object_focus canvas = do
 
 check_object_layer canvas = do
    r1 <- evas_object_rectangle_add canvas
+   r2 <- evas_object_rectangle_add canvas
 
    assertM "Layer object get . set == id" $ do
       object_layer_set r1 10
       (== 10) <$> object_layer_get r1
+
+   assertM "Layer object above" $ do
+      object_layer_set r1 10
+      object_layer_set r2 10
+      object_stack_above r1 r2
+      (== r1) <$> object_above_get r2
+
+   assertM "Layer object below" $ do
+      object_layer_set r1 10
+      object_layer_set r2 10
+      object_stack_below r1 r2
+      (== r1) <$> object_below_get r2
 
 
 check_object_name canvas = do
@@ -108,6 +122,7 @@ check_object_size canvas = do
       (x2,y2,w2,h2) <- object_geometry_get r1
       return (x1 == x2 && y1 == y2 && w1 == w2 && h1 == h2)
 
+
 check_object_color canvas = do
    rect1 <- evas_object_rectangle_add canvas
 
@@ -116,3 +131,10 @@ check_object_color canvas = do
       object_color_set rect1 r0 g0 b0 a0
       (r1,g1,b1,a1) <- object_color_get rect1
       return (r0 == r1 && g0 == g1 && b0 == b1 && a0 == a1)
+
+
+check_object_evas canvas = do
+   r1 <- evas_object_rectangle_add canvas
+
+   assertM "Retrieve object canvas" $ do
+      (== canvas) <$> object_evas_get r1

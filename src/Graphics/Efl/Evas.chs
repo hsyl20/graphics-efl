@@ -187,6 +187,25 @@ foreign import ccall "evas_object_image_add" object_image_add :: Evas -> IO Obje
 -- | Create a new image object that automatically scales its bound image to the object's area, on both axis
 foreign import ccall "evas_object_image_filled_add" object_image_filled_add :: Evas -> IO Object
 
+-- | Set the data for an image from memory to be loaded
+foreign import ccall "evas_object_image_memfile_set" object_image_memfile_set :: Object -> Ptr () -> Int -> CString -> CString -> IO ()
+
+-- | Set the source file from where an image object must fetch the real image data (it may be an Eet file, besides pure image ones)
+foreign import ccall "evas_object_image_file_set" object_image_file_set :: Object -> CString -> CString -> IO ()
+
+-- | Retrieve the source file from where an image object is to fetch the real image data (it may be an Eet file, besides pure image ones)
+foreign import ccall "evas_object_image_file_get" object_image_file_get :: Object -> Ptr CString -> CString -> IO ()
+
+-- | Set the dimensions for an image object's border, a region which won't ever be scaled together with its center
+foreign import ccall "evas_object_image_border_set" object_image_border_set :: Object -> Int -> Int -> Int -> Int -> IO ()
+
+-- | Retrieve the dimensions for an image object's border, a region which won't ever be scaled together with its center
+object_image_border_get :: Object -> IO (Int,Int,Int,Int)
+object_image_border_get obj = get4_helper (_object_image_border_get obj)
+
+foreign import ccall "evas_object_image_border_get" _object_image_border_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
+
+
 
 
 
@@ -194,7 +213,6 @@ foreign import ccall "evas_object_image_filled_add" object_image_filled_add :: E
 
 foreign import ccall "evas_object_pass_events_set" evas_object_pass_events_set :: Object -> Bool -> IO ()
 
-foreign import ccall "evas_object_image_file_set" evas_object_image_file_set :: Object -> CString -> CString -> IO ()
 foreign import ccall "evas_object_image_load_error_get" evas_object_image_load_error_get :: Object -> IO Int
 foreign import ccall "evas_object_image_fill_set" evas_object_image_fill_set :: Object -> Int -> Int -> Int -> Int -> IO ()
 

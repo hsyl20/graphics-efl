@@ -100,7 +100,7 @@ previousImage img current images = do
 showImage :: Object -> String -> IO ()
 showImage img path = do
   putStrLn $ "Show image " ++ path
-  withCString path $ flip (evas_object_image_file_set img) nullPtr
+  withCString path $ flip (object_image_file_set img) nullPtr
   err <- evas_object_image_load_error_get img
   case err of
     0 -> return ()

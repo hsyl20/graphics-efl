@@ -37,7 +37,7 @@ main = do
   if Vector.length images == 0 then shutdown ee else return ()
 
   img <- object_image_add canvas
-  evas_object_pass_events_set img True
+  object_pass_events_set img True
   object_show img
 
   showImage img $ images ! 0
@@ -143,12 +143,12 @@ onKeyDown obj cb = do
   wcb <- evas_object_event_wrap_callback $ \_ _ _ info -> do
     keyName <- keyDownKey info
     cb keyName
-  void $ evas_object_event_callback_add obj (fromEnum EvasCallbackKeyDown) wcb nullPtr
+  void $ object_event_callback_add obj EvasCallbackKeyDown wcb nullPtr
   
 onEvent :: CallbackType -> Object -> IO () -> IO ()
 onEvent evType obj cb = do
   wcb <- evas_object_event_wrap_callback $ \_ _ _ _ -> cb
-  void $ evas_object_event_callback_add obj (fromEnum evType) wcb nullPtr
+  void $ object_event_callback_add obj evType wcb nullPtr
 
 onCanvasResize :: CoreCanvas -> IO () -> IO ()
 onCanvasResize ee cb = do

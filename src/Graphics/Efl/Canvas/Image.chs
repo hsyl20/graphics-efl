@@ -1,6 +1,6 @@
 {-# Language ForeignFunctionInterface #-}
 
-module Graphics.Efl.Evas.Image where
+module Graphics.Efl.Canvas.Image where
 
 import Foreign.Ptr
 import Foreign.C.String
@@ -10,14 +10,14 @@ import Control.Applicative
 
 import Graphics.Efl.Helpers
 import Graphics.Efl.Eina
-import Graphics.Efl.Evas.Types
+import Graphics.Efl.Canvas.Types
 
 
 -- | Create a new image object on the given Evas e canvas
-foreign import ccall "evas_object_image_add" object_image_add :: Evas -> IO Object
+foreign import ccall "evas_object_image_add" object_image_add :: Canvas -> IO Object
 
 -- | Create a new image object that automatically scales its bound image to the object's area, on both axis
-foreign import ccall "evas_object_image_filled_add" object_image_filled_add :: Evas -> IO Object
+foreign import ccall "evas_object_image_filled_add" object_image_filled_add :: Canvas -> IO Object
 
 
 

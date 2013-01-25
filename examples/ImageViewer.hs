@@ -11,9 +11,9 @@ import Foreign.Ptr
 import Foreign.C.String
 
 
-import Graphics.Efl.Ecore
-import Graphics.Efl.EcoreEvas
-import Graphics.Efl.Evas
+import Graphics.Efl.Core
+import Graphics.Efl.CoreCanvas
+import Graphics.Efl.Canvas
 
 import qualified Data.Vector as Vector
 import Data.Vector ((!), Vector)
@@ -61,7 +61,7 @@ main = do
   shutdown ee
 
 -- Shutdown the application
-shutdown :: EcoreEvas -> IO ()
+shutdown :: CoreCanvas -> IO ()
 shutdown ee = do
   putStrLn "Going to shutdown"
 -- FIXME: deadlock
@@ -70,7 +70,7 @@ shutdown ee = do
   exitSuccess
 
 -- Refresh current display
-refresh :: Object -> Evas -> IO ()
+refresh :: Object -> Canvas -> IO ()
 refresh img canvas = do
   zoomFit img canvas
   centerImage img canvas
@@ -111,7 +111,7 @@ showImage img path = do
 
 
 -- Zoom the image so that it fits in the canvas
-zoomFit :: Object -> Evas -> IO ()
+zoomFit :: Object -> Canvas -> IO ()
 zoomFit img canvas = do
   (cw,ch) <- evas_output_size_get canvas
   (iw,ih) <- object_image_size_get img
@@ -126,7 +126,7 @@ zoomFit img canvas = do
   object_image_fill_set img 0 0 w h
 
 -- Center the image on the canvas
-centerImage :: Object -> Evas -> IO ()
+centerImage :: Object -> Canvas -> IO ()
 centerImage img canvas = do
   (cw,ch) <- evas_output_size_get canvas
   (_,_,iw,ih) <- object_geometry_get img
@@ -150,13 +150,13 @@ onEvent evType obj cb = do
   wcb <- evas_object_event_wrap_callback $ \_ _ _ _ -> cb
   void $ evas_object_event_callback_add obj (fromEnum evType) wcb nullPtr
 
-onCanvasResize :: EcoreEvas -> IO () -> IO ()
+onCanvasResize :: CoreCanvas -> IO () -> IO ()
 onCanvasResize ee cb = do
   wcb <- ecore_evas_wrap_callback (\_ -> cb)
   ecore_evas_callback_resize_set ee wcb
 
 -- Configure background with "backgroundColor"
-configureBackground :: EcoreEvas -> Evas -> IO Object
+configureBackground :: CoreCanvas -> Canvas -> IO Object
 configureBackground ee canvas = do
   bg <- evas_object_rectangle_add canvas
   let (alpha, red, green, blue) = backgroundColor

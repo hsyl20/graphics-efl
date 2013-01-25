@@ -1,12 +1,12 @@
 {-# Language ForeignFunctionInterface #-}
 
-module Graphics.Efl.Evas.Types where
+module Graphics.Efl.Canvas.Types where
 
 import Foreign.Ptr
 
 #include <Evas.h>
 
-type Evas = Ptr ()
+type Canvas = Ptr ()
 type Object = Ptr ()
 type Coord = Int
 type PixelImportSource = Ptr ()
@@ -23,6 +23,6 @@ type VideoSurface = Ptr ()
 {#enum _Evas_Callback_Type as CallbackType {underscoreToCase} deriving (Eq,Show) #}
 
 
-type ObjectEventCb = FunPtr (Ptr () -> Evas -> Object -> Ptr () -> IO ())
+type ObjectEventCb = FunPtr (Ptr () -> Canvas -> Object -> Ptr () -> IO ())
 
 type ObjectImagePixelsGetCb = FunPtr (Ptr () -> Object -> IO ())

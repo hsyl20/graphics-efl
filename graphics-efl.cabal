@@ -16,15 +16,15 @@ cabal-version:       >=1.8
 
 library
   exposed-modules:
-      Graphics.Efl.Ecore,
+      Graphics.Efl.Core,
       Graphics.Efl.Helpers,
-      Graphics.Efl.EcoreEvas,
-      Graphics.Efl.Evas,
-      Graphics.Efl.Evas.Types,
-      Graphics.Efl.Evas.BasicObject,
-      Graphics.Efl.Evas.Image,
-      Graphics.Efl.Evas.Rectangle,
-      Graphics.Efl.Evas.Events,
+      Graphics.Efl.CoreCanvas,
+      Graphics.Efl.Canvas,
+      Graphics.Efl.Canvas.Types,
+      Graphics.Efl.Canvas.BasicObject,
+      Graphics.Efl.Canvas.Image,
+      Graphics.Efl.Canvas.Rectangle,
+      Graphics.Efl.Canvas.Events,
       Graphics.Efl.Eina
 
   PkgConfig-Depends:

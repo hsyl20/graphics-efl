@@ -1,6 +1,6 @@
 {-# Language ForeignFunctionInterface #-}
 
-module Graphics.Efl.Ecore where
+module Graphics.Efl.Core where
 
 import Foreign.Ptr
 

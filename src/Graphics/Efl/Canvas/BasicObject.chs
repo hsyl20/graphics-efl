@@ -1,6 +1,6 @@
 {-# Language ForeignFunctionInterface #-}
 
-module Graphics.Efl.Evas.BasicObject where
+module Graphics.Efl.Canvas.BasicObject where
 
 import Foreign.Ptr
 import Foreign.C.String
@@ -10,7 +10,7 @@ import Control.Applicative
 
 import Graphics.Efl.Helpers
 import Graphics.Efl.Eina
-import Graphics.Efl.Evas.Types
+import Graphics.Efl.Canvas.Types
 
 
 -- | Clip one object to another
@@ -124,7 +124,7 @@ foreign import ccall "evas_object_color_get" _object_color_get :: Object -> Ptr 
 
 
 -- | Retrieve the Evas canvas that the given object lives on
-foreign import ccall "evas_object_evas_get" object_evas_get :: Object -> IO Evas
+foreign import ccall "evas_object_evas_get" object_evas_get :: Object -> IO Canvas
 
 
 -- | Retrieve the type of the given Evas object

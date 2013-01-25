@@ -24,6 +24,7 @@ library
       Graphics.Efl.Canvas.BasicObject,
       Graphics.Efl.Canvas.Image,
       Graphics.Efl.Canvas.Rectangle,
+      Graphics.Efl.Canvas.Text,
       Graphics.Efl.Canvas.Events,
       Graphics.Efl.Eina
 

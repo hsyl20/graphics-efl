@@ -287,49 +287,107 @@ object_image_colorspace_get obj = toEnum <$> _object_image_colorspace_get obj
 
 foreign import ccall "evas_object_image_colorspace_get" _object_image_colorspace_get :: Object -> IO Int
 
-{- TODO 
 
-Eina_Bool   evas_object_image_region_support_get (const Evas_Object *obj)
-   Get the support state of a given image.
-void  evas_object_image_native_surface_set (Evas_Object *obj, Evas_Native_Surface *surf)
-   Set the native surface of a given image of the canvas.
-Evas_Native_Surface *   evas_object_image_native_surface_get (const Evas_Object *obj)
-   Get the native surface of a given image of the canvas.
-void  evas_object_image_video_surface_set (Evas_Object *obj, Evas_Video_Surface *surf)
-   Set the video surface linked to a given image of the canvas.
-const Evas_Video_Surface *    evas_object_image_video_surface_get (const Evas_Object *obj)
-   Get the video surface linekd to a given image of the canvas.
-void  evas_object_image_scale_hint_set (Evas_Object *obj, Evas_Image_Scale_Hint hint)
-   Set the scale hint of a given image of the canvas.
-Evas_Image_Scale_Hint   evas_object_image_scale_hint_get (const Evas_Object *obj)
-   Get the scale hint of a given image of the canvas.
-void  evas_object_image_content_hint_set (Evas_Object *obj, Evas_Image_Content_Hint hint)
-   Set the content hint setting of a given image object of the canvas.
-Evas_Image_Content_Hint    evas_object_image_content_hint_get (const Evas_Object *obj)
-   Get the content hint setting of a given image object of the canvas.
-void  evas_object_image_alpha_mask_set (Evas_Object *obj, Eina_Bool ismask)
-   Enable an image to be used as an alpha mask.
-Eina_Bool   evas_object_image_source_set (Evas_Object *obj, Evas_Object *src)
-   Set the source object on an image object to used as a proxy.
-Evas_Object *  evas_object_image_source_get (const Evas_Object *obj)
-   Get the current source object of an image object.
-Eina_Bool   evas_object_image_source_unset (Evas_Object *obj)
-   Clear the source object on a proxy image object.
-Eina_Bool   evas_object_image_extension_can_load_get (const char *file)
-   Check if a file extension may be supported by Image Object Functions.
-Eina_Bool   evas_object_image_extension_can_load_fast_get (const char *file)
-   Check if a file extension may be supported by Image Object Functions.
-Eina_Bool   evas_object_image_animated_get (const Evas_Object *obj)
-   Check if an image object can be animated (have multiple frames)
-int   evas_object_image_animated_frame_count_get (const Evas_Object *obj)
-   Get the total number of frames of the image object.
-Evas_Image_Animated_Loop_Hint    evas_object_image_animated_loop_type_get (const Evas_Object *obj)
-   Get the kind of looping the image object does.
-int   evas_object_image_animated_loop_count_get (const Evas_Object *obj)
-   Get the number times the animation of the object loops.
-double   evas_object_image_animated_frame_duration_get (const Evas_Object *obj, int start_frame, int fram_num)
-   Get the duration of a sequence of frames.
-void  evas_object_image_animated_frame_set (Evas_Object *obj, int frame_num)
-   Set the frame to current frame of an image object. 
+-- | Get the support state of a given image
+object_image_region_support_get :: Object -> IO Bool
+object_image_region_support_get obj = toBool <$> _object_image_region_support_get obj
 
--}
+foreign import ccall "evas_object_image_region_support_get" _object_image_region_support_get :: Object -> IO EinaBool
+
+
+-- | Set the native surface of a given image of the canvas
+foreign import ccall "evas_object_image_native_surface_set" object_image_native_surface_set :: Object -> NativeSurface -> IO ()
+
+-- | Get the native surface of a given image of the canvas
+foreign import ccall "evas_object_image_native_surface_get" object_image_native_surface_get :: Object -> IO NativeSurface
+
+-- | Set the video surface linked to a given image of the canvas
+foreign import ccall "evas_object_image_video_surface_set" object_image_video_surface_set :: Object -> VideoSurface -> IO ()
+
+-- | Get the video surface linekd to a given image of the canvas
+foreign import ccall "evas_object_image_video_surface_get" object_image_video_surface_get :: Object -> IO VideoSurface
+
+
+-- | Set the scale hint of a given image of the canvas
+object_image_scale_hint_set :: Object -> ImageScaleHint -> IO ()
+object_image_scale_hint_set obj hint = _object_image_scale_hint_set obj (fromEnum hint)
+
+foreign import ccall "evas_object_image_scale_hint_set" _object_image_scale_hint_set :: Object -> Int -> IO ()
+
+-- | Get the scale hint of a given image of the canvas
+object_image_scale_hint_get :: Object -> IO ImageScaleHint
+object_image_scale_hint_get obj = toEnum <$> _object_image_scale_hint_get obj
+
+foreign import ccall "evas_object_image_scale_hint_get" _object_image_scale_hint_get :: Object -> IO Int
+
+
+-- | Set the content hint setting of a given image object of the canvas
+object_image_content_hint_set :: Object -> ImageContentHint -> IO ()
+object_image_content_hint_set obj hint = _object_image_content_hint_set obj (fromEnum hint)
+
+foreign import ccall "evas_object_image_content_hint_set" _object_image_content_hint_set :: Object -> Int -> IO ()
+
+-- | Get the content hint setting of a given image object of the canvas 
+object_image_content_hint_get :: Object -> IO ImageContentHint
+object_image_content_hint_get obj = toEnum <$> _object_image_content_hint_get obj
+
+foreign import ccall "evas_object_image_content_hint_get" _object_image_content_hint_get :: Object -> IO Int
+
+
+-- | Enable an image to be used as an alpha mask
+object_image_alpha_mask_set :: Object -> Bool -> IO ()
+object_image_alpha_mask_set obj ismask = _object_image_alpha_mask_set obj (fromBool ismask)
+
+foreign import ccall "evas_object_image_alpha_mask_set" _object_image_alpha_mask_set :: Object -> EinaBool -> IO ()
+
+
+-- | Set the source object on an image object to used as a proxy
+foreign import ccall "evas_object_image_source_set" object_image_source_set :: Object -> Object -> IO ()
+
+-- | Get the current source object of an image object
+foreign import ccall "evas_object_image_source_get" object_image_source_get :: Object -> IO Object 
+
+-- | Clear the source object on a proxy image object
+object_image_source_unset :: Object -> IO Bool
+object_image_source_unset obj = toBool <$> _object_image_source_unset obj
+
+foreign import ccall "evas_object_image_source_unset" _object_image_source_unset :: Object -> IO EinaBool
+
+
+-- | Check if a file extension may be supported by Image Object Functions
+object_image_extension_can_load_get :: String -> IO Bool
+object_image_extension_can_load_get file = toBool <$> withCString file _object_image_extension_can_load_get
+
+foreign import ccall "evas_object_image_extension_can_load_get" _object_image_extension_can_load_get :: CString -> IO EinaBool
+
+-- | Check if a file extension may be supported by Image Object Functions
+object_image_extension_can_load_fast_get :: String -> IO Bool
+object_image_extension_can_load_fast_get file = toBool <$> withCString file _object_image_extension_can_load_fast_get
+
+foreign import ccall "evas_object_image_extension_can_load_fast_get" _object_image_extension_can_load_fast_get :: CString -> IO EinaBool
+
+-- | Check if an image object can be animated (have multiple frames)
+object_image_animated_get :: Object -> IO Bool
+object_image_animated_get obj = toBool <$> _object_image_animated_get obj
+
+foreign import ccall "evas_object_image_animated_get" _object_image_animated_get :: Object -> IO EinaBool
+
+-- | Get the total number of frames of the image object
+foreign import ccall "evas_object_image_animated_frame_count_get" object_image_animated_frame_count_get :: Object -> IO Int
+
+
+-- | Get the kind of looping the image object does
+object_image_animated_loop_hint_get :: Object -> IO ImageAnimatedLoopHint
+object_image_animated_loop_hint_get obj = toEnum <$> _object_image_animated_loop_hint_get obj
+
+foreign import ccall "evas_object_image_animated_loop_hint_get" _object_image_animated_loop_hint_get :: Object -> IO Int
+
+
+-- | Get the number times the animation of the object loops
+foreign import ccall "evas_object_image_animated_loop_count_get" object_image_animated_loop_count_get :: Object -> IO Int
+
+-- | Get the duration of a sequence of frames
+foreign import ccall "evas_object_image_animated_frame_duration_get" object_image_animated_frame_duration_get :: Object -> Int -> Int -> IO Double
+
+-- | Set the frame to current frame of an image object
+foreign import ccall "evas_object_image_animated_frame_set" object_image_animated_frame_set :: Object -> Int -> IO ()

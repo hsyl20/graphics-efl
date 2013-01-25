@@ -214,39 +214,81 @@ foreign import ccall "evas_object_image_save" _object_image_save :: Object -> CS
 -- | Import pixels from given source to a given canvas image object
 foreign import ccall "evas_object_image_pixels_imports" _object_image_pixels_import :: Object -> PixelImportSource -> IO EinaBool
 
+-- | Set the callback function to get pixels from a canvas' image
+foreign import ccall "evas_object_image_pixels_get_callback_set" object_image_pixels_get_callback_set :: Object -> ObjectImagePixelsGetCb -> Ptr () -> IO ()
+
+-- | Mark whether the given image object is dirty and needs to request its pixels
+object_image_pixels_dirty_set :: Object -> Bool -> IO ()
+object_image_pixels_dirty_set obj b = _object_image_pixels_dirty_set obj (fromBool b)
+
+foreign import ccall "evas_object_image_pixels_dirty_set" _object_image_pixels_dirty_set :: Object -> EinaBool -> IO ()
+
+-- | Retrieve whether the given image object is dirty (needs to be redrawn)
+object_image_pixels_dirty_get :: Object -> IO Bool
+object_image_pixels_dirty_get obj = toBool <$> _object_image_pixels_dirty_get obj
+
+foreign import ccall "evas_object_image_pixels_dirty_get" _object_image_pixels_dirty_get :: Object -> IO EinaBool
+
+-- | Set the DPI resolution of an image object's source image
+foreign import ccall "evas_object_image_load_dpi_set" object_image_load_dpi_set :: Object -> Double -> IO ()
+
+-- | Get the DPI resolution of a loaded image object in the canvas
+foreign import ccall "evas_object_image_load_dpi_get" object_image_load_dpi_get :: Object -> IO Double
+
+-- | Set the size of a given image object's source image, when loading it
+foreign import ccall "evas_object_image_load_size_set" object_image_load_size_set :: Object -> Int -> Int -> IO ()
+
+-- | Get the size of a given image object's source image, when loading it
+object_image_load_size_get :: Object -> IO (Int,Int)
+object_image_load_size_get obj = get2_helper (_object_image_load_size_get obj)
+
+foreign import ccall "evas_object_image_load_size_get" _object_image_load_size_get :: Object -> Ptr Int -> Ptr Int -> IO ()
+
+
+-- | Set the scale down factor of a given image object's source image, when loading it
+foreign import ccall "evas_object_image_load_scale_down_set" object_image_load_scale_down_set :: Object -> Int -> IO ()
+
+-- | Get the scale down factor of a given image object's source image, when loading it
+foreign import ccall "evas_object_image_load_scale_down_get" object_image_load_scale_down_get :: Object -> IO Int
+
+
+-- | Inform a given image object to load a selective region of its source image
+foreign import ccall "evas_object_image_load_region_set" object_image_load_region_set :: Object -> Int -> Int -> IO ()
+
+-- | Retrieve the coordinates of a given image object's selective (source image) load region.
+object_image_load_region_get :: Object -> IO (Int,Int,Int,Int)
+object_image_load_region_get obj = get4_helper (_object_image_load_region_get obj)
+
+foreign import ccall "evas_object_image_load_region_get" _object_image_load_region_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
+
+
+-- | Define if the orientation information in the image file should be honored
+object_image_load_orientation_set :: Object -> Bool -> IO ()
+object_image_load_orientation_set obj b = _object_image_load_orientation_set obj (fromBool b)
+
+foreign import ccall "evas_object_image_load_orientation_set" _object_image_load_orientation_set :: Object -> EinaBool -> IO ()
+
+-- | Get if the orientation information in the image file should be honored
+object_image_load_orientation_get :: Object -> IO Bool
+object_image_load_orientation_get obj = toBool <$> _object_image_load_orientation_get obj
+
+foreign import ccall "evas_object_image_load_orientation_get" _object_image_load_orientation_get :: Object -> IO EinaBool
+
+
+-- | Set the colorspace of a given image of the canvas
+object_image_colorspace_set :: Object -> ColorSpace -> IO ()
+object_image_colorspace_set obj cspace = _object_image_colorspace_set obj (fromEnum cspace)
+
+foreign import ccall "evas_object_image_colorspace_set" _object_image_colorspace_set :: Object -> Int -> IO ()
+
+-- | Get the colorspace of a given image of the canvas
+object_image_colorspace_get :: Object -> IO ColorSpace
+object_image_colorspace_get obj = toEnum <$> _object_image_colorspace_get obj
+
+foreign import ccall "evas_object_image_colorspace_get" _object_image_colorspace_get :: Object -> IO Int
 
 {- TODO 
 
-void  evas_object_image_pixels_get_callback_set (Evas_Object *obj, Evas_Object_Image_Pixels_Get_Cb func, void *data)
-   Set the callback function to get pixels from a canvas' image.
-void  evas_object_image_pixels_dirty_set (Evas_Object *obj, Eina_Bool dirty)
-   Mark whether the given image object is dirty and needs to request its pixels.
-Eina_Bool   evas_object_image_pixels_dirty_get (const Evas_Object *obj)
-   Retrieves whether the given image object is dirty (needs to be redrawn).
-void  evas_object_image_load_dpi_set (Evas_Object *obj, double dpi)
-   Set the DPI resolution of an image object's source image.
-double   evas_object_image_load_dpi_get (const Evas_Object *obj)
-   Get the DPI resolution of a loaded image object in the canvas.
-void  evas_object_image_load_size_set (Evas_Object *obj, int w, int h)
-   Set the size of a given image object's source image, when loading it.
-void  evas_object_image_load_size_get (const Evas_Object *obj, int *w, int *h)
-   Get the size of a given image object's source image, when loading it.
-void  evas_object_image_load_scale_down_set (Evas_Object *obj, int scale_down)
-   Set the scale down factor of a given image object's source image, when loading it.
-int   evas_object_image_load_scale_down_get (const Evas_Object *obj)
-   get the scale down factor of a given image object's source image, when loading it.
-void  evas_object_image_load_region_set (Evas_Object *obj, int x, int y, int w, int h)
-   Inform a given image object to load a selective region of its source image.
-void  evas_object_image_load_region_get (const Evas_Object *obj, int *x, int *y, int *w, int *h)
-   Retrieve the coordinates of a given image object's selective (source image) load region.
-void  evas_object_image_load_orientation_set (Evas_Object *obj, Eina_Bool enable)
-   Define if the orientation information in the image file should be honored.
-Eina_Bool   evas_object_image_load_orientation_get (const Evas_Object *obj)
-   Get if the orientation information in the image file should be honored.
-void  evas_object_image_colorspace_set (Evas_Object *obj, Evas_Colorspace cspace)
-   Set the colorspace of a given image of the canvas.
-Evas_Colorspace   evas_object_image_colorspace_get (const Evas_Object *obj)
-   Get the colorspace of a given image of the canvas.
 Eina_Bool   evas_object_image_region_support_get (const Evas_Object *obj)
    Get the support state of a given image.
 void  evas_object_image_native_surface_set (Evas_Object *obj, Evas_Native_Surface *surf)

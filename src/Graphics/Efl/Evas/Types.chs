@@ -19,3 +19,5 @@ type PixelImportSource = Ptr ()
 
 
 type ObjectEventCb = FunPtr (Ptr () -> Evas -> Object -> Ptr () -> IO ())
+
+type ObjectImagePixelsGetCb = FunPtr (Ptr () -> Object -> IO ())

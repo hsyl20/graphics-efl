@@ -146,7 +146,7 @@ foreign import ccall "evas_object_text_style_pad_color_get" _object_text_style_p
 
 
 -- | Retrieve the direction of the text currently being displayed in the text object 
-object_text_bidi_direction_get :: Object -> IO BiDiDirection
+object_text_bidi_direction_get :: Object -> IO TextDirection
 object_text_bidi_direction_get obj = toEnum <$> _object_text_bidi_direction_get obj
 
 foreign import ccall "evas_object_text_bidi_direction_get" _object_text_bidi_direction_get :: Object -> IO Int

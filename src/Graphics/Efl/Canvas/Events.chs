@@ -10,8 +10,6 @@ import Control.Applicative
 import Graphics.Efl.Eina
 import Graphics.Efl.Canvas.Types
 
-#include <Evas.h>
-
 -- | Add (register) a callback function to a given Evas object event
 object_event_callback_add :: Object -> CallbackType -> ObjectEventCb -> Ptr () -> IO ()
 object_event_callback_add obj typ = _object_event_callback_add obj (fromEnum typ)

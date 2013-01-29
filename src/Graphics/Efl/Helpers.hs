@@ -22,6 +22,28 @@ get2_ex_helper f = do
       rh <- peek h
       return (rw,rh,c)
 
+get3_helper :: (Storable a, Storable b, Storable c) => (Ptr a -> Ptr b -> Ptr c -> IO ()) -> IO (a,b,c)
+get3_helper f = do
+  alloca $ \a ->
+    alloca $ \b ->
+      alloca $ \c -> do
+         f a b c
+         ra <- peek a
+         rb <- peek b
+         rc <- peek c
+         return (ra,rb,rc)
+
+get3_ex_helper :: (Storable a, Storable b, Storable c) => (Ptr a -> Ptr b -> Ptr c -> IO e) -> IO (a,b,c,e)
+get3_ex_helper f = do
+  alloca $ \a ->
+    alloca $ \b ->
+      alloca $ \c -> do
+         e <- f a b c
+         ra <- peek a
+         rb <- peek b
+         rc <- peek c
+         return (ra,rb,rc,e)
+
 get4_helper :: (Storable a, Storable b, Storable c, Storable d) => (Ptr a -> Ptr b -> Ptr c -> Ptr d -> IO ()) -> IO (a,b,c,d)
 get4_helper f = do
   alloca $ \w ->

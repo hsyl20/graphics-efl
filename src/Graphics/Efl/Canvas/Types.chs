@@ -54,6 +54,7 @@ type NativeSurface = Ptr ()
 type VideoSurface = Ptr ()
 type FontSize = Int
 type CallbackPriority = Int16
+type Transformation = Ptr ()
 
 {#enum _Evas_Border_Fill_Mode as BorderFillMode {underscoreToCase} deriving (Eq,Show) #}
 {#enum _Evas_Fill_Spread as FillSpread {underscoreToCase} deriving (Eq,Show) #}

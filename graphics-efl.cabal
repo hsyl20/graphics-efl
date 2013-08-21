@@ -33,7 +33,8 @@ library
   PkgConfig-Depends:
     eina,
     evas,
-    ecore
+    ecore,
+    ecore-evas
 
   extra-libraries:
     eina

@@ -9,13 +9,14 @@ import Foreign.Ptr
 type EcoreFdHandler = Ptr ()
 type EcoreFdCb = FunPtr (Ptr () -> EcoreFdHandler -> IO ())
 
-ecore_fd_read = 1
-ecore_fd_write = 2
-ecore_fd_error = 4 
+fdRead, fdWrite, fdError :: Int
+fdRead = 1
+fdWrite = 2
+fdError = 4 
 
-foreign import ccall "ecore_main_loop_begin" ecore_main_loop_begin :: IO ()
-foreign import ccall "ecore_main_loop_quit" ecore_main_loop_quit :: IO ()
+foreign import ccall "ecore_main_loop_begin" beginMainLoop :: IO ()
+foreign import ccall "ecore_main_loop_quit" quitMainLoop :: IO ()
 
-foreign import ccall "ecore_main_fd_handler_add" ecore_main_fd_handler_add :: Int -> Int -> EcoreFdCb -> Ptr () -> EcoreFdCb -> Ptr () -> IO ()
+foreign import ccall "ecore_main_fd_handler_add" addMainFdHandler :: Int -> Int -> EcoreFdCb -> Ptr () -> EcoreFdCb -> Ptr () -> IO ()
 
-foreign import ccall "wrapper" ecore_fd_wrap_callback :: (Ptr () -> EcoreFdHandler -> IO ()) -> IO EcoreFdCb
+foreign import ccall "wrapper" wrapCallback :: (Ptr () -> EcoreFdHandler -> IO ()) -> IO EcoreFdCb

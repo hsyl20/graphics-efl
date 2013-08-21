@@ -1,72 +1,85 @@
 {-# Language MultiWayIf,LambdaCase #-}
 
-import System.Environment (getArgs)
-import System.Exit
+import qualified Graphics.Efl.Core as Core
+import Graphics.Efl.CoreCanvas (CoreCanvas)
+import qualified Graphics.Efl.CoreCanvas as CoreCanvas
+import Graphics.Efl.Canvas (Canvas,Object,LoadError(..))
+import qualified Graphics.Efl.Canvas as Canvas
+import qualified Graphics.Efl.Canvas.Transformations as Trans
 
+import Control.Applicative ((<$>))
 import Control.Concurrent.MVar
 import Control.Monad (void)
-import Control.Applicative ((<$>))
-
-import Foreign.Ptr
 import Foreign.C.String
-
-
-import Graphics.Efl.Core
-import Graphics.Efl.CoreCanvas
-import Graphics.Efl.Canvas
+import Foreign.Ptr
+import System.Environment (getArgs)
+import System.Exit
+import Text.Printf
 
 import qualified Data.Vector as Vector
 import Data.Vector ((!), Vector)
+
 
 backgroundColor :: (Int,Int,Int,Int)
 backgroundColor = (0,0,0,0)
 
 main :: IO ()
 main = do
-  ecore_evas_init
-  ee <- ecore_evas_new nullPtr 0 0 800 600 nullPtr
-  ecore_evas_show ee
+  CoreCanvas.init
+  ee <- CoreCanvas.new nullPtr 0 0 800 600 nullPtr
+  CoreCanvas.show ee
 
-  canvas <- ecore_evas_get ee
+  canvas <- CoreCanvas.get ee
 
   bg <- configureBackground ee canvas
 
   images <- Vector.fromList <$> getArgs
   currentImage <- newMVar 0
 
-  if Vector.length images == 0 then shutdown ee else return ()
+  putStrLn (printf "%d images to show" (Vector.length images))
 
-  img <- object_image_add canvas
-  object_pass_events_set img True
-  object_show img
+  if Vector.length images == 0 then myShutdown ee else return ()
+
+  img <- Canvas.addImage canvas
 
   showImage img $ images ! 0
+
+  Canvas.enablePassEvents img
+  Canvas.show img
+
+  tr <- Trans.new 4
+  Trans.populateFromObject tr img
+--  Canvas.setTransformation img tr
+--  Canvas.enableTransformation img
+  Trans.free tr
+
 
   onCanvasResize ee $ do
     zoomFit img canvas
     centerImage img canvas
 
   onKeyDown bg $ \case 
-    "space" -> nextImage img currentImage images >> refresh img canvas
-    "n" -> nextImage img currentImage images >> refresh img canvas
-    "p" -> previousImage img currentImage images >> refresh img canvas
-    "q" -> ecore_main_loop_quit
+    "space" -> nextImage img currentImage images
+    "n" -> nextImage img currentImage images
+    "p" -> previousImage img currentImage images
+    "t" -> rotate img 90.0
+    "q" -> Core.quitMainLoop
     _ -> return ()
 
   onMouseDown bg $ do
     putStrLn "Mouse down"
 
-  ecore_main_loop_begin
+  Core.beginMainLoop
 
-  shutdown ee
+  myShutdown ee
 
 -- Shutdown the application
-shutdown :: CoreCanvas -> IO ()
-shutdown ee = do
+myShutdown :: CoreCanvas -> IO ()
+myShutdown ee = do
   putStrLn "Going to shutdown"
 -- FIXME: deadlock
---  ecore_evas_free ee
---  ecore_evas_shutdown
+  CoreCanvas.free ee
+  CoreCanvas.shutdown
   exitSuccess
 
 -- Refresh current display
@@ -75,16 +88,26 @@ refresh img canvas = do
   zoomFit img canvas
   centerImage img canvas
 
+
+rotate :: Object -> Double -> IO ()
+rotate img angle = do
+   (x,y,w,h) <- Canvas.getGeometry img
+   tr <- Trans.duplicate =<< Canvas.getTransformation img
+   Trans.rotate tr angle (x + w `div` 2) (y + h `div` 2)
+   Canvas.setTransformation img tr
+   Canvas.enableTransformation img
+   Trans.free tr
+
 -- Switch to next image
 nextImage :: Object -> MVar Int -> Vector String -> IO ()
 nextImage img current images = do
   c <- takeMVar current
-  if Vector.length images >= c
+  if c+1 < Vector.length images
     then do
       showImage img (images ! (c+1))
       putMVar current (c+1)
     else
-      ecore_main_loop_quit
+      putMVar current c
 
 -- Switch to previous image
 previousImage :: Object -> MVar Int -> Vector String -> IO ()
@@ -94,27 +117,28 @@ previousImage img current images = do
       showImage img (images ! (c-1))
       putMVar current (c-1)
     else 
-      return ()
+      putMVar current c
 
 -- Show the image whose path is given as a parameter
 showImage :: Object -> String -> IO ()
 showImage img path = do
-  putStrLn $ "Show image " ++ path
-  withCString path $ flip (object_image_file_set img) nullPtr
-  err <- object_image_load_error_get img
+  canvas <- Canvas.getCanvas img
+  putStrLn (printf "Show image %s" (show path))
+  withCString path $ flip (Canvas.setImageFile img) nullPtr
+  err <- Canvas.getImageLoadError img
   case err of
     EvasLoadErrorNone -> return ()
-    _ -> putStrLn =<< peekCString =<< evas_load_error_str (fromEnum err)
-  (w,h) <- object_image_size_get img
-  object_image_fill_set img 0 0 w h
-  object_resize img w h
-
+    _ -> putStrLn =<< peekCString =<< Canvas.loadErrorString (fromEnum err)
+  (w,h) <- Canvas.getImageSize img
+  Canvas.setImageFill img 0 0 w h
+  Canvas.resize img w h
+  refresh img canvas
 
 -- Zoom the image so that it fits in the canvas
 zoomFit :: Object -> Canvas -> IO ()
 zoomFit img canvas = do
-  (cw,ch) <- evas_output_size_get canvas
-  (iw,ih) <- object_image_size_get img
+  (cw,ch) <- Canvas.getOutputSize canvas
+  (iw,ih) <- Canvas.getImageSize img
   
   let ratioH = (fromIntegral ch) / (fromIntegral ih)
       ratioW = (fromIntegral cw) / (fromIntegral iw)
@@ -122,52 +146,52 @@ zoomFit img canvas = do
       w = floor $ (ratio * fromIntegral iw :: Double)
       h = floor $ (ratio * fromIntegral ih :: Double)
 
-  object_resize img w h
-  object_image_fill_set img 0 0 w h
+  Canvas.resize img w h
+  Canvas.setImageFill img 0 0 w h
 
 -- Center the image on the canvas
 centerImage :: Object -> Canvas -> IO ()
 centerImage img canvas = do
-  (cw,ch) <- evas_output_size_get canvas
-  (_,_,iw,ih) <- object_geometry_get img
+  (cw,ch) <- Canvas.getOutputSize canvas
+  (_,_,iw,ih) <- Canvas.getGeometry img
   let w = floor $ (fromIntegral cw - fromIntegral iw :: Double) / 2
       h = floor $ (fromIntegral ch - fromIntegral ih :: Double) / 2
   
-  object_move img w h
+  Canvas.move img w h
 
 onMouseDown :: Object -> IO () -> IO ()
-onMouseDown = onEvent EvasCallbackMouseDown
+onMouseDown = onEvent Canvas.EvasCallbackMouseDown
 
 onKeyDown :: Object -> (String -> IO ()) -> IO ()
 onKeyDown obj cb = do 
-  wcb <- evas_object_event_wrap_callback $ \_ _ _ info -> do
-    keyName <- keyDownKey info
+  wcb <- Canvas.wrapEventCallback $ \_ _ _ info -> do
+    keyName <- Canvas.keyDownKey info
     cb keyName
-  void $ object_event_callback_add obj EvasCallbackKeyDown wcb nullPtr
+  void $ Canvas.addObjectEventCallback obj Canvas.EvasCallbackKeyDown wcb nullPtr
   
-onEvent :: CallbackType -> Object -> IO () -> IO ()
+onEvent :: Canvas.CallbackType -> Object -> IO () -> IO ()
 onEvent evType obj cb = do
-  wcb <- evas_object_event_wrap_callback $ \_ _ _ _ -> cb
-  void $ object_event_callback_add obj evType wcb nullPtr
+  wcb <- Canvas.wrapEventCallback $ \_ _ _ _ -> cb
+  void $ Canvas.addObjectEventCallback obj evType wcb nullPtr
 
 onCanvasResize :: CoreCanvas -> IO () -> IO ()
 onCanvasResize ee cb = do
-  wcb <- ecore_evas_wrap_callback (\_ -> cb)
-  ecore_evas_callback_resize_set ee wcb
+  wcb <- CoreCanvas.wrapCallback (\_ -> cb)
+  CoreCanvas.setResizeCallback ee wcb
 
 -- Configure background with "backgroundColor"
 configureBackground :: CoreCanvas -> Canvas -> IO Object
 configureBackground ee canvas = do
-  bg <- evas_object_rectangle_add canvas
+  bg <- Canvas.addRectangle canvas
   let (alpha, red, green, blue) = backgroundColor
-  object_color_set bg alpha red green blue
-  (w,h) <- evas_output_size_get canvas
-  object_resize bg w h
-  object_show bg
-  object_focus_set bg True
+  Canvas.setColor bg alpha red green blue
+  (w,h) <- Canvas.getOutputSize canvas
+  Canvas.resize bg w h
+  Canvas.show bg
+  Canvas.setFocus bg True
 
   onCanvasResize ee $ do
-    (lw,lh) <- evas_output_size_get canvas
-    object_resize bg lw lh
+    (lw,lh) <- Canvas.getOutputSize canvas
+    Canvas.resize bg lw lh
 
   return bg

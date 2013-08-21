@@ -14,17 +14,17 @@ import Graphics.Efl.Canvas.Types
 
 {- FIXME: put this somewhere else... -}
 
-foreign import ccall "wrapper" evas_object_event_wrap_callback :: (Ptr () -> Canvas -> Object -> Ptr () -> IO ()) -> IO ObjectEventCb
+foreign import ccall "wrapper" wrapEventCallback :: (Ptr () -> Canvas -> Object -> Ptr () -> IO ()) -> IO ObjectEventCb
+
+getOutputSize :: Canvas -> IO (Int,Int)
+getOutputSize ev = get2_helper (evas_output_size_get_ ev)
 
 foreign import ccall "evas_output_size_get" evas_output_size_get_ :: Canvas -> Ptr Int -> Ptr Int -> IO ()
 
-evas_output_size_get :: Canvas -> IO (Int,Int)
-evas_output_size_get ev = get2_helper (evas_output_size_get_ ev)
 
+foreign import ccall "evas_event_callback_add" addEventCallback :: Canvas -> Int -> ObjectEventCb -> Ptr () -> IO ()
 
-foreign import ccall "evas_event_callback_add" evas_event_callback_add :: Canvas -> Int -> ObjectEventCb -> Ptr () -> IO ()
-
-foreign import ccall "evas_load_error_str" evas_load_error_str :: Int -> IO CString
+foreign import ccall "evas_load_error_str" loadErrorString :: Int -> IO CString
 
 
 keyDownKeyname :: Ptr () -> IO String

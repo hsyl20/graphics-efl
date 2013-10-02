@@ -7,3 +7,4 @@ import Graphics.Efl.Canvas.Image as M
 import Graphics.Efl.Canvas.Events as M
 import Graphics.Efl.Canvas.Misc as M
 import Graphics.Efl.Canvas.Text as M
+import Graphics.Efl.Canvas.Map as M

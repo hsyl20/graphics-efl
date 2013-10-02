@@ -1,5 +1,6 @@
 {-# Language ForeignFunctionInterface #-}
 
+-- | Text
 module Graphics.Efl.Canvas.Text (
    addText,
    setTextFontSource, getTextFontSource,

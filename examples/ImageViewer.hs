@@ -3,7 +3,6 @@
 import qualified Graphics.Efl.Core as Core
 import Graphics.Efl.Window
 import Graphics.Efl.Canvas
-import qualified Graphics.Efl.Canvas.Transformations as Trans
 
 import Control.Applicative ((<$>))
 import Control.Concurrent.MVar
@@ -45,11 +44,11 @@ main = do
   enablePassEvents img
   uncover img
 
-  tr <- Trans.new 4
-  Trans.populateFromObject tr img
---  setTransformation img tr
---  enableTransformation img
-  Trans.free tr
+  tr <- createMap 4
+  populateMapPointsFromObject tr img
+--  setMap img tr
+--  enableMap img
+  freeMap tr
 
 
   onCanvasResize win $ do
@@ -90,11 +89,11 @@ refresh img canvas = do
 rotate :: Object -> Double -> IO ()
 rotate img angle = do
    (x,y,w,h) <- getGeometry img
-   tr <- Trans.duplicate =<< Trans.getTransformation img
-   Trans.rotate tr angle (x + w `div` 2) (y + h `div` 2)
-   Trans.setTransformation img tr
-   Trans.enableTransformation img
-   Trans.free tr
+   tr <- dupMap =<< getMap img
+   rotateMap tr angle (x + w `div` 2) (y + h `div` 2)
+   setMap img tr
+   enableMap img
+   freeMap tr
 
 -- Switch to next image
 nextImage :: Object -> MVar Int -> Vector String -> IO ()

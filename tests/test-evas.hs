@@ -4,12 +4,10 @@ import System.Exit (exitFailure, exitSuccess)
 
 import Control.Monad
 import Control.Applicative
-import Foreign.Ptr
 
 import Graphics.Efl.Core
 import Graphics.Efl.Window
 import Graphics.Efl.Canvas
-import Graphics.Efl.Canvas.Rectangle
 import Graphics.Efl.Eina
 
 assert :: String -> Bool -> IO ()

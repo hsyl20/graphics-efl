@@ -1,8 +1,7 @@
 {-# Language MultiWayIf,LambdaCase #-}
 
 import qualified Graphics.Efl.Core as Core
-import Graphics.Efl.CoreCanvas (CoreCanvas)
-import qualified Graphics.Efl.CoreCanvas as CoreCanvas
+import Graphics.Efl.Window
 import Graphics.Efl.Canvas
 import qualified Graphics.Efl.Canvas.Transformations as Trans
 
@@ -24,20 +23,20 @@ backgroundColor = (0,0,0,0)
 
 main :: IO ()
 main = do
-  CoreCanvas.init
-  ee <- CoreCanvas.new nullPtr 0 0 800 600 nullPtr
-  CoreCanvas.show ee
+  initWindowingSystem
+  win <- createWindow Nothing 0 0 800 600 Nothing
+  showWindow win
 
-  canvas <- CoreCanvas.get ee
+  canvas <- getWindowCanvas win
 
-  bg <- configureBackground ee canvas
+  bg <- configureBackground win canvas
 
   images <- Vector.fromList <$> getArgs
   currentImage <- newMVar 0
 
   putStrLn (printf "%d images to show" (Vector.length images))
 
-  if Vector.length images == 0 then myShutdown ee else return ()
+  if Vector.length images == 0 then myShutdown win else return ()
 
   img <- addImage canvas
 
@@ -53,7 +52,7 @@ main = do
   Trans.free tr
 
 
-  onCanvasResize ee $ do
+  onCanvasResize win $ do
     zoomFit img canvas
     centerImage img canvas
 
@@ -70,15 +69,15 @@ main = do
 
   Core.beginMainLoop
 
-  myShutdown ee
+  myShutdown win
 
 -- Shutdown the application
-myShutdown :: CoreCanvas -> IO ()
-myShutdown ee = do
+myShutdown :: Window -> IO ()
+myShutdown win = do
   putStrLn "Going to shutdown"
 -- FIXME: deadlock
-  CoreCanvas.free ee
-  CoreCanvas.shutdown
+  destroyWindow win
+  shutdownWindowingSystem
   exitSuccess
 
 -- Refresh current display
@@ -173,14 +172,12 @@ onEvent evType obj cb = do
   wcb <- wrapEventCallback $ \_ _ _ _ -> cb
   void $ addObjectEventCallback obj evType wcb nullPtr
 
-onCanvasResize :: CoreCanvas -> IO () -> IO ()
-onCanvasResize ee cb = do
-  wcb <- CoreCanvas.wrapCallback (\_ -> cb)
-  CoreCanvas.setResizeCallback ee wcb
+onCanvasResize :: Window -> IO () -> IO ()
+onCanvasResize win cb = setWindowResizeCallback win (const cb)
 
 -- Configure background with "backgroundColor"
-configureBackground :: CoreCanvas -> Canvas -> IO Object
-configureBackground ee canvas = do
+configureBackground :: Window -> Canvas -> IO Object
+configureBackground win canvas = do
   bg <- addRectangle canvas
   let (red, green, blue, alpha) = backgroundColor
   setColor bg red green blue alpha
@@ -189,7 +186,7 @@ configureBackground ee canvas = do
   uncover bg
   setFocus bg True
 
-  onCanvasResize ee $ do
+  onCanvasResize win $ do
     (lw,lh) <- getOutputSize canvas
     resize bg lw lh
 

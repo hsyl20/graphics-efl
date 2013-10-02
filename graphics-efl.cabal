@@ -18,7 +18,7 @@ library
   exposed-modules:
       Graphics.Efl.Core,
       Graphics.Efl.Helpers,
-      Graphics.Efl.CoreCanvas,
+      Graphics.Efl.Window,
       Graphics.Efl.Canvas,
       Graphics.Efl.Canvas.Types,
       Graphics.Efl.Canvas.BasicObject,

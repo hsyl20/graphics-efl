@@ -6,9 +6,9 @@ import Control.Monad
 import Control.Applicative
 import Foreign.Ptr
 
-import Graphics.Efl.Core as Core
-import Graphics.Efl.CoreCanvas as CoreCanvas
-import Graphics.Efl.Canvas as Canvas
+import Graphics.Efl.Core
+import Graphics.Efl.Window
+import Graphics.Efl.Canvas
 import Graphics.Efl.Canvas.Rectangle
 import Graphics.Efl.Eina
 
@@ -24,9 +24,9 @@ assertM :: String -> IO Bool -> IO ()
 assertM s b = assert s =<< b
 
 main = do
-   CoreCanvas.init
-   ee <- CoreCanvas.new nullPtr 0 0 800 600 nullPtr
-   canvas <- CoreCanvas.get ee
+   initWindowingSystem
+   win <- createWindow Nothing 0 0 800 600 Nothing
+   canvas <- getWindowCanvas win
 
    check_object_clipping canvas
    check_object_focus canvas
@@ -54,14 +54,12 @@ check_object_clipping canvas = do
 
    assertM "Clipping object unset" $ do
       setClippingObject r1 r2
-      unsetClipping r1
+      disableClipping r1
       (== Nothing) <$> getClippingObject r1
 
    assertM "Clipping object list get" $ do
       setClippingObject r1 r3
       setClippingObject r2 r3
-      putStrLn =<< (Prelude.show <$> getClipees r3)
-      putStrLn (Prelude.show [r1,r2,r3])
       (== [r1,r2]) <$> getClipees r3
 
 
@@ -108,9 +106,9 @@ check_object_ref canvas = do
 
    assertM "Ref object (-1) . (+1) == id" $ do
       t0 <- getRefCount r1
-      increaseRef r1
+      retain r1
       t1 <- getRefCount r1
-      decreaseRef r1
+      release r1
       t2 <- getRefCount r1
       return (t2 == t0 && t1 == t0 + 1)
 

@@ -1,15 +1,14 @@
 import Graphics.Efl.Canvas
-import Graphics.Efl.CoreCanvas as CoreCanvas
+import Graphics.Efl.Window
 import Graphics.Efl.Core
-import Foreign.Ptr
 import Control.Concurrent
 
 main :: IO ()
 main = do
-   CoreCanvas.init
-   window <- CoreCanvas.new nullPtr 0 0 800 600 nullPtr
-   canvas <- CoreCanvas.get window
-   CoreCanvas.show window
+   initWindowingSystem
+   window <- createWindow Nothing 0 0 800 600 Nothing
+   canvas <- getWindowCanvas window
+   showWindow window
    
    _ <- forkIO beginMainLoop
 

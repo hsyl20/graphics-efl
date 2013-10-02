@@ -212,7 +212,7 @@ saveImage obj file key flags =
 foreign import ccall "evas_object_image_save" _object_image_save :: Object -> CString -> CString -> CString -> IO EinaBool
 
 -- | Import pixels from given source to a given canvas image object
-foreign import ccall "evas_object_image_pixels_imports" _object_image_pixels_import :: Object -> PixelImportSource -> IO EinaBool
+foreign import ccall "evas_object_image_pixels_import" _object_image_pixels_import :: Object -> PixelImportSource -> IO EinaBool
 
 -- | Set the callback function to get pixels from a canvas' image
 foreign import ccall "evas_object_image_pixels_get_callback_set" setImagePixelsGetCallback :: Object -> ObjectImagePixelsGetCb -> Ptr () -> IO ()
@@ -378,9 +378,9 @@ foreign import ccall "evas_object_image_animated_frame_count_get" getAnimatedIma
 
 -- | Get the kind of looping the image object does
 getAnimatedImageLoopHint :: Object -> IO ImageAnimatedLoopHint
-getAnimatedImageLoopHint obj = toEnum <$> _object_image_animated_loop_hint_get obj
+getAnimatedImageLoopHint obj = toEnum <$> _object_image_animated_loop_type_get obj
 
-foreign import ccall "evas_object_image_animated_loop_hint_get" _object_image_animated_loop_hint_get :: Object -> IO Int
+foreign import ccall "evas_object_image_animated_loop_type_get" _object_image_animated_loop_type_get :: Object -> IO Int
 
 
 -- | Get the number times the animation of the object loops

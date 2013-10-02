@@ -63,7 +63,7 @@ foreign import ccall "evas_map_util_3d_rotate" rotate3D :: Transformation -> Dou
 foreign import ccall "evas_map_util_quat_rotate" rotateQuat :: Transformation -> Double -> Double -> Double -> Double -> Double -> Double -> Double -> IO ()
 
 -- | Perform lighting calculations on the given Map
-foreign import ccall "evas_map_util_3d_lightning" lightning3D :: Transformation -> Coord -> Coord -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()
+foreign import ccall "evas_map_util_3d_lighting" lighting3D :: Transformation -> Coord -> Coord -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Apply a perspective transform to the map
 foreign import ccall "evas_map_util_3d_perspective" perspective3D :: Transformation -> Coord -> Coord -> Coord -> Coord -> IO ()

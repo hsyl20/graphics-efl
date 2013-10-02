@@ -1,6 +1,20 @@
 {-# Language ForeignFunctionInterface #-}
 
-module Graphics.Efl.Canvas.Text where
+module Graphics.Efl.Canvas.Text (
+   addText,
+   setTextFontSource, getTextFontSource,
+   setTextFont, getTextFont,
+   setText, getText,
+   setTextBidiDelimiters, getTextBidiDelimiters,
+   getTextCharPos, getTextLastCharUpToPos,
+   setTextStyle, getTextStyle,
+   setTextShadowColor, getTextShadowColor,
+   setTextGlowColor, getTextGlowColor,
+   setTextGlow2Color, getTextGlow2Color,
+   setTextOutlineColor, getTextOutlineColor,
+   getTextStylePad,
+   getTextDirection
+) where
 
 import Foreign.Ptr
 import Foreign.C.String
@@ -58,22 +72,22 @@ getText obj = peekCString =<< _object_text_text_get obj
 foreign import ccall "evas_object_text_text_get" _object_text_text_get :: Object -> IO CString
 
 -- | Set the BiDi delimiters used in the textblock
-object_text_bidi_delimiters_set :: Object -> String -> IO ()
-object_text_bidi_delimiters_set obj delim = withCString delim (_object_text_bidi_delimiters_set obj)
+setTextBidiDelimiters :: Object -> String -> IO ()
+setTextBidiDelimiters obj delim = withCString delim (_object_text_bidi_delimiters_set obj)
 
 foreign import ccall "evas_object_text_bidi_delimiters_set" _object_text_bidi_delimiters_set :: Object -> CString -> IO ()
 
 
 -- | Get the BiDi delimiters used in the textblock
-object_text_bidi_delimiters_get :: Object -> IO String
-object_text_bidi_delimiters_get obj = peekCString =<< _object_text_bidi_delimiters_get obj
+getTextBidiDelimiters :: Object -> IO String
+getTextBidiDelimiters obj = peekCString =<< _object_text_bidi_delimiters_get obj
 
 foreign import ccall "evas_object_text_bidi_delimiters_get" _object_text_bidi_delimiters_get :: Object -> IO CString 
 
 
 -- | Retrieve position and dimension information of a character within a text Evas_Object
-object_text_char_pos_get :: Object -> Int -> IO (Maybe (Coord, Coord, Coord, Coord))
-object_text_char_pos_get obj pos = do
+getTextCharPos :: Object -> Int -> IO (Maybe (Coord, Coord, Coord, Coord))
+getTextCharPos obj pos = do
    (cx,cy,cw,ch,ret) <- get4_ex_helper (_object_text_char_pos_get obj pos)
    return $ if toBool ret  then Nothing else Just (cx,cy,cw,ch)
 
@@ -81,7 +95,7 @@ foreign import ccall "evas_object_text_char_pos_get" _object_text_char_pos_get :
 
 
 -- | Return the logical position of the last char in the text up to the pos given
-foreign import ccall "evas_object_text_last_up_to_pos" object_text_last_up_to_pos :: Object -> Coord -> Coord -> IO Int
+foreign import ccall "evas_object_text_last_up_to_pos" getTextLastCharUpToPos :: Object -> Coord -> Coord -> IO Int
 
 -- | Retrieve the style on use on the given text object
 getTextStyle :: Object -> IO (TextStyle, TextShadowStyle)
@@ -100,53 +114,53 @@ foreign import ccall "evas_object_text_style_set" _object_text_style_set :: Obje
 
 
 -- | Set the shadow color for the given text object
-foreign import ccall "evas_object_text_shadow_color_set" object_text_shadow_color_set :: Object -> Int -> Int -> Int -> Int -> IO ()
+foreign import ccall "evas_object_text_shadow_color_set" setTextShadowColor :: Object -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Retrieve the shadow color for the given text object
-object_text_shadow_color_get :: Object -> IO (Int, Int, Int, Int)
-object_text_shadow_color_get obj = get4_helper (_object_text_shadow_color_get obj)
+getTextShadowColor :: Object -> IO (Int, Int, Int, Int)
+getTextShadowColor obj = get4_helper (_object_text_shadow_color_get obj)
 
 foreign import ccall "evas_object_text_shadow_color_get" _object_text_shadow_color_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
 
 
 -- | Set the glow color for the given text object
-foreign import ccall "evas_object_text_glow_color_set" object_text_glow_color_set :: Object -> Int -> Int -> Int -> Int -> IO ()
+foreign import ccall "evas_object_text_glow_color_set" setTextGlowColor :: Object -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Retrieve the glow color for the given text object
-object_text_glow_color_get :: Object -> IO (Int, Int, Int, Int)
-object_text_glow_color_get obj = get4_helper (_object_text_glow_color_get obj)
+getTextGlowColor :: Object -> IO (Int, Int, Int, Int)
+getTextGlowColor obj = get4_helper (_object_text_glow_color_get obj)
 
 foreign import ccall "evas_object_text_glow_color_get" _object_text_glow_color_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
 
 
 -- | Set the glow2 color for the given text object
-foreign import ccall "evas_object_text_glow2_color_set" object_text_glow2_color_set :: Object -> Int -> Int -> Int -> Int -> IO ()
+foreign import ccall "evas_object_text_glow2_color_set" setTextGlow2Color :: Object -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Retrieve the glow2 color for the given text object
-object_text_glow2_color_get :: Object -> IO (Int, Int, Int, Int)
-object_text_glow2_color_get obj = get4_helper (_object_text_glow2_color_get obj)
+getTextGlow2Color :: Object -> IO (Int, Int, Int, Int)
+getTextGlow2Color obj = get4_helper (_object_text_glow2_color_get obj)
 
 foreign import ccall "evas_object_text_glow2_color_get" _object_text_glow2_color_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
 
 -- | Set the outline color for the given text object
-foreign import ccall "evas_object_text_outline_color_set" object_text_outline_color_set :: Object -> Int -> Int -> Int -> Int -> IO ()
+foreign import ccall "evas_object_text_outline_color_set" setTextOutlineColor :: Object -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Retrieve the outline color for the given text object
-object_text_outline_color_get :: Object -> IO (Int, Int, Int, Int)
-object_text_outline_color_get obj = get4_helper (_object_text_outline_color_get obj)
+getTextOutlineColor :: Object -> IO (Int, Int, Int, Int)
+getTextOutlineColor obj = get4_helper (_object_text_outline_color_get obj)
 
 foreign import ccall "evas_object_text_outline_color_get" _object_text_outline_color_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
 
 
 -- | Gets the text style pad of a text object
-object_text_style_pad_get :: Object -> IO (Int, Int, Int, Int)
-object_text_style_pad_get obj = get4_helper (_object_text_style_pad_get obj)
+getTextStylePad :: Object -> IO (Int, Int, Int, Int)
+getTextStylePad obj = get4_helper (_object_text_style_pad_get obj)
 
 foreign import ccall "evas_object_text_style_pad_get" _object_text_style_pad_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
 
 
 -- | Retrieve the direction of the text currently being displayed in the text object 
-object_text_direction_get :: Object -> IO TextDirection
-object_text_direction_get obj = toEnum <$> _object_text_direction_get obj
+getTextDirection :: Object -> IO TextDirection
+getTextDirection obj = toEnum <$> _object_text_direction_get obj
 
 foreign import ccall "evas_object_text_direction_get" _object_text_direction_get :: Object -> IO Int

@@ -6,9 +6,9 @@ import Control.Monad
 import Control.Applicative
 import Foreign.Ptr
 
-import Graphics.Efl.Core
-import Graphics.Efl.CoreCanvas
-import Graphics.Efl.Canvas
+import Graphics.Efl.Core as Core
+import Graphics.Efl.CoreCanvas as CoreCanvas
+import Graphics.Efl.Canvas as Canvas
 import Graphics.Efl.Canvas.Rectangle
 import Graphics.Efl.Eina
 
@@ -24,9 +24,9 @@ assertM :: String -> IO Bool -> IO ()
 assertM s b = assert s =<< b
 
 main = do
-   ecore_evas_init
-   ee <- ecore_evas_new nullPtr 0 0 800 600 nullPtr
-   canvas <- ecore_evas_get ee
+   CoreCanvas.init
+   ee <- CoreCanvas.new nullPtr 0 0 800 600 nullPtr
+   canvas <- CoreCanvas.get ee
 
    check_object_clipping canvas
    check_object_focus canvas
@@ -41,101 +41,103 @@ main = do
 
 
 check_object_clipping canvas = do
-   r1 <- evas_object_rectangle_add canvas
-   r2 <- evas_object_rectangle_add canvas
-   r3 <- evas_object_rectangle_add canvas
+   r1 <- addRectangle canvas
+   r2 <- addRectangle canvas
+   r3 <- addRectangle canvas
 
    assertM "No initial clipping object" $ 
-      (== Nothing) <$> object_clip_get r1
+      (== Nothing) <$> getClippingObject r1
 
    assertM "Clipping object get . set == id" $ do
-      object_clip_set r1 r2
-      (== Just r2) <$> object_clip_get r1
+      setClippingObject r1 r2
+      (== Just r2) <$> getClippingObject r1
 
    assertM "Clipping object unset" $ do
-      object_clip_set r1 r2
-      object_clip_unset r1
-      (== Nothing) <$> object_clip_get r1
+      setClippingObject r1 r2
+      unsetClipping r1
+      (== Nothing) <$> getClippingObject r1
 
    assertM "Clipping object list get" $ do
-      object_clip_set r1 r3
-      object_clip_set r2 r3
-      (== [r1,r2]) <$> object_clipees_get r3
+      setClippingObject r1 r3
+      setClippingObject r2 r3
+      putStrLn =<< (Prelude.show <$> getClipees r3)
+      putStrLn (Prelude.show [r1,r2,r3])
+      (== [r1,r2]) <$> getClipees r3
 
 
 check_object_focus canvas = do
-   r1 <- evas_object_rectangle_add canvas
-   r2 <- evas_object_rectangle_add canvas
+   r1 <- addRectangle canvas
+   r2 <- addRectangle canvas
 
    assertM "Focus object get . set == id" $ do
-      object_focus_set r2 True
-      (== True) <$> object_focus_get r2
+      setFocus r2 True
+      (== True) <$> isFocused r2
 
 
 check_object_layer canvas = do
-   r1 <- evas_object_rectangle_add canvas
-   r2 <- evas_object_rectangle_add canvas
+   r1 <- addRectangle canvas
+   r2 <- addRectangle canvas
 
    assertM "Layer object get . set == id" $ do
-      object_layer_set r1 10
-      (== 10) <$> object_layer_get r1
+      setLayer r1 10
+      (== 10) <$> getLayer r1
 
    assertM "Layer object above" $ do
-      object_layer_set r1 10
-      object_layer_set r2 10
-      object_stack_above r1 r2
-      (== Just r1) <$> object_above_get r2
+      setLayer r1 10
+      setLayer r2 10
+      stackAbove r1 r2
+      (== Just r1) <$> getObjectAbove r2
 
    assertM "Layer object below" $ do
-      object_layer_set r1 10
-      object_layer_set r2 10
-      object_stack_below r1 r2
-      (== Just r1) <$> object_below_get r2
+      setLayer r1 10
+      setLayer r2 10
+      stackBelow r1 r2
+      (== Just r1) <$> getObjectBelow r2
 
 
 check_object_name canvas = do
-   r1 <- evas_object_rectangle_add canvas
+   r1 <- addRectangle canvas
 
    assertM "Name object get . set == id" $ do
       let name = "whatever"
-      object_name_set r1 name
-      (== name) <$> object_name_get r1
+      setName r1 name
+      (== name) <$> getName r1
 
 check_object_ref canvas = do
-   r1 <- evas_object_rectangle_add canvas
+   r1 <- addRectangle canvas
 
    assertM "Ref object (-1) . (+1) == id" $ do
-      t0 <- object_ref_get r1
-      object_ref r1
-      t1 <- object_ref_get r1
-      object_unref r1
-      t2 <- object_ref_get r1
+      t0 <- getRefCount r1
+      increaseRef r1
+      t1 <- getRefCount r1
+      decreaseRef r1
+      t2 <- getRefCount r1
       return (t2 == t0 && t1 == t0 + 1)
 
 check_object_size canvas = do
-   r1 <- evas_object_rectangle_add canvas
+   r1 <- addRectangle canvas
 
    assertM "Moving object" $ do
-      (x0,y0,w0,h0) <- object_geometry_get r1
+      (x0,y0,w0,h0) <- getGeometry r1
       let (x1,y1,w1,h1) = (x0+100, y0+150, w0+200, h0+250)
-      object_resize r1 w1 h1
-      object_move r1 x1 y1
-      (x2,y2,w2,h2) <- object_geometry_get r1
+      resize r1 w1 h1
+      move r1 x1 y1
+      (x2,y2,w2,h2) <- getGeometry r1
       return (x1 == x2 && y1 == y2 && w1 == w2 && h1 == h2)
 
 
 check_object_color canvas = do
-   rect1 <- evas_object_rectangle_add canvas
+   rect1 <- addRectangle canvas
 
    assertM "Coloring object" $ do
       let (r0,g0,b0,a0) = (10,20,30,40)
-      object_color_set rect1 r0 g0 b0 a0
-      (r1,g1,b1,a1) <- object_color_get rect1
+      setColor rect1 r0 g0 b0 a0
+      (r1,g1,b1,a1) <- getColor rect1
       return (r0 == r1 && g0 == g1 && b0 == b1 && a0 == a1)
 
 
 check_object_evas canvas = do
-   r1 <- evas_object_rectangle_add canvas
+   r1 <- addRectangle canvas
 
    assertM "Retrieve object canvas" $ do
-      (== canvas) <$> object_evas_get r1
+      (== canvas) <$> getCanvas r1

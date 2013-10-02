@@ -183,8 +183,8 @@ onCanvasResize ee cb = do
 configureBackground :: CoreCanvas -> Canvas -> IO Object
 configureBackground ee canvas = do
   bg <- Canvas.addRectangle canvas
-  let (alpha, red, green, blue) = backgroundColor
-  Canvas.setColor bg alpha red green blue
+  let (red, green, blue, alpha) = backgroundColor
+  Canvas.setColor bg red green blue alpha
   (w,h) <- Canvas.getOutputSize canvas
   Canvas.resize bg w h
   Canvas.show bg

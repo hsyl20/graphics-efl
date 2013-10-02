@@ -1,6 +1,20 @@
 {-# Language ForeignFunctionInterface #-}
 
-module Graphics.Efl.Canvas.BasicObject where
+module Graphics.Efl.Canvas.BasicObject (
+   setClippingObject, getClippingObject,
+   disableClipping, getClipees,
+   setFocus, isFocused,
+   setLayer, getLayer,
+   setName, getName,
+   retain, release, getRefCount,
+   delete,
+   move, resize, getGeometry,
+   cover, uncover, isVisible,
+   setColor, getColor,
+   getCanvas, getType,
+   raise, lower, stackAbove, stackBelow,
+   getObjectBelow, getObjectAbove
+) where
 
 import Foreign.Ptr
 import Foreign.C.String
@@ -23,7 +37,7 @@ getClippingObject obj = maybePtr <$> _object_clip_get obj
 foreign import ccall "evas_object_clip_get" _object_clip_get :: Object -> IO Object
    
 -- | Disable/cease clipping on a clipped object
-foreign import ccall "evas_object_clip_unset" unsetClipping :: Object -> IO ()
+foreign import ccall "evas_object_clip_unset" disableClipping :: Object -> IO ()
 
 -- | Return a list of objects currently clipped by obj
 getClipees :: Object -> IO [Object]
@@ -70,10 +84,10 @@ foreign import ccall "evas_object_name_get" _object_name_get :: Object -> IO CSt
 
 
 -- | Increment object reference count to defer its deletion
-foreign import ccall "evas_object_ref" increaseRef :: Object -> IO ()
+foreign import ccall "evas_object_ref" retain :: Object -> IO ()
 
 -- | Decrement object reference count
-foreign import ccall "evas_object_unref" decreaseRef :: Object -> IO ()
+foreign import ccall "evas_object_unref" release :: Object -> IO ()
 
 -- | Get the object reference count
 foreign import ccall "evas_object_ref_get" getRefCount :: Object -> IO Int
@@ -100,10 +114,10 @@ foreign import ccall "evas_object_geometry_get" _object_geometry_get :: Object -
 
 
 -- | Make the given Evas object visible
-foreign import ccall "evas_object_show" show :: Object -> IO ()
+foreign import ccall "evas_object_show" uncover :: Object -> IO ()
 
 -- | Make the given Evas object invisible
-foreign import ccall "evas_object_hide" hide :: Object -> IO ()
+foreign import ccall "evas_object_hide" cover :: Object -> IO ()
 
 -- | Retrieve whether or not the given Evas object is visible
 isVisible :: Object -> IO Bool

@@ -3,8 +3,7 @@
 import qualified Graphics.Efl.Core as Core
 import Graphics.Efl.CoreCanvas (CoreCanvas)
 import qualified Graphics.Efl.CoreCanvas as CoreCanvas
-import Graphics.Efl.Canvas (Canvas,Object,LoadError(..))
-import qualified Graphics.Efl.Canvas as Canvas
+import Graphics.Efl.Canvas
 import qualified Graphics.Efl.Canvas.Transformations as Trans
 
 import Control.Applicative ((<$>))
@@ -40,17 +39,17 @@ main = do
 
   if Vector.length images == 0 then myShutdown ee else return ()
 
-  img <- Canvas.addImage canvas
+  img <- addImage canvas
 
   showImage img $ images ! 0
 
-  Canvas.enablePassEvents img
-  Canvas.show img
+  enablePassEvents img
+  uncover img
 
   tr <- Trans.new 4
   Trans.populateFromObject tr img
---  Canvas.setTransformation img tr
---  Canvas.enableTransformation img
+--  setTransformation img tr
+--  enableTransformation img
   Trans.free tr
 
 
@@ -91,7 +90,7 @@ refresh img canvas = do
 
 rotate :: Object -> Double -> IO ()
 rotate img angle = do
-   (x,y,w,h) <- Canvas.getGeometry img
+   (x,y,w,h) <- getGeometry img
    tr <- Trans.duplicate =<< Trans.getTransformation img
    Trans.rotate tr angle (x + w `div` 2) (y + h `div` 2)
    Trans.setTransformation img tr
@@ -122,23 +121,23 @@ previousImage img current images = do
 -- Show the image whose path is given as a parameter
 showImage :: Object -> String -> IO ()
 showImage img path = do
-  canvas <- Canvas.getCanvas img
+  canvas <- getCanvas img
   putStrLn (printf "Show image %s" (show path))
-  withCString path $ flip (Canvas.setImageFile img) nullPtr
-  err <- Canvas.getImageLoadError img
+  withCString path $ flip (setImageFile img) nullPtr
+  err <- getImageLoadError img
   case err of
     EvasLoadErrorNone -> return ()
-    _ -> putStrLn =<< peekCString =<< Canvas.loadErrorString (fromEnum err)
-  (w,h) <- Canvas.getImageSize img
-  Canvas.setImageFill img 0 0 w h
-  Canvas.resize img w h
+    _ -> putStrLn =<< peekCString =<< loadErrorString (fromEnum err)
+  (w,h) <- getImageSize img
+  setImageFill img 0 0 w h
+  resize img w h
   refresh img canvas
 
 -- Zoom the image so that it fits in the canvas
 zoomFit :: Object -> Canvas -> IO ()
 zoomFit img canvas = do
-  (cw,ch) <- Canvas.getOutputSize canvas
-  (iw,ih) <- Canvas.getImageSize img
+  (cw,ch) <- getOutputSize canvas
+  (iw,ih) <- getImageSize img
   
   let ratioH = (fromIntegral ch) / (fromIntegral ih)
       ratioW = (fromIntegral cw) / (fromIntegral iw)
@@ -146,33 +145,33 @@ zoomFit img canvas = do
       w = floor $ (ratio * fromIntegral iw :: Double)
       h = floor $ (ratio * fromIntegral ih :: Double)
 
-  Canvas.resize img w h
-  Canvas.setImageFill img 0 0 w h
+  resize img w h
+  setImageFill img 0 0 w h
 
 -- Center the image on the canvas
 centerImage :: Object -> Canvas -> IO ()
 centerImage img canvas = do
-  (cw,ch) <- Canvas.getOutputSize canvas
-  (_,_,iw,ih) <- Canvas.getGeometry img
+  (cw,ch) <- getOutputSize canvas
+  (_,_,iw,ih) <- getGeometry img
   let w = floor $ (fromIntegral cw - fromIntegral iw :: Double) / 2
       h = floor $ (fromIntegral ch - fromIntegral ih :: Double) / 2
   
-  Canvas.move img w h
+  move img w h
 
 onMouseDown :: Object -> IO () -> IO ()
-onMouseDown = onEvent Canvas.EvasCallbackMouseDown
+onMouseDown = onEvent EvasCallbackMouseDown
 
 onKeyDown :: Object -> (String -> IO ()) -> IO ()
 onKeyDown obj cb = do 
-  wcb <- Canvas.wrapEventCallback $ \_ _ _ info -> do
-    keyName <- Canvas.keyDownKey info
+  wcb <- wrapEventCallback $ \_ _ _ info -> do
+    keyName <- keyDownKey info
     cb keyName
-  void $ Canvas.addObjectEventCallback obj Canvas.EvasCallbackKeyDown wcb nullPtr
+  void $ addObjectEventCallback obj EvasCallbackKeyDown wcb nullPtr
   
-onEvent :: Canvas.CallbackType -> Object -> IO () -> IO ()
+onEvent :: CallbackType -> Object -> IO () -> IO ()
 onEvent evType obj cb = do
-  wcb <- Canvas.wrapEventCallback $ \_ _ _ _ -> cb
-  void $ Canvas.addObjectEventCallback obj evType wcb nullPtr
+  wcb <- wrapEventCallback $ \_ _ _ _ -> cb
+  void $ addObjectEventCallback obj evType wcb nullPtr
 
 onCanvasResize :: CoreCanvas -> IO () -> IO ()
 onCanvasResize ee cb = do
@@ -182,16 +181,16 @@ onCanvasResize ee cb = do
 -- Configure background with "backgroundColor"
 configureBackground :: CoreCanvas -> Canvas -> IO Object
 configureBackground ee canvas = do
-  bg <- Canvas.addRectangle canvas
+  bg <- addRectangle canvas
   let (red, green, blue, alpha) = backgroundColor
-  Canvas.setColor bg red green blue alpha
-  (w,h) <- Canvas.getOutputSize canvas
-  Canvas.resize bg w h
-  Canvas.show bg
-  Canvas.setFocus bg True
+  setColor bg red green blue alpha
+  (w,h) <- getOutputSize canvas
+  resize bg w h
+  uncover bg
+  setFocus bg True
 
   onCanvasResize ee $ do
-    (lw,lh) <- Canvas.getOutputSize canvas
-    Canvas.resize bg lw lh
+    (lw,lh) <- getOutputSize canvas
+    resize bg lw lh
 
   return bg

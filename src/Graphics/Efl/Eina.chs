@@ -1,5 +1,6 @@
 {-# Language ForeignFunctionInterface #-}
 
+-- | EFL basic data types library (lists, iterators...)
 module Graphics.Efl.Eina where
 
 import Foreign.Ptr
@@ -33,6 +34,7 @@ toList el = do
    xs <- toList =<< list_next el
    return (x:xs)
 
+-- | Boolean
 type EinaBool = CUChar
 
 -- | Convert a Eina bool into a Bool

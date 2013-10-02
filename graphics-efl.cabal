@@ -53,6 +53,15 @@ Test-Suite test-evas
   hs-source-dirs: tests
   build-depends:  base, graphics-efl
 
+executable Simple
+  main-is: Simple.hs
+  build-depends: 
+    base,
+    graphics-efl
+
+  hs-source-dirs: examples
+  ghc-options: -Wall
+
 executable ImageViewer
   main-is: ImageViewer.hs
   build-depends: 

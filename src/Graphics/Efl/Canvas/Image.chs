@@ -1,6 +1,43 @@
 {-# Language ForeignFunctionInterface #-}
 
-module Graphics.Efl.Canvas.Image where
+-- | Image
+module Graphics.Efl.Canvas.Image (
+   addImage, addFilledImage,
+   setImageMemFile, setImageFile, getImageFile,
+   setImageBorder, getImageBorder,
+   setImageBorderCenterFill, getImageBorderCenterFill,
+   setImageFilling, isImageFilled,
+   setImageBorderScale, getImageBorderScale,
+   setImageFill, getImageFill,
+   setImageFillSpread, getImageFillSpread,
+   setImageSize, getImageSize,
+   getImageStride,
+   getImageLoadError, 
+   setImageData, getImageData, convertImageData,
+   setImageDataCopy, addImageDataUpdate,
+   setImageAlpha, getImageAlpha,
+   setImageSmoothScale, getImageSmoothScale,
+   preloadImage, reloadImage, saveImage,
+   importImagePixels, setImagePixelsGetCallback,
+   setImageDirtyPixels, getImageDirtyPixels,
+   setImageLoadDPI, getImageLoadDPI,
+   setImageLoadSize, getImageLoadSize,
+   setImageLoadScaleDownFactor, getImageLoadScaleDownFactor,
+   setImageLoadRegion, getImageLoadRegion,
+   setImageLoadOrientation, getImageLoadOrientation,
+   setImageColorSpace, getImageColorSpace,
+   getImageRegionSupport,
+   setImageNativeSurface, getImageNativeSurface,
+   setImageVideoSurface, getImageVideoSurface,
+   setImageScaleHint, getImageScaleHint,
+   setImageContentHint, getImageContentHint,
+   setImageAlphaMask,
+   setImageSource, getImageSource, unsetImageSource,
+   canLoadImageExtension, canLoadImageExtensionFast,
+   isImageAnimated, getAnimatedImageLoopType,
+   getAnimatedImageLoopCount, getAnimatedImageFrameCount,
+   getAnimatedImageFrameDuration, setAnimatedImageFrame
+) where
 
 import Foreign.Ptr
 import Foreign.C.String
@@ -56,8 +93,8 @@ foreign import ccall "evas_object_image_border_center_fill_get" _object_image_bo
 
 
 -- | Set whether the image object's fill property should track the object's size
-setImageFilled :: Object -> Bool -> IO ()
-setImageFilled obj b = _object_image_filled_set obj (fromBool b)
+setImageFilling :: Object -> Bool -> IO ()
+setImageFilling obj b = _object_image_filled_set obj (fromBool b)
 
 foreign import ccall "evas_object_image_filled_set" _object_image_filled_set :: Object -> EinaBool -> IO ()
 
@@ -212,7 +249,7 @@ saveImage obj file key flags =
 foreign import ccall "evas_object_image_save" _object_image_save :: Object -> CString -> CString -> CString -> IO EinaBool
 
 -- | Import pixels from given source to a given canvas image object
-foreign import ccall "evas_object_image_pixels_import" _object_image_pixels_import :: Object -> PixelImportSource -> IO EinaBool
+foreign import ccall "evas_object_image_pixels_import" importImagePixels :: Object -> PixelImportSource -> IO EinaBool
 
 -- | Set the callback function to get pixels from a canvas' image
 foreign import ccall "evas_object_image_pixels_get_callback_set" setImagePixelsGetCallback :: Object -> ObjectImagePixelsGetCb -> Ptr () -> IO ()
@@ -377,14 +414,14 @@ foreign import ccall "evas_object_image_animated_frame_count_get" getAnimatedIma
 
 
 -- | Get the kind of looping the image object does
-getAnimatedImageLoopHint :: Object -> IO ImageAnimatedLoopHint
-getAnimatedImageLoopHint obj = toEnum <$> _object_image_animated_loop_type_get obj
+getAnimatedImageLoopType :: Object -> IO ImageAnimatedLoopType
+getAnimatedImageLoopType obj = toEnum <$> _object_image_animated_loop_type_get obj
 
 foreign import ccall "evas_object_image_animated_loop_type_get" _object_image_animated_loop_type_get :: Object -> IO Int
 
 
 -- | Get the number times the animation of the object loops
-foreign import ccall "evas_object_image_animated_loop_count_get" getAnimatedImageLoopCountHint :: Object -> IO Int
+foreign import ccall "evas_object_image_animated_loop_count_get" getAnimatedImageLoopCount :: Object -> IO Int
 
 -- | Get the duration of a sequence of frames
 foreign import ccall "evas_object_image_animated_frame_duration_get" getAnimatedImageFrameDuration :: Object -> Int -> Int -> IO Double

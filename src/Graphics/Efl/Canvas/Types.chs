@@ -62,7 +62,7 @@ type Transformation = Ptr ()
 {#enum _Evas_Colorspace as ColorSpace {underscoreToCase} deriving (Eq,Show) #}
 {#enum _Evas_Image_Scale_Hint as ImageScaleHint {underscoreToCase} deriving (Eq,Show) #}
 {#enum _Evas_Image_Content_Hint as ImageContentHint {underscoreToCase} deriving (Eq,Show) #}
-{#enum _Evas_Image_Animated_Loop_Hint as ImageAnimatedLoopHint {underscoreToCase} deriving (Eq,Show) #}
+{#enum _Evas_Image_Animated_Loop_Hint as ImageAnimatedLoopType {underscoreToCase} deriving (Eq,Show) #}
 {#enum _Evas_Text_Direction as TextDirection {underscoreToCase} deriving (Eq,Show) #}
 {#enum _Evas_Callback_Type as CallbackType {underscoreToCase} deriving (Eq,Show) #}
 

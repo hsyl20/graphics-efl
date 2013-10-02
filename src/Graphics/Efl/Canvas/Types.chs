@@ -1,6 +1,17 @@
 {-# Language ForeignFunctionInterface #-}
 
-module Graphics.Efl.Canvas.Types where
+-- | EFL types
+module Graphics.Efl.Canvas.Types (
+   TextStyle(..), TextShadowStyle(..),
+   BorderFillMode(..), FillSpread(..), LoadError(..),
+   ColorSpace(..), ImageScaleHint(..), ImageContentHint(..),
+   ImageAnimatedLoopType(..), TextDirection(..),
+   Canvas, Object, Coord,
+   PixelImportSource, NativeSurface, VideoSurface,
+   FontSize, CallbackPriority, Map,
+   CallbackType(..), 
+   ObjectEventCb, ObjectImagePixelsGetCb
+) where
 
 import Foreign.Ptr
 import Data.Int (Int16)

@@ -14,30 +14,30 @@ import Graphics.Efl.Eina
 import Graphics.Efl.Canvas.Types
 
 -- | Create a new text object on the provided canvas
-foreign import ccall "evas_object_text_add" object_text_add :: Canvas -> IO Object
+foreign import ccall "evas_object_text_add" addText :: Canvas -> IO Object
 
 -- | Set the font (source) file to be used on a given text object 
-object_text_font_source_set :: Object -> String -> IO Object
-object_text_font_source_set obj font = withCString font (_object_text_font_source_set obj)
+setTextFontSource :: Object -> String -> IO Object
+setTextFontSource obj font = withCString font (_object_text_font_source_set obj)
 
 foreign import ccall "evas_object_text_font_source_set" _object_text_font_source_set :: Object -> CString -> IO Object
 
 -- | Get the font file's path which is being used on a given text object
-object_text_font_source_get :: Object -> IO String
-object_text_font_source_get obj = peekCString =<< _object_text_font_source_get obj
+getTextFontSource :: Object -> IO String
+getTextFontSource obj = peekCString =<< _object_text_font_source_get obj
 
 foreign import ccall "evas_object_text_font_source_get" _object_text_font_source_get :: Object -> IO CString
 
 -- | Set the font family and size on a given text object
-object_text_font_set :: Object -> String -> FontSize -> IO ()
-object_text_font_set obj font size = withCString font (flip (_object_text_font_set obj) size)
+setTextFont :: Object -> String -> FontSize -> IO ()
+setTextFont obj font size = withCString font (flip (_object_text_font_set obj) size)
 
 foreign import ccall "evas_object_text_font_set" _object_text_font_set :: Object -> CString -> FontSize -> IO ()
 
 
 -- | Retrieve the font family and size in use on a given text object
-object_text_font_get :: Object -> IO (String,FontSize)
-object_text_font_get obj = do
+getTextFont :: Object -> IO (String,FontSize)
+getTextFont obj = do
    (cfont, size) <- get2_helper (_object_text_font_get obj)
    font <- peekCString cfont
    return (font,size)
@@ -45,15 +45,15 @@ object_text_font_get obj = do
 foreign import ccall "evas_object_text_font_get" _object_text_font_get :: Object -> Ptr CString -> Ptr FontSize -> IO ()
 
 -- | Set the text string to be displayed by the given text object
-object_text_text_set :: Object -> String -> IO ()
-object_text_text_set obj text = withCString text (_object_text_text_set obj)
+setText :: Object -> String -> IO ()
+setText obj text = withCString text (_object_text_text_set obj)
 
 foreign import ccall "evas_object_text_text_set" _object_text_text_set :: Object -> CString -> IO ()
 
 
 -- | Retrieve the text string currently being displayed by the given text object
-object_text_text_get :: Object -> IO String
-object_text_text_get obj = peekCString =<< _object_text_text_get obj
+getText :: Object -> IO String
+getText obj = peekCString =<< _object_text_text_get obj
 
 foreign import ccall "evas_object_text_text_get" _object_text_text_get :: Object -> IO CString
 
@@ -84,8 +84,8 @@ foreign import ccall "evas_object_text_char_pos_get" _object_text_char_pos_get :
 foreign import ccall "evas_object_text_last_up_to_pos" object_text_last_up_to_pos :: Object -> Coord -> Coord -> IO Int
 
 -- | Retrieve the style on use on the given text object
-object_text_style_get :: Object -> IO (TextStyle, TextShadowStyle)
-object_text_style_get obj = do
+getTextStyle :: Object -> IO (TextStyle, TextShadowStyle)
+getTextStyle obj = do
    v <- _object_text_style_get obj
    return (toEnum (v .&. 0x0F), toEnum (v .&. 0xF0))
 
@@ -93,8 +93,8 @@ foreign import ccall "evas_object_text_style_get" _object_text_style_get :: Obje
 
 
 -- | Set the style to apply on the given text object
-object_text_style_set :: Object -> TextStyle -> TextShadowStyle -> IO ()
-object_text_style_set obj style shadow = _object_text_style_set obj (fromEnum style .|. fromEnum shadow)
+setTextStyle :: Object -> TextStyle -> TextShadowStyle -> IO ()
+setTextStyle obj style shadow = _object_text_style_set obj (fromEnum style .|. fromEnum shadow)
 
 foreign import ccall "evas_object_text_style_set" _object_text_style_set :: Object -> Int -> IO ()
 
@@ -139,14 +139,14 @@ foreign import ccall "evas_object_text_outline_color_get" _object_text_outline_c
 
 
 -- | Gets the text style pad of a text object
-object_text_style_pad_color_get :: Object -> IO (Int, Int, Int, Int)
-object_text_style_pad_color_get obj = get4_helper (_object_text_style_pad_color_get obj)
+object_text_style_pad_get :: Object -> IO (Int, Int, Int, Int)
+object_text_style_pad_get obj = get4_helper (_object_text_style_pad_get obj)
 
-foreign import ccall "evas_object_text_style_pad_color_get" _object_text_style_pad_color_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
+foreign import ccall "evas_object_text_style_pad_get" _object_text_style_pad_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
 
 
 -- | Retrieve the direction of the text currently being displayed in the text object 
-object_text_bidi_direction_get :: Object -> IO TextDirection
-object_text_bidi_direction_get obj = toEnum <$> _object_text_bidi_direction_get obj
+object_text_direction_get :: Object -> IO TextDirection
+object_text_direction_get obj = toEnum <$> _object_text_direction_get obj
 
-foreign import ccall "evas_object_text_bidi_direction_get" _object_text_bidi_direction_get :: Object -> IO Int
+foreign import ccall "evas_object_text_direction_get" _object_text_direction_get :: Object -> IO Int

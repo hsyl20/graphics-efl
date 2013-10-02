@@ -92,10 +92,10 @@ refresh img canvas = do
 rotate :: Object -> Double -> IO ()
 rotate img angle = do
    (x,y,w,h) <- Canvas.getGeometry img
-   tr <- Trans.duplicate =<< Canvas.getTransformation img
+   tr <- Trans.duplicate =<< Trans.getTransformation img
    Trans.rotate tr angle (x + w `div` 2) (y + h `div` 2)
-   Canvas.setTransformation img tr
-   Canvas.enableTransformation img
+   Trans.setTransformation img tr
+   Trans.enableTransformation img
    Trans.free tr
 
 -- Switch to next image

@@ -1,5 +1,6 @@
 {-# Language ForeignFunctionInterface #-}
 
+-- | EFL windowing system
 module Graphics.Efl.Window (
    Window,
    initWindowingSystem, shutdownWindowingSystem,
@@ -19,6 +20,7 @@ import Graphics.Efl.Canvas
 
 #include <Ecore_Evas.h>
 
+-- | A window
 type Window = Ptr ()
 
 -- | Initialize the windowing system

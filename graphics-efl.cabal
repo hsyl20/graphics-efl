@@ -17,6 +17,7 @@ cabal-version:       >=1.8
 library
   exposed-modules:
       Graphics.Efl.Core,
+      Graphics.Efl.Simple,
       Graphics.Efl.Helpers,
       Graphics.Efl.Window,
       Graphics.Efl.Canvas,

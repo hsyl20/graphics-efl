@@ -5,7 +5,7 @@ module Graphics.Efl.Canvas.Map (
    enableMap, disableMap, isMapEnabled,
    setMap, getMap,
    populateMapPointsFromObjectFull, populateMapPointsFromObject, populateMapPointsFromGeometry,
-   setMapPointsColor, rotateMap, zoomMap, rotateMap3D, rotateMapQuat, lighting3DMap, perspective3DMap,
+   setMapPointsColor, rotateMap, zoomMap, rotateMap3D, lighting3DMap, perspective3DMap,
    isMapClockwise, createMap,
    setMapSmooth, isMapSmooth,
    setMapAlpha, isMapAlpha,
@@ -74,7 +74,7 @@ foreign import ccall "evas_map_util_zoom" zoomMap :: Map -> Double -> Double -> 
 foreign import ccall "evas_map_util_3d_rotate" rotateMap3D :: Map -> Double -> Double -> Double -> Coord -> Coord -> Coord -> IO ()
 
 -- | Rotate the map in 3D using a unit quaternion
-foreign import ccall "evas_map_util_quat_rotate" rotateMapQuat :: Map -> Double -> Double -> Double -> Double -> Double -> Double -> Double -> IO ()
+--foreign import ccall "evas_map_util_quat_rotate" rotateMapQuat :: Map -> Double -> Double -> Double -> Double -> Double -> Double -> Double -> IO ()
 
 -- | Perform lighting calculations on the given Map
 foreign import ccall "evas_map_util_3d_lighting" lighting3DMap :: Map -> Coord -> Coord -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()

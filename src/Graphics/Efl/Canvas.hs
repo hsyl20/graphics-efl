@@ -19,6 +19,9 @@ import Graphics.Efl.Canvas.Events as M
 import Graphics.Efl.Canvas.Misc as M
 import Graphics.Efl.Canvas.Text as M
 import Graphics.Efl.Canvas.Map as M
+import Graphics.Efl.Canvas.Engine as M
+import Graphics.Efl.Canvas.ViewPort as M
+import Graphics.Efl.Canvas.Pointer as M
 
 import Foreign.Ptr
 import Foreign.C.Types

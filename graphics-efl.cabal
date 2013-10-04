@@ -30,6 +30,8 @@ library
       Graphics.Efl.Canvas.Events,
       Graphics.Efl.Canvas.Map,
       Graphics.Efl.Canvas.Engine,
+      Graphics.Efl.Canvas.ViewPort,
+      Graphics.Efl.Canvas.Pointer,
       Graphics.Efl.Canvas.Misc,
       Graphics.Efl.Eina
 

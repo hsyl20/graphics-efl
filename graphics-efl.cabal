@@ -29,6 +29,7 @@ library
       Graphics.Efl.Canvas.Text,
       Graphics.Efl.Canvas.Events,
       Graphics.Efl.Canvas.Map,
+      Graphics.Efl.Canvas.Engine,
       Graphics.Efl.Canvas.Misc,
       Graphics.Efl.Eina
 

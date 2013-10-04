@@ -50,7 +50,7 @@ library
   build-depends:       base ==4.6.*, vector ==0.10.*
   hs-source-dirs:      src
   build-tools:         c2hs
-  ghc-options: -Wall
+  ghc-options: -Wall -threaded
 
 Test-Suite test-evas
   type:           exitcode-stdio-1.0
@@ -65,7 +65,7 @@ executable Simple
     graphics-efl
 
   hs-source-dirs: examples
-  ghc-options: -Wall
+  ghc-options: -Wall -threaded
 
 executable ImageViewer
   main-is: ImageViewer.hs
@@ -74,4 +74,4 @@ executable ImageViewer
     graphics-efl,
     vector
   hs-source-dirs: examples
-  ghc-options: -Wall
+  ghc-options: -Wall -threaded

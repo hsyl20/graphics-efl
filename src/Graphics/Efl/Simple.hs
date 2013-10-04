@@ -1,3 +1,4 @@
+-- | Simple interface to create a window
 module Graphics.Efl.Simple (
    module M,
    defaultWindow, defaultWindowEx, withDefaultWindow

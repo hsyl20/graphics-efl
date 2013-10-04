@@ -1,5 +1,6 @@
 {-# Language ForeignFunctionInterface #-}
 
+-- | Methods for canvas objects
 module Graphics.Efl.Canvas.BasicObject (
    setClippingObject, getClippingObject,
    disableClipping, getClipees,

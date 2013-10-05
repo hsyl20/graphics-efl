@@ -1,6 +1,6 @@
 {-# Language MultiWayIf,LambdaCase #-}
 
-import qualified Graphics.Efl.Core as Core
+import Graphics.Efl.Core
 import Graphics.Efl.Window
 import Graphics.Efl.Canvas
 
@@ -41,7 +41,7 @@ main = do
 
   showImage img $ images ! 0
 
-  enablePassEvents img
+  enableEventPassing img
   uncover img
 
   tr <- createMap 4
@@ -60,13 +60,13 @@ main = do
     "n" -> nextImage img currentImage images
     "p" -> previousImage img currentImage images
     "t" -> rotate img 90.0
-    "q" -> Core.quitMainLoop
+    "q" -> quitMainLoop
     _ -> return ()
 
   onMouseDown bg $ do
     putStrLn "Mouse down"
 
-  Core.beginMainLoop
+  beginMainLoop
 
   myShutdown win
 
@@ -84,6 +84,7 @@ refresh :: Object -> Canvas -> IO ()
 refresh img canvas = do
   zoomFit img canvas
   centerImage img canvas
+  renderCanvas canvas
 
 
 rotate :: Object -> Double -> IO ()
@@ -134,7 +135,7 @@ showImage img path = do
 -- Zoom the image so that it fits in the canvas
 zoomFit :: Object -> Canvas -> IO ()
 zoomFit img canvas = do
-  (cw,ch) <- getOutputSize canvas
+  (cw,ch) <- getCanvasOutputSize canvas
   (iw,ih) <- getImageSize img
   
   let ratioH = (fromIntegral ch) / (fromIntegral ih)
@@ -149,7 +150,7 @@ zoomFit img canvas = do
 -- Center the image on the canvas
 centerImage :: Object -> Canvas -> IO ()
 centerImage img canvas = do
-  (cw,ch) <- getOutputSize canvas
+  (cw,ch) <- getCanvasOutputSize canvas
   (_,_,iw,ih) <- getGeometry img
   let w = floor $ (fromIntegral cw - fromIntegral iw :: Double) / 2
       h = floor $ (fromIntegral ch - fromIntegral ih :: Double) / 2
@@ -164,12 +165,12 @@ onKeyDown obj cb = do
   wcb <- wrapEventCallback $ \_ _ _ info -> do
     keyName <- keyDownKey info
     cb keyName
-  void $ addObjectEventCallback obj EvasCallbackKeyDown wcb nullPtr
+  void $ addEventCallback obj EvasCallbackKeyDown wcb nullPtr
   
 onEvent :: CallbackType -> Object -> IO () -> IO ()
 onEvent evType obj cb = do
   wcb <- wrapEventCallback $ \_ _ _ _ -> cb
-  void $ addObjectEventCallback obj evType wcb nullPtr
+  void $ addEventCallback obj evType wcb nullPtr
 
 onCanvasResize :: Window -> IO () -> IO ()
 onCanvasResize win cb = setWindowResizeCallback win (const cb)
@@ -180,13 +181,13 @@ configureBackground win canvas = do
   bg <- addRectangle canvas
   let (red, green, blue, alpha) = backgroundColor
   setColor bg red green blue alpha
-  (w,h) <- getOutputSize canvas
+  (w,h) <- getCanvasOutputSize canvas
   resize bg w h
   uncover bg
   setFocus bg True
 
   onCanvasResize win $ do
-    (lw,lh) <- getOutputSize canvas
+    (lw,lh) <- getCanvasOutputSize canvas
     resize bg lw lh
 
   return bg

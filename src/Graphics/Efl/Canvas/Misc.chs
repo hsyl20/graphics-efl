@@ -7,7 +7,6 @@ import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Storable
 
-import Graphics.Efl.Helpers
 import Graphics.Efl.Canvas.Types
 
 #include <Evas.h>
@@ -16,13 +15,7 @@ import Graphics.Efl.Canvas.Types
 
 foreign import ccall "wrapper" wrapEventCallback :: (Ptr () -> Canvas -> Object -> Ptr () -> IO ()) -> IO ObjectEventCb
 
-getOutputSize :: Canvas -> IO (Int,Int)
-getOutputSize ev = get2_helper (evas_output_size_get_ ev)
-
-foreign import ccall "evas_output_size_get" evas_output_size_get_ :: Canvas -> Ptr Int -> Ptr Int -> IO ()
-
-
-foreign import ccall "evas_event_callback_add" addEventCallback :: Canvas -> Int -> ObjectEventCb -> Ptr () -> IO ()
+foreign import ccall "evas_event_callback_add" addCanvasEventCallback :: Canvas -> Int -> ObjectEventCb -> Ptr () -> IO ()
 
 foreign import ccall "evas_load_error_str" loadErrorString :: Int -> IO CString
 

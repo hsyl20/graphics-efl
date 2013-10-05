@@ -10,7 +10,8 @@ module Graphics.Efl.Canvas.Types (
    PixelImportSource, NativeSurface, VideoSurface,
    FontSize, CallbackPriority, Map,
    CallbackType(..), 
-   ObjectEventCb, ObjectImagePixelsGetCb
+   ObjectEventCb, ObjectImagePixelsGetCb,
+   EventFlags(..)
 ) where
 
 import Foreign.Ptr
@@ -51,11 +52,19 @@ typedef enum _Evas_Text_Direction
    EVAS_BIDI_DIRECTION_RTL
 } Evas_Text_Direction;
 
+enum EventFlags
+{
+   EVENT_FLAG_NONE = 0,
+   EVENT_FLAG_ON_HOLD = (1 << 0),
+   EVENT_FLAG_ON_SCROLL = (1 << 1)
+};
+
 #endc
 
 -- We use custom enums as the original is in fact a bitset
 {#enum _Evas_Text_Style as TextStyle {underscoreToCase} deriving (Eq,Show) #}
 {#enum _Evas_Text_Shadow_Style as TextShadowStyle {underscoreToCase} deriving (Eq,Show) #}
+{#enum EventFlags {underscoreToCase} deriving (Eq,Show) #}
 
 type Canvas = Ptr ()
 type Object = Ptr ()

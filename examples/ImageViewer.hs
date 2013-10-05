@@ -1,8 +1,7 @@
 {-# Language MultiWayIf,LambdaCase #-}
 
 import Graphics.Efl.Core
-import Graphics.Efl.Window
-import Graphics.Efl.Canvas
+import Graphics.Efl.Simple
 
 import Control.Applicative ((<$>))
 import Control.Concurrent.MVar
@@ -22,53 +21,45 @@ backgroundColor = (0,0,0,0)
 
 main :: IO ()
 main = do
-  initWindowingSystem
-  win <- createWindow Nothing 0 0 800 600 Nothing
-  showWindow win
+   withDefaultWindow $ \win canvas -> do
 
-  canvas <- getWindowCanvas win
+      bg <- configureBackground win canvas
 
-  bg <- configureBackground win canvas
+      images <- Vector.fromList <$> getArgs
+      currentImage <- newMVar 0
 
-  images <- Vector.fromList <$> getArgs
-  currentImage <- newMVar 0
+      putStrLn (printf "%d images to show" (Vector.length images))
 
-  putStrLn (printf "%d images to show" (Vector.length images))
+      if Vector.length images == 0 then myShutdown win else return ()
 
-  if Vector.length images == 0 then myShutdown win else return ()
+      img <- addImage canvas
 
-  img <- addImage canvas
+      showImage img $ images ! 0
 
-  showImage img $ images ! 0
+      enableEventPassing img
+      uncover img
 
-  enableEventPassing img
-  uncover img
-
-  tr <- createMap 4
-  populateMapPointsFromObject tr img
---  setMap img tr
---  enableMap img
-  freeMap tr
+      tr <- createMap 4
+      populateMapPointsFromObject tr img
+   --   setMap img tr
+   --   enableMap img
+      freeMap tr
 
 
-  onCanvasResize win $ do
-    zoomFit img canvas
-    centerImage img canvas
+      onCanvasResize win $ do
+        zoomFit img canvas
+        centerImage img canvas
 
-  onKeyDown bg $ \case 
-    "space" -> nextImage img currentImage images
-    "n" -> nextImage img currentImage images
-    "p" -> previousImage img currentImage images
-    "t" -> rotate img 90.0
-    "q" -> quitMainLoop
-    _ -> return ()
+      onKeyDown bg $ \case 
+         "space" -> nextImage img currentImage images
+         "n" -> nextImage img currentImage images
+         "p" -> previousImage img currentImage images
+         "t" -> rotate img 90.0
+         "q" -> quitMainLoop
+         _ -> return ()
 
-  onMouseDown bg $ do
-    putStrLn "Mouse down"
-
-  beginMainLoop
-
-  myShutdown win
+      onMouseDown bg $ do
+         putStrLn "Mouse down"
 
 -- Shutdown the application
 myShutdown :: Window -> IO ()

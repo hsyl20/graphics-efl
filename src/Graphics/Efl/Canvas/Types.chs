@@ -8,7 +8,7 @@ module Graphics.Efl.Canvas.Types (
    ImageAnimatedLoopType(..), TextDirection(..),
    Canvas, Object, Coord,
    PixelImportSource, NativeSurface, VideoSurface,
-   FontSize, CallbackPriority, Map,
+   FontSize, CallbackPriority, Map, EngineInfo,
    CallbackType(..), 
    ObjectEventCb, ObjectImagePixelsGetCb,
    EventFlags(..)
@@ -76,6 +76,7 @@ type VideoSurface = Ptr ()
 type FontSize = Int
 type CallbackPriority = Int16
 type Map = Ptr ()
+type EngineInfo = Ptr ()
 
 {#enum _Evas_Border_Fill_Mode as BorderFillMode {underscoreToCase} deriving (Eq,Show) #}
 {#enum _Evas_Fill_Spread as FillSpread {underscoreToCase} deriving (Eq,Show) #}

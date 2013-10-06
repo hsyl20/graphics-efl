@@ -9,6 +9,8 @@ module Graphics.Efl.Canvas.Types (
    Canvas, Object, Coord,
    PixelImportSource, NativeSurface, VideoSurface,
    FontSize, CallbackPriority, Map, EngineInfo,
+   TextBlockStyle, TextBlockCursor,
+   TextBlockNodeFormat,
    CallbackType(..), 
    ObjectEventCb, ObjectImagePixelsGetCb,
    EventFlags(..)
@@ -77,6 +79,9 @@ type FontSize = Int
 type CallbackPriority = Int16
 type Map = Ptr ()
 type EngineInfo = Ptr ()
+type TextBlockStyle  = Ptr ()
+type TextBlockCursor  = Ptr ()
+type TextBlockNodeFormat  = Ptr ()
 
 {#enum _Evas_Border_Fill_Mode as BorderFillMode {underscoreToCase} deriving (Eq,Show) #}
 {#enum _Evas_Fill_Spread as FillSpread {underscoreToCase} deriving (Eq,Show) #}

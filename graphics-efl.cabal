@@ -28,6 +28,7 @@ library
       Graphics.Efl.Canvas.Polygon,
       Graphics.Efl.Canvas.Line,
       Graphics.Efl.Canvas.Text,
+      Graphics.Efl.Canvas.TextBlock,
       Graphics.Efl.Canvas.Events,
       Graphics.Efl.Canvas.Map,
       Graphics.Efl.Canvas.Engine,

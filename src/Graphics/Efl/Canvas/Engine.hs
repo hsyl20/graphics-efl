@@ -4,10 +4,12 @@
 module Graphics.Efl.Canvas.Engine (
    lookupEngine, listEngines,
    setCanvasEngineById, getCanvasEngineId, getCanvasEngineName,
-   getCanvasEngineInfo
+   setCanvasEngineInfo, getCanvasEngineInfo
 ) where
 
 import Foreign.C.String
+import Foreign.C.Types
+import Control.Applicative ((<$>))
 
 import Graphics.Efl.Eina
 import Graphics.Efl.Canvas.Types
@@ -39,6 +41,12 @@ foreign import ccall "evas_output_method_get" getCanvasEngineId :: Canvas -> IO 
 
 -- | Retrieves the current render engine info struct from the given canvas
 foreign import ccall "evas_engine_info_get" getCanvasEngineInfo :: Canvas -> IO EngineInfo
+
+-- | Applies the engine settings for the given canvas
+setCanvasEngineInfo :: Canvas -> EngineInfo -> IO Bool
+setCanvasEngineInfo canvas info = toBool <$> _setCanvasEngineInfo canvas info
+
+foreign import ccall "evas_engine_info_set" _setCanvasEngineInfo :: Canvas -> EngineInfo -> IO EinaBool
 
 -- | Get the output engine name for the given canvas
 getCanvasEngineName :: Canvas -> IO String

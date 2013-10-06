@@ -14,7 +14,7 @@ main = do
             # setText "Haskell-EFL!!"
             # resize 200 10
             # move 25 50
-            # setTextStyle EvasTextStylePlain EvasTextStyleShadowDirectionBottomRight
+            # setTextStyle TextStylePlain TextStyleShadowDirectionBottomRight
             # setTextFont "DejaVu" 14
             # setColor 0 255 0 255
             # uncover

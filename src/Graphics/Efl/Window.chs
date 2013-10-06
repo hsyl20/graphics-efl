@@ -5,7 +5,7 @@ module Graphics.Efl.Window (
    Window,
    initWindowingSystem, shutdownWindowingSystem,
    createWindow, destroyWindow, showWindow,
-   getWindowCanvas,
+   getWindowCanvas, getWindowGeometry,
    setWindowResizeCallback
 ) where
 
@@ -17,6 +17,7 @@ import Control.Applicative
 import Control.Monad
 
 import Graphics.Efl.Canvas
+import Graphics.Efl.Helpers
 
 #include <Ecore_Evas.h>
 
@@ -57,6 +58,12 @@ foreign import ccall "ecore_evas_show" showWindow :: Window -> IO ()
 
 -- | Get the rendering canvas of the window
 foreign import ccall "ecore_evas_get" getWindowCanvas :: Window -> IO Canvas
+
+-- | Retrieve the position and (rectangular) size of the given Evas object
+getWindowGeometry :: Window -> IO (Int,Int,Int,Int)
+getWindowGeometry win = get4_helper (_getWindowGeometry win)
+
+foreign import ccall "ecore_evas_geometry_get" _getWindowGeometry :: Window -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
 
 -- | Associate a callback to the "resize" event
 setWindowResizeCallback :: Window -> (Window -> IO ()) -> IO ()

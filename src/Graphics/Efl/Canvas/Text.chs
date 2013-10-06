@@ -32,10 +32,10 @@ import Graphics.Efl.Canvas.Types
 foreign import ccall "evas_object_text_add" addText :: Canvas -> IO Object
 
 -- | Set the font (source) file to be used on a given text object 
-setTextFontSource :: Object -> String -> IO Object
-setTextFontSource obj font = withCString font (_object_text_font_source_set obj)
+setTextFontSource :: String -> Object -> IO ()
+setTextFontSource font obj = withCString font (_object_text_font_source_set obj)
 
-foreign import ccall "evas_object_text_font_source_set" _object_text_font_source_set :: Object -> CString -> IO Object
+foreign import ccall "evas_object_text_font_source_set" _object_text_font_source_set :: Object -> CString -> IO ()
 
 -- | Get the font file's path which is being used on a given text object
 getTextFontSource :: Object -> IO String
@@ -44,8 +44,8 @@ getTextFontSource obj = peekCString =<< _object_text_font_source_get obj
 foreign import ccall "evas_object_text_font_source_get" _object_text_font_source_get :: Object -> IO CString
 
 -- | Set the font family and size on a given text object
-setTextFont :: Object -> String -> FontSize -> IO ()
-setTextFont obj font size = withCString font (flip (_object_text_font_set obj) size)
+setTextFont :: String -> FontSize -> Object -> IO ()
+setTextFont font size obj = withCString font (flip (_object_text_font_set obj) size)
 
 foreign import ccall "evas_object_text_font_set" _object_text_font_set :: Object -> CString -> FontSize -> IO ()
 
@@ -60,8 +60,8 @@ getTextFont obj = do
 foreign import ccall "evas_object_text_font_get" _object_text_font_get :: Object -> Ptr CString -> Ptr FontSize -> IO ()
 
 -- | Set the text string to be displayed by the given text object
-setText :: Object -> String -> IO ()
-setText obj text = withCString text (_object_text_text_set obj)
+setText :: String -> Object -> IO ()
+setText text obj = withCString text (_object_text_text_set obj)
 
 foreign import ccall "evas_object_text_text_set" _object_text_text_set :: Object -> CString -> IO ()
 
@@ -73,8 +73,8 @@ getText obj = peekCString =<< _object_text_text_get obj
 foreign import ccall "evas_object_text_text_get" _object_text_text_get :: Object -> IO CString
 
 -- | Set the BiDi delimiters used in the textblock
-setTextBidiDelimiters :: Object -> String -> IO ()
-setTextBidiDelimiters obj delim = withCString delim (_object_text_bidi_delimiters_set obj)
+setTextBidiDelimiters :: String -> Object -> IO ()
+setTextBidiDelimiters delim obj = withCString delim (_object_text_bidi_delimiters_set obj)
 
 foreign import ccall "evas_object_text_bidi_delimiters_set" _object_text_bidi_delimiters_set :: Object -> CString -> IO ()
 
@@ -108,14 +108,17 @@ foreign import ccall "evas_object_text_style_get" _object_text_style_get :: Obje
 
 
 -- | Set the style to apply on the given text object
-setTextStyle :: Object -> TextStyle -> TextShadowStyle -> IO ()
-setTextStyle obj style shadow = _object_text_style_set obj (fromEnum style .|. fromEnum shadow)
+setTextStyle :: TextStyle -> TextShadowStyle -> Object -> IO ()
+setTextStyle style shadow obj = _object_text_style_set obj (fromEnum style .|. fromEnum shadow)
 
 foreign import ccall "evas_object_text_style_set" _object_text_style_set :: Object -> Int -> IO ()
 
 
 -- | Set the shadow color for the given text object
-foreign import ccall "evas_object_text_shadow_color_set" setTextShadowColor :: Object -> Int -> Int -> Int -> Int -> IO ()
+setTextShadowColor :: Int -> Int -> Int -> Int -> Object -> IO ()
+setTextShadowColor r g b a obj = _setTextShadowColor obj r g b a
+
+foreign import ccall "evas_object_text_shadow_color_set" _setTextShadowColor :: Object -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Retrieve the shadow color for the given text object
 getTextShadowColor :: Object -> IO (Int, Int, Int, Int)
@@ -125,7 +128,10 @@ foreign import ccall "evas_object_text_shadow_color_get" _object_text_shadow_col
 
 
 -- | Set the glow color for the given text object
-foreign import ccall "evas_object_text_glow_color_set" setTextGlowColor :: Object -> Int -> Int -> Int -> Int -> IO ()
+setTextGlowColor :: Int -> Int -> Int -> Int -> Object -> IO ()
+setTextGlowColor r g b a obj = _setTextGlowColor obj r g b a
+
+foreign import ccall "evas_object_text_glow_color_set" _setTextGlowColor :: Object -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Retrieve the glow color for the given text object
 getTextGlowColor :: Object -> IO (Int, Int, Int, Int)
@@ -135,7 +141,10 @@ foreign import ccall "evas_object_text_glow_color_get" _object_text_glow_color_g
 
 
 -- | Set the glow2 color for the given text object
-foreign import ccall "evas_object_text_glow2_color_set" setTextGlow2Color :: Object -> Int -> Int -> Int -> Int -> IO ()
+setTextGlow2Color :: Int -> Int -> Int -> Int -> Object -> IO ()
+setTextGlow2Color r g b a obj = _setTextGlow2Color obj r g b a
+
+foreign import ccall "evas_object_text_glow2_color_set" _setTextGlow2Color :: Object -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Retrieve the glow2 color for the given text object
 getTextGlow2Color :: Object -> IO (Int, Int, Int, Int)
@@ -144,7 +153,10 @@ getTextGlow2Color obj = get4_helper (_object_text_glow2_color_get obj)
 foreign import ccall "evas_object_text_glow2_color_get" _object_text_glow2_color_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
 
 -- | Set the outline color for the given text object
-foreign import ccall "evas_object_text_outline_color_set" setTextOutlineColor :: Object -> Int -> Int -> Int -> Int -> IO ()
+setTextOutlineColor :: Int -> Int -> Int -> Int -> Object -> IO ()
+setTextOutlineColor r g b a obj = _setTextOutlineColor obj r g b a
+
+foreign import ccall "evas_object_text_outline_color_set" _setTextOutlineColor :: Object -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Retrieve the outline color for the given text object
 getTextOutlineColor :: Object -> IO (Int, Int, Int, Int)

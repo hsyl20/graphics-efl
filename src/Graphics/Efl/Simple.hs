@@ -1,6 +1,7 @@
 -- | Simple interface to create a window
 module Graphics.Efl.Simple (
    module M,
+   (#),
    defaultWindow, defaultWindowEx, withDefaultWindow
 ) where
 
@@ -39,3 +40,10 @@ withDefaultWindow f = do
    r <- f w c
    readMVar v
    return r
+
+
+(#) :: IO Object -> (Object -> IO ()) -> IO Object
+(#) obj f = do
+   o <- obj
+   f o
+   return o

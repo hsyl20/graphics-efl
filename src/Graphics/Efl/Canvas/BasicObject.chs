@@ -22,6 +22,7 @@ import Foreign.C.String
 import Foreign.C.Types
 
 import Control.Applicative
+import Data.Int
 
 import Graphics.Efl.Helpers
 import Graphics.Efl.Eina
@@ -29,7 +30,10 @@ import Graphics.Efl.Canvas.Types
 
 
 -- | Clip one object to another
-foreign import ccall "evas_object_clip_set" setClippingObject :: Object -> Object -> IO ()
+setClippingObject :: Object -> Object -> IO ()
+setClippingObject = flip _setClippingObject
+
+foreign import ccall "evas_object_clip_set" _setClippingObject :: Object -> Object -> IO ()
 
 -- | Get the object clipping the given object (if any)
 getClippingObject :: Object -> IO (Maybe Object)
@@ -49,9 +53,9 @@ foreign import ccall "evas_object_clipees_get" _object_clipees_get :: Object -> 
 
 
 -- | Set or unset a given object as the currently focused one on its canvas
-setFocus :: Object -> Bool -> IO ()
-setFocus obj True = _object_focus_set obj 1
-setFocus obj False = _object_focus_set obj 0
+setFocus :: Bool -> Object -> IO ()
+setFocus True obj = _object_focus_set obj 1
+setFocus False obj = _object_focus_set obj 0
 
 foreign import ccall "evas_object_focus_set" _object_focus_set :: Object -> EinaBool -> IO ()
 
@@ -64,15 +68,22 @@ foreign import ccall "evas_object_focus_get" _object_focus_get :: Object -> IO E
 
 
 -- | Sets the layer of its canvas that the given object will be part of
-foreign import ccall "evas_object_layer_set" setLayer :: Object -> CShort -> IO ()
+setLayer :: Int16 -> Object -> IO ()
+setLayer n o = _setLayer o (fromIntegral n)
+
+foreign import ccall "evas_object_layer_set" _setLayer :: Object -> CShort -> IO ()
+
 -- | Retrieves the layer of its canvas that the given object is part of
-foreign import ccall "evas_object_layer_get" getLayer :: Object -> IO CShort
+getLayer :: Object -> IO Int16
+getLayer o = fromIntegral <$> _getLayer o
+
+foreign import ccall "evas_object_layer_get" _getLayer :: Object -> IO CShort
 
 
 
 -- | Set the name of the given Evas object to the given name
-setName :: Object -> String -> IO ()
-setName obj name = withCString name (_object_name_set obj)
+setName :: String -> Object -> IO ()
+setName name obj = withCString name (_object_name_set obj)
 
 foreign import ccall "evas_object_name_set" _object_name_set :: Object -> CString -> IO ()
 
@@ -101,10 +112,16 @@ foreign import ccall "evas_object_del" delete :: Object -> IO ()
 
 
 -- | Move the given Evas object to the given location inside its canvas' viewport
-foreign import ccall "evas_object_move" move :: Object -> Coord -> Coord -> IO ()
+move :: Coord -> Coord -> Object -> IO ()
+move x y obj = _move obj x y
+
+foreign import ccall "evas_object_move" _move :: Object -> Coord -> Coord -> IO ()
 
 -- | Change the size of the given Evas object
-foreign import ccall "evas_object_resize" resize :: Object -> Coord -> Coord -> IO ()
+resize :: Coord -> Coord -> Object -> IO ()
+resize w h obj = _resize obj w h
+
+foreign import ccall "evas_object_resize" _resize :: Object -> Coord -> Coord -> IO ()
 
 -- | Retrieve the position and (rectangular) size of the given Evas object
 getGeometry :: Object -> IO (Coord,Coord,Coord,Coord)
@@ -129,7 +146,10 @@ foreign import ccall "evas_object_visible_get" object_visible_get_ :: Object -> 
 
 
 -- | Set the general/main color of the given Evas object to the given one
-foreign import ccall "evas_object_color_set" setColor :: Object -> Int -> Int -> Int -> Int -> IO ()
+setColor :: Int -> Int -> Int -> Int -> Object -> IO ()
+setColor r g b a obj = _setColor obj r g b a
+
+foreign import ccall "evas_object_color_set" _setColor :: Object -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Set the general/main color of the given Evas object to the given one
 getColor :: Object -> IO (Int,Int,Int,Int)
@@ -157,10 +177,16 @@ foreign import ccall "evas_object_raise" raise :: Object -> IO ()
 foreign import ccall "evas_object_lower" lower :: Object -> IO ()
 
 -- | Stack an object immediately above another object
-foreign import ccall "evas_object_stack_above" stackAbove :: Object -> Object -> IO ()
+stackAbove :: Object -> Object -> IO ()
+stackAbove = flip _stackAbove
+
+foreign import ccall "evas_object_stack_above" _stackAbove :: Object -> Object -> IO ()
 
 -- | Stack an object immediately below another object
-foreign import ccall "evas_object_stack_below" stackBelow :: Object -> Object -> IO ()
+stackBelow :: Object -> Object -> IO ()
+stackBelow = flip _stackBelow
+
+foreign import ccall "evas_object_stack_below" _stackBelow :: Object -> Object -> IO ()
 
 -- | Get the Evas object stacked right above an object
 getObjectAbove :: Object -> IO (Maybe Object)

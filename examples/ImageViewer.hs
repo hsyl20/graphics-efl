@@ -4,7 +4,7 @@ import Graphics.Efl.Core
 import Graphics.Efl.Simple
 
 import Control.Applicative ((<$>))
-import Control.Concurrent.MVar
+import Control.Concurrent.STM
 import Control.Monad (void)
 import Foreign.C.String
 import Foreign.Ptr
@@ -17,7 +17,7 @@ import Data.Vector ((!), Vector)
 
 
 backgroundColor :: (Int,Int,Int,Int)
-backgroundColor = (0,0,0,0)
+backgroundColor = (64,64,64,255)
 
 main :: IO ()
 main = do
@@ -26,18 +26,24 @@ main = do
       bg <- configureBackground win canvas
 
       images <- Vector.fromList <$> getArgs
-      currentImage <- newMVar 0
+      currentImage <- atomically $ newTVar 0
 
       putStrLn (printf "%d images to show" (Vector.length images))
 
       if Vector.length images == 0 then myShutdown win else return ()
 
-      img <- addImage canvas
+      img <- addFilledImage canvas
 
       showImage img $ images ! 0
 
       enableEventPassing img
       uncover img
+
+      onWindowResize win $ do
+         (_,_,w,h) <- getWindowGeometry win
+         resize w h bg
+         --refresh img canvas
+
 
       tr <- createMap 4
       populateMapPointsFromObject tr img
@@ -45,10 +51,6 @@ main = do
    --   enableMap img
       freeMap tr
 
-
-      onCanvasResize win $ do
-        zoomFit img canvas
-        centerImage img canvas
 
       onKeyDown bg $ \case 
          "space" -> nextImage img currentImage images
@@ -82,31 +84,31 @@ rotate :: Object -> Double -> IO ()
 rotate img angle = do
    (x,y,w,h) <- getGeometry img
    tr <- dupMap =<< getMap img
-   rotateMap tr angle (x + w `div` 2) (y + h `div` 2)
+   rotateMap angle (x + w `div` 2) (y + h `div` 2) tr
    setMap img tr
    enableMap img
    freeMap tr
 
 -- Switch to next image
-nextImage :: Object -> MVar Int -> Vector String -> IO ()
+nextImage :: Object -> TVar Int -> Vector String -> IO ()
 nextImage img current images = do
-  c <- takeMVar current
-  if c+1 < Vector.length images
-    then do
-      showImage img (images ! (c+1))
-      putMVar current (c+1)
-    else
-      putMVar current c
+   let f x = if x+1 < Vector.length images then x+1 else x
+
+   c <- atomically $ do
+      modifyTVar current f
+      readTVar current
+   showImage img (images ! c)
 
 -- Switch to previous image
-previousImage :: Object -> MVar Int -> Vector String -> IO ()
+previousImage :: Object -> TVar Int -> Vector String -> IO ()
 previousImage img current images = do
-  c <- takeMVar current
-  if c > 0 then do
-      showImage img (images ! (c-1))
-      putMVar current (c-1)
-    else 
-      putMVar current c
+   let f x = if x > 0 then x-1 else x
+
+   c <- atomically $ do
+      modifyTVar current f
+      readTVar current
+
+   showImage img (images ! c)
 
 -- Show the image whose path is given as a parameter
 showImage :: Object -> String -> IO ()
@@ -119,8 +121,7 @@ showImage img path = do
     EvasLoadErrorNone -> return ()
     _ -> putStrLn =<< peekCString =<< loadErrorString (fromEnum err)
   (w,h) <- getImageSize img
-  setImageFill img 0 0 w h
-  resize img w h
+  resize w h img
   refresh img canvas
 
 -- Zoom the image so that it fits in the canvas
@@ -135,8 +136,7 @@ zoomFit img canvas = do
       w = floor $ (ratio * fromIntegral iw :: Double)
       h = floor $ (ratio * fromIntegral ih :: Double)
 
-  resize img w h
-  setImageFill img 0 0 w h
+  resize w h img
 
 -- Center the image on the canvas
 centerImage :: Object -> Canvas -> IO ()
@@ -146,7 +146,7 @@ centerImage img canvas = do
   let w = floor $ (fromIntegral cw - fromIntegral iw :: Double) / 2
       h = floor $ (fromIntegral ch - fromIntegral ih :: Double) / 2
   
-  move img w h
+  move w h img
 
 onMouseDown :: Object -> IO () -> IO ()
 onMouseDown = onEvent EvasCallbackMouseDown
@@ -163,22 +163,18 @@ onEvent evType obj cb = do
   wcb <- wrapEventCallback $ \_ _ _ _ -> cb
   void $ addEventCallback obj evType wcb nullPtr
 
-onCanvasResize :: Window -> IO () -> IO ()
-onCanvasResize win cb = setWindowResizeCallback win (const cb)
+onWindowResize :: Window -> IO () -> IO ()
+onWindowResize win cb = setWindowResizeCallback win (const cb)
 
 -- Configure background with "backgroundColor"
 configureBackground :: Window -> Canvas -> IO Object
 configureBackground win canvas = do
   bg <- addRectangle canvas
   let (red, green, blue, alpha) = backgroundColor
-  setColor bg red green blue alpha
+  setColor red green blue alpha bg
   (w,h) <- getCanvasOutputSize canvas
-  resize bg w h
+  resize w h bg
   uncover bg
-  setFocus bg True
-
-  onCanvasResize win $ do
-    (lw,lh) <- getCanvasOutputSize canvas
-    resize bg lw lh
+  setFocus True bg
 
   return bg

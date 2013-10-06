@@ -47,40 +47,70 @@ foreign import ccall "evas_object_map_enable_get" _object_transformation_enable_
 
 
 -- | Set current object transformation
-foreign import ccall "evas_object_map_set" setMap :: Object -> Map -> IO ()
+setMap :: Map -> Object -> IO ()
+setMap = flip _setMap
+
+foreign import ccall "evas_object_map_set" _setMap :: Object -> Map -> IO ()
 
 -- | Get current object transformation
 foreign import ccall "evas_object_map_get" getMap :: Object -> IO Map
 
 -- | Populate source and destination map points to match exactly object
-foreign import ccall "evas_map_util_points_populate_from_object_full" populateMapPointsFromObjectFull :: Map -> Object -> Coord -> IO ()
+populateMapPointsFromObjectFull :: Object -> Coord -> Map -> IO ()
+populateMapPointsFromObjectFull obj xy m = _populateMapPointsFromObjectFull m obj xy
+
+foreign import ccall "evas_map_util_points_populate_from_object_full" _populateMapPointsFromObjectFull :: Map -> Object -> Coord -> IO ()
 
 -- | Populate source and destination map points to match exactly object
-foreign import ccall "evas_map_util_points_populate_from_object" populateMapPointsFromObject :: Map -> Object -> IO ()
+populateMapPointsFromObject :: Object -> Map -> IO ()
+populateMapPointsFromObject = flip _populateMapPointsFromObject
+
+foreign import ccall "evas_map_util_points_populate_from_object" _populateMapPointsFromObject :: Map -> Object -> IO ()
 
 -- | Populate source and destination map points to match given geometry
-foreign import ccall "evas_map_util_points_populate_from_geometry" populateMapPointsFromGeometry :: Map -> Coord -> Coord -> Coord -> Coord -> Coord -> IO ()
+populateMapPointsFromGeometry :: Coord -> Coord -> Coord -> Coord -> Coord -> Map -> IO ()
+populateMapPointsFromGeometry x y z w h m = _populateMapPointsFromGeometry m x y z w h
+
+foreign import ccall "evas_map_util_points_populate_from_geometry" _populateMapPointsFromGeometry :: Map -> Coord -> Coord -> Coord -> Coord -> Coord -> IO ()
 
 -- | Set color of all points to given color
-foreign import ccall "evas_map_util_points_color_set" setMapPointsColor :: Map -> Int -> Int -> Int -> Int -> IO ()
+setMapPointsColor :: Int -> Int -> Int -> Int -> Map -> IO ()
+setMapPointsColor r g b a m = _setMapPointsColor m r g b a
+
+foreign import ccall "evas_map_util_points_color_set" _setMapPointsColor :: Map -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Change the transformation to apply the given rotation
-foreign import ccall "evas_map_util_rotate" rotateMap :: Map -> Double -> Coord -> Coord -> IO ()
+rotateMap :: Double -> Coord -> Coord -> Map -> IO ()
+rotateMap phi cx cy m = _rotateMap m phi cx cy
+
+foreign import ccall "evas_map_util_rotate" _rotateMap :: Map -> Double -> Coord -> Coord -> IO ()
 
 -- | Change the transformation to apply the given zoom
-foreign import ccall "evas_map_util_zoom" zoomMap :: Map -> Double -> Double -> Coord -> Coord -> IO ()
+zoomMap :: Double -> Double -> Coord -> Coord -> Map -> IO ()
+zoomMap fx fy x y m = _zoomMap m fx fy x y
+
+foreign import ccall "evas_map_util_zoom" _zoomMap :: Map -> Double -> Double -> Coord -> Coord -> IO ()
 
 -- | Rotate the map around 3 axes in 3D
-foreign import ccall "evas_map_util_3d_rotate" rotateMap3D :: Map -> Double -> Double -> Double -> Coord -> Coord -> Coord -> IO ()
+rotateMap3D :: Double -> Double -> Double -> Coord -> Coord -> Coord -> Map -> IO ()
+rotateMap3D rx ry rz cx cy cz m = _rotateMap3D m rx ry rz cx cy cz
+
+foreign import ccall "evas_map_util_3d_rotate" _rotateMap3D :: Map -> Double -> Double -> Double -> Coord -> Coord -> Coord -> IO ()
 
 -- | Rotate the map in 3D using a unit quaternion
 --foreign import ccall "evas_map_util_quat_rotate" rotateMapQuat :: Map -> Double -> Double -> Double -> Double -> Double -> Double -> Double -> IO ()
 
 -- | Perform lighting calculations on the given Map
-foreign import ccall "evas_map_util_3d_lighting" lighting3DMap :: Map -> Coord -> Coord -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()
+lighting3DMap :: Coord -> Coord -> Int -> Int -> Int -> Int -> Int -> Int -> Map -> IO ()
+lighting3DMap x y a b c d e f m = _lighting3DMap m x y a b c d e f
+
+foreign import ccall "evas_map_util_3d_lighting" _lighting3DMap :: Map -> Coord -> Coord -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()
 
 -- | Apply a perspective transform to the map
-foreign import ccall "evas_map_util_3d_perspective" perspective3DMap :: Map -> Coord -> Coord -> Coord -> Coord -> IO ()
+perspective3DMap :: Coord -> Coord -> Coord -> Coord -> Map -> IO ()
+perspective3DMap x y x' y' m = _perspective3DMap m x y x' y'
+
+foreign import ccall "evas_map_util_3d_perspective" _perspective3DMap :: Map -> Coord -> Coord -> Coord -> Coord -> IO ()
 
 -- | Get the clockwise state of a map
 isMapClockwise :: Map -> IO Bool
@@ -92,8 +122,8 @@ foreign import ccall "evas_map_util_clockwise_get" _transformation_util_clockwis
 foreign import ccall "evas_map_new" createMap :: Int -> IO Map
 
 -- | Set the smoothing for map rendering
-setMapSmooth :: Map -> Bool -> IO ()
-setMapSmooth tr b = _transformation_smooth_set tr (fromBool b)
+setMapSmooth :: Bool -> Map -> IO ()
+setMapSmooth b m = _transformation_smooth_set m (fromBool b)
 
 foreign import ccall "evas_map_smooth_set" _transformation_smooth_set :: Map -> EinaBool -> IO ()
 
@@ -104,8 +134,8 @@ isMapSmooth tr = toBool <$> _transformation_smooth_get tr
 foreign import ccall "evas_map_smooth_get" _transformation_smooth_get :: Map -> IO EinaBool
 
 -- | Set the alpha flag for map rendering
-setMapAlpha :: Map -> Bool -> IO ()
-setMapAlpha tr b = _transformation_alpha_set tr (fromBool b)
+setMapAlpha :: Bool -> Map -> IO ()
+setMapAlpha b m = _transformation_alpha_set m (fromBool b)
 
 foreign import ccall "evas_map_alpha_set" _transformation_alpha_set :: Map -> EinaBool -> IO ()
 
@@ -125,16 +155,22 @@ foreign import ccall "evas_map_free" freeMap :: Map -> IO ()
 foreign import ccall "evas_map_count_get" getMapCount :: Map -> IO Int
 
 -- | Change the map point's coordinate
-foreign import ccall "evas_map_point_coord_set" setMapPointCoord :: Map -> Int -> Coord -> Coord -> Coord -> IO ()
+setMapPointCoord :: Int -> Coord -> Coord -> Coord -> Map -> IO ()
+setMapPointCoord n x y z m = _setMapPointCoord m n x y z
+
+foreign import ccall "evas_map_point_coord_set" _setMapPointCoord :: Map -> Int -> Coord -> Coord -> Coord -> IO ()
 
 -- | Get the map point's coordinate
-getMapPointCoord :: Map -> Int -> IO (Coord, Coord, Coord)
-getMapPointCoord tr idx = get3_helper (_transformation_point_coord_get tr idx)
+getMapPointCoord :: Int -> Map -> IO (Coord, Coord, Coord)
+getMapPointCoord n m = get3_helper (_transformation_point_coord_get m n)
 
 foreign import ccall "evas_map_point_coord_get" _transformation_point_coord_get :: Map -> Int -> Ptr Coord -> Ptr Coord -> Ptr Coord -> IO ()
 
 -- | Change the map point's U and V texture source point
-foreign import ccall "evas_map_point_image_uv_set" setMapPointImageUV :: Map -> Int -> Double -> Double -> IO ()
+setMapPointImageUV :: Int -> Double -> Double -> Map -> IO ()
+setMapPointImageUV n u v m = _setMapPointImageUV m n u v
+
+foreign import ccall "evas_map_point_image_uv_set" _setMapPointImageUV :: Map -> Int -> Double -> Double -> IO ()
 
 -- | Get the map point's U and V texture source points
 getMapPointImageUV :: Map -> Int -> IO (Double, Double)
@@ -143,7 +179,10 @@ getMapPointImageUV tr idx = get2_helper (_transformation_point_image_uv_get tr i
 foreign import ccall "evas_map_point_image_uv_get" _transformation_point_image_uv_get :: Map -> Int -> Ptr Double -> Ptr Double -> IO ()
 
 -- | Set the color of a vertex in the map
-foreign import ccall "evas_map_point_color_set" setMapPointColor :: Map -> Int -> Int -> Int -> Int -> Int -> IO ()
+setMapPointColor :: Int -> Int -> Int -> Int -> Int -> Map -> IO ()
+setMapPointColor n r g b a m = _setMapPointColor m n r g b a
+
+foreign import ccall "evas_map_point_color_set" _setMapPointColor :: Map -> Int -> Int -> Int -> Int -> Int -> IO ()
 
 
 -- | Get the color set on a vertex in the map

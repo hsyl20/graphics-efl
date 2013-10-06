@@ -15,17 +15,17 @@ import Graphics.Efl.Helpers
 -- | Set the output size of the render engine of the given canvas
 foreign import ccall "evas_output_size_set" setCanvasOutputSize :: Canvas -> Int -> Int -> IO ()
 
--- | Retrieve the output size of the render engine of the given evas.
+-- | Retrieve the output size of the render engine of the given canvas
 getCanvasOutputSize :: Canvas -> IO (Int,Int)
 getCanvasOutputSize canvas = get2_helper (_getCanvasOutputSize canvas)
 
 foreign import ccall "evas_output_size_get" _getCanvasOutputSize :: Canvas -> Ptr Int -> Ptr Int -> IO ()
 
 
--- | Set the output viewport of the given evas in canvas units.
+-- | Set the output viewport of the given evas in canvas units
 foreign import ccall "evas_output_viewport_set" setCanvasViewport :: Canvas -> Coord -> Coord -> Coord -> Coord -> IO ()
 
--- | Get the render engine's output viewport co-ordinates in canvas units
+-- | Get the render engine's output viewport coordinates in canvas units
 getCanvasViewport :: Canvas -> IO (Coord,Coord,Coord,Coord)
 getCanvasViewport canvas = get4_helper (_getCanvasViewport canvas)
 

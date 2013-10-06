@@ -72,6 +72,7 @@ executable ImageViewer
   build-depends: 
     base,
     graphics-efl,
-    vector
+    vector,
+    stm
   hs-source-dirs: examples
   ghc-options: -Wall -threaded

@@ -8,7 +8,7 @@ module Graphics.Efl.Window (
    createWindow, destroyWindow, showWindow,
    setWindowTitle, getWindowTitle,
    getWindowCanvas, getWindowGeometry,
-   setWindowResizeCallback
+   onWindowResize, onWindowResizeEx
 ) where
 
 import Foreign.Ptr
@@ -99,15 +99,19 @@ foreign import ccall "ecore_evas_show" showWindow :: Window -> IO ()
 -- | Get the rendering canvas of the window
 foreign import ccall "ecore_evas_get" getWindowCanvas :: Window -> IO Canvas
 
--- | Retrieve the position and (rectangular) size of the given Evas object
+-- | Retrieve the position and (rectangular) size of the given canvas object
 getWindowGeometry :: Window -> IO (Int,Int,Int,Int)
 getWindowGeometry win = get4_helper (_getWindowGeometry win)
 
 foreign import ccall "ecore_evas_geometry_get" _getWindowGeometry :: Window -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
 
 -- | Associate a callback to the "resize" event
-setWindowResizeCallback :: Window -> (Window -> IO ()) -> IO ()
-setWindowResizeCallback win cb = setWindowResizeCallback_ win =<< wrapCallback cb
+onWindowResize :: Window -> IO () -> IO ()
+onWindowResize win cb = onWindowResizeEx win (const cb)
+
+-- | Associate a callback to the "resize" event
+onWindowResizeEx :: Window -> (Window -> IO ()) -> IO ()
+onWindowResizeEx win cb = setWindowResizeCallback_ win =<< wrapCallback cb
 
 foreign import ccall "ecore_evas_callback_resize_set" setWindowResizeCallback_ :: Window -> FunPtr (Window -> IO ()) -> IO ()
 

@@ -69,7 +69,7 @@ foreign import ccall "evas_map_util_points_populate_from_object" _populateMapPoi
 
 -- | Populate source and destination map points to match given geometry
 populateMapPointsFromGeometry :: Coord -> Coord -> Coord -> Coord -> Coord -> Map -> IO ()
-populateMapPointsFromGeometry x y z w h m = _populateMapPointsFromGeometry m x y z w h
+populateMapPointsFromGeometry x y w h z m = _populateMapPointsFromGeometry m x y w h z
 
 foreign import ccall "evas_map_util_points_populate_from_geometry" _populateMapPointsFromGeometry :: Map -> Coord -> Coord -> Coord -> Coord -> Coord -> IO ()
 

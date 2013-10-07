@@ -119,7 +119,10 @@ foreign import ccall "evas_object_image_border_scale_get" getImageBorderScale ::
 
 
 -- | Set how to fill an image object's drawing rectangle given the (real) image bound to it
-foreign import ccall "evas_object_image_fill_set" setImageFill :: Object -> Coord -> Coord -> Coord -> Coord -> IO ()
+setImageFill :: Coord -> Coord -> Coord -> Coord -> Object -> IO ()
+setImageFill x y w h obj = _setImageFill obj x y w h
+
+foreign import ccall "evas_object_image_fill_set" _setImageFill :: Object -> Coord -> Coord -> Coord -> Coord -> IO ()
 
 -- | Retrieve how an image object is to fill its drawing rectangle, given the (real) image bound to it
 getImageFill :: Object -> IO (Coord,  Coord, Coord, Coord)

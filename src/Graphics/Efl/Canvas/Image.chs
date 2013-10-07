@@ -62,7 +62,13 @@ foreign import ccall "evas_object_image_filled_add" addFilledImage :: Canvas -> 
 foreign import ccall "evas_object_image_memfile_set" setImageMemFile :: Object -> Ptr () -> Int -> CString -> CString -> IO ()
 
 -- | Set the source file from where an image object must fetch the real image data (it may be an Eet file, besides pure image ones)
-foreign import ccall "evas_object_image_file_set" setImageFile :: Object -> CString -> CString -> IO ()
+setImageFile :: String -> Maybe String -> Object -> IO ()
+setImageFile file key obj = 
+   withCString file $ \file' -> case key of
+      Nothing -> _setImageFile obj file' nullPtr
+      Just k -> withCString k (\key' -> _setImageFile obj file' key')
+
+foreign import ccall "evas_object_image_file_set" _setImageFile :: Object -> CString -> CString -> IO ()
 
 -- | Retrieve the source file from where an image object is to fetch the real image data (it may be an Eet file, besides pure image ones)
 foreign import ccall "evas_object_image_file_get" getImageFile :: Object -> Ptr CString -> CString -> IO ()

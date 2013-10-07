@@ -30,7 +30,7 @@ main = do
 
       putStrLn (printf "%d images to show" (Vector.length images))
 
-      if Vector.length images == 0 then myShutdown win else return ()
+      if Vector.length images == 0 then (quitMainLoop >> exitSuccess) else return ()
 
       img <- addFilledImage canvas
 
@@ -46,7 +46,7 @@ main = do
 
 
       tr <- createMap 4
-      populateMapPointsFromObject tr img
+               # populateMapPointsFromObject img
    --   setMap img tr
    --   enableMap img
       freeMap tr
@@ -62,15 +62,6 @@ main = do
 
       onMouseDown bg $ do
          putStrLn "Mouse down"
-
--- Shutdown the application
-myShutdown :: Window -> IO ()
-myShutdown win = do
-  putStrLn "Going to shutdown"
--- FIXME: deadlock
-  destroyWindow win
-  shutdownWindowingSystem
-  exitSuccess
 
 -- Refresh current display
 refresh :: Object -> Canvas -> IO ()
@@ -115,7 +106,7 @@ showImage :: Object -> String -> IO ()
 showImage img path = do
   canvas <- getCanvas img
   putStrLn (printf "Show image %s" (show path))
-  withCString path $ flip (setImageFile img) nullPtr
+  setImageFile path Nothing img
   err <- getImageLoadError img
   case err of
     EvasLoadErrorNone -> return ()

@@ -19,7 +19,7 @@ defaultWindowEx engine = do
    c <- getWindowCanvas w
    showWindow w
    v <- newEmptyMVar
-   _ <- forkFinally beginMainLoop (\_ -> putMVar v ())
+   _ <- forkOS (beginMainLoop >> putMVar v ())
    return (w,c,v)
 
 -- | Initialize a default window.
@@ -30,7 +30,7 @@ defaultWindow engine = do
    w <- createWindow engine 0 0 800 600 Nothing
    c <- getWindowCanvas w
    showWindow w
-   _ <- forkIO beginMainLoop
+   _ <- forkOS beginMainLoop
    return (w,c)
 
 -- | Create a default window and block

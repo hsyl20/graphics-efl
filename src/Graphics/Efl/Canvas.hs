@@ -14,10 +14,13 @@ module Graphics.Efl.Canvas (
 import Graphics.Efl.Canvas.Types as M
 import Graphics.Efl.Canvas.BasicObject as M
 import Graphics.Efl.Canvas.Rectangle as M
+import Graphics.Efl.Canvas.Line as M
+import Graphics.Efl.Canvas.Polygon as M
 import Graphics.Efl.Canvas.Image as M
 import Graphics.Efl.Canvas.Events as M
 import Graphics.Efl.Canvas.Misc as M
 import Graphics.Efl.Canvas.Text as M
+import Graphics.Efl.Canvas.TextBlock as M
 import Graphics.Efl.Canvas.Map as M
 import Graphics.Efl.Canvas.Engine as M
 import Graphics.Efl.Canvas.ViewPort as M

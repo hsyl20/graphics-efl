@@ -14,6 +14,14 @@ main = do
 
       setWindowTitle "Simple Haskell-EFL Example" win
 
+      bg <- addRectangle canvas
+            # setColor 0 0 0 255
+            # uncover
+
+      onWindowResize win $ do
+         (_,_,w,h) <- getWindowGeometry win
+         resize w h bg
+
       r <- addRectangle canvas
             # resize 100 40
             # move 20 40
@@ -42,7 +50,7 @@ main = do
       let run = do
                rotateMap 5 cx cy m
                setMap m r
-               threadDelay (1000 * 1000 * 1)
+               threadDelay (1000 * 100)
                run
 
       run

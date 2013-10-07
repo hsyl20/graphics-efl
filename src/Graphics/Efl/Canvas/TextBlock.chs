@@ -20,11 +20,35 @@ module Graphics.Efl.Canvas.TextBlock (
    setTextBlockCursorFirstParagraph, setTextBlockCursorLastParagraph,
    setTextBlockCursorNextParagraph, setTextBlockCursorPreviousParagraph,
    getTextBlockFormatNodeList, getTextBlockFirstFormatNode, getTextBlockLastFormatNode,
-   getTextBlockNextFormatNode, getTextBlockPreviousFormatNode
+   getTextBlockNextFormatNode, getTextBlockPreviousFormatNode,
+   removeTextBlockFormatNodePair, setTextBlockCursorAtFormatNode,
+   getTextBlockFormatNodeAtCursor, getTextBlockFormatNodeText,
+   setTextBlockCursorAtFormatPosition, isTextBlockCursorFormatVisible,
+   advanceTextBlockCursorToNextFormat, advanceTextBlockCursorToPreviousFormat,
+   isTextBlockCursorFormat,
+   advanceTextBlockCursorPreviousChar, advanceTextBlockCursorNextChar,
+   moveTextBlockCursorWordStart, moveTextBlockCursorWordEnd,
+   moveTextBlockCursorParagraphFirstChar, moveTextBlockCursorParagraphLastChar,
+   moveTextBlockCursorLineFirstChar, moveTextBlockCursorLineLastChar,
+   getTextBlockCursorPos, setTextBlockCursorPos, setTextBlockCursorLine, 
+   compareTextBlockCursors, copyTextBlockCursors,
+   appendTextBlockCursorText, prependTextBlockCursorText,
+   appendTextBlockCursorFormat, prependTextBlockCursorFormat,
+   deleteTextBlockCursorChar, deleteTextBlockCursorRange,
+   getTextBlockCursorParagraphText, getTextBlockCursorParagraphTextLength,
+   getTextBlockCursorVisibleRange, getTextBlockCursorRangeFormats,
+   getTextBlockCursorRangeText, getTextBlockCursorContent,
+   getTextBlockCursorGeometry, getTextBlockCursorCharGeometry,
+   getTextBlockCursorPenGeometry, getTextBlockCursorLineGeometry,
+   getTextBlockCursorRangeGeometry, getTextBlockCursorFormatItemGeometry,
+   setTextBlockCursorCharCoord, setTextBlockCursorLineCoord,
+   isTextBlockCursorEndOfLine, getTextBlockLineGeometry,
+   clearTextBlock, getTextBlockFormattedSize, getTextBlockNativeSize
 ) where
 
 import Foreign.C.String
 import Foreign.C.Types
+import Foreign.Ptr
 import Control.Applicative
 
 import Graphics.Efl.Canvas.Types
@@ -166,3 +190,194 @@ getTextBlockPreviousFormatNode :: TextBlockNodeFormat -> IO (Maybe TextBlockNode
 getTextBlockPreviousFormatNode n = maybePtr <$>  _getTextBlockPreviousFormatNode n
 
 foreign import ccall "evas_textblock_node_format_prev_get" _getTextBlockPreviousFormatNode :: TextBlockNodeFormat -> IO TextBlockNodeFormat
+
+-- | Remove a format node and it's match. i.e, removes a \<tag\> \</tag\> pair.
+-- Assumes the node is the first part of \<tag\> i.e, this won't work if
+-- n is a closing tag.
+foreign import ccall "evas_textblock_node_format_remove_pair" removeTextBlockFormatNodePair :: Object -> TextBlockNodeFormat -> IO ()
+
+-- | Set the cursor to point to the place where format points to
+foreign import ccall "evas_textblock_cursor_set_at_format" setTextBlockCursorAtFormatNode :: TextBlockCursor -> TextBlockNodeFormat -> IO ()
+
+-- | Return the format node at the position pointed by cur
+foreign import ccall "evas_textblock_cursor_format_get" getTextBlockFormatNodeAtCursor :: TextBlockCursor -> IO TextBlockNodeFormat
+
+-- | Get the text format representation of the format node
+foreign import ccall "evas_textblock_node_format_text_get" getTextBlockFormatNodeText :: TextBlockNodeFormat -> IO CString
+
+-- | Set the cursor to point to the position of fmt
+foreign import ccall "evas_textblock_cursor_at_format_set" setTextBlockCursorAtFormatPosition :: TextBlockCursor -> TextBlockNodeFormat -> IO ()
+
+-- | Check if the current cursor position is a visible format. This way is more
+-- efficient than evas_textblock_cursor_format_get() to check for the existence
+-- of a visible format.
+isTextBlockCursorFormatVisible :: TextBlockCursor -> IO Bool
+isTextBlockCursorFormatVisible cur = toBool <$> _isTextBlockCursorFormatVisible cur
+
+foreign import ccall "evas_textblock_cursor_format_is_visible_get" _isTextBlockCursorFormatVisible :: TextBlockCursor -> IO EinaBool
+
+-- | Advance to the next format node
+advanceTextBlockCursorToNextFormat :: TextBlockCursor -> IO Bool
+advanceTextBlockCursorToNextFormat cur = toBool <$> _advanceTextBlockCursorToNextFormat cur
+
+foreign import ccall "evas_textblock_cursor_format_next" _advanceTextBlockCursorToNextFormat :: TextBlockCursor -> IO EinaBool
+
+-- | Advance to the prev format node
+advanceTextBlockCursorToPreviousFormat :: TextBlockCursor -> IO Bool
+advanceTextBlockCursorToPreviousFormat cur = toBool <$> _advanceTextBlockCursorToPreviousFormat cur
+
+foreign import ccall "evas_textblock_cursor_format_prev" _advanceTextBlockCursorToPreviousFormat :: TextBlockCursor -> IO EinaBool
+
+-- | Return true if the cursor points to a format
+isTextBlockCursorFormat :: TextBlockCursor -> IO Bool
+isTextBlockCursorFormat cur = toBool <$> _isTextBlockCursorFormatVisible cur
+
+foreign import ccall "evas_textblock_cursor_is_format" _isTextBlockCursorFormat :: TextBlockCursor -> IO EinaBool
+
+-- | Advance 1 char forward
+advanceTextBlockCursorNextChar :: TextBlockCursor -> IO Bool
+advanceTextBlockCursorNextChar cur = toBool <$> _advanceTextBlockCursorNextChar cur
+
+foreign import ccall "evas_textblock_cursor_char_next" _advanceTextBlockCursorNextChar :: TextBlockCursor -> IO EinaBool
+
+-- | Advance 1 char backward
+advanceTextBlockCursorPreviousChar :: TextBlockCursor -> IO Bool
+advanceTextBlockCursorPreviousChar cur = toBool <$> _advanceTextBlockCursorPreviousChar cur
+
+foreign import ccall "evas_textblock_cursor_char_prev" _advanceTextBlockCursorPreviousChar :: TextBlockCursor -> IO EinaBool
+
+-- | Move the cursor to the start of the word under the cursor
+moveTextBlockCursorWordStart :: TextBlockCursor -> IO Bool
+moveTextBlockCursorWordStart cur = toBool <$> _moveTextBlockCursorWordStart cur
+
+foreign import ccall "evas_textblock_cursor_word_start" _moveTextBlockCursorWordStart :: TextBlockCursor -> IO EinaBool
+
+-- | Move the cursor to the end of the word under the cursor
+moveTextBlockCursorWordEnd :: TextBlockCursor -> IO Bool
+moveTextBlockCursorWordEnd cur = toBool <$> _moveTextBlockCursorWordEnd cur
+
+foreign import ccall "evas_textblock_cursor_word_end" _moveTextBlockCursorWordEnd :: TextBlockCursor -> IO EinaBool
+
+-- | Go to the first char in the node the cursor is pointing on
+foreign import ccall "evas_textblock_cursor_paragraph_char_first" moveTextBlockCursorParagraphFirstChar :: TextBlockCursor -> IO ()
+
+-- | Go to the last char in a text node
+foreign import ccall "evas_textblock_cursor_paragraph_char_last" moveTextBlockCursorParagraphLastChar :: TextBlockCursor -> IO ()
+
+-- | Go to the start of the current line
+foreign import ccall "evas_textblock_cursor_line_char_first" moveTextBlockCursorLineFirstChar :: TextBlockCursor -> IO ()
+
+-- | Go to the end of the current line
+foreign import ccall "evas_textblock_cursor_line_char_last" moveTextBlockCursorLineLastChar :: TextBlockCursor -> IO ()
+
+-- | Return the current cursor pos
+foreign import ccall "evas_textblock_cursor_pos_get" getTextBlockCursorPos :: TextBlockCursor -> IO Int
+
+-- | Set the cursor pos
+foreign import ccall "evas_textblock_cursor_pos_set" setTextBlockCursorPos :: TextBlockCursor -> Int -> IO ()
+
+-- | Go to the start of the line passed
+foreign import ccall "evas_textblock_cursor_line_set" setTextBlockCursorLine :: TextBlockCursor -> Int -> IO ()
+
+-- | Compare two cursors
+foreign import ccall "evas_textblock_cursor_compare" compareTextBlockCursors :: TextBlockCursor -> TextBlockCursor -> IO Int
+
+-- | Make cur_dest point to the same place as cur. Does not work if they don't point to the same object.
+foreign import ccall "evas_textblock_cursor_copy" copyTextBlockCursors :: TextBlockCursor -> TextBlockCursor -> IO ()
+
+-- | Add text to the current cursor position and set the cursor to *before* the start of the text just added
+foreign import ccall "evas_textblock_cursor_text_append" appendTextBlockCursorText :: TextBlockCursor -> CString -> IO Int
+
+-- | Add text to the current cursor position and set the cursor to *after* the start of the text just added
+foreign import ccall "evas_textblock_cursor_text_prepend" prependTextBlockCursorText :: TextBlockCursor -> CString -> IO Int
+
+-- | Add format to the current cursor position. If the format being added is a
+-- visible format, add it *before* the cursor position, otherwise, add it after.
+appendTextBlockCursorFormat :: TextBlockCursor -> String -> IO Bool
+appendTextBlockCursorFormat cur fmt = toBool <$> withCString fmt (_appendTextBlockCursorFormat cur)
+
+foreign import ccall "evas_textblock_cursor_format_append" _appendTextBlockCursorFormat :: TextBlockCursor -> CString -> IO EinaBool
+
+-- | Add format to the current cursor position. If the format being added is a
+-- visible format, add it *before* the cursor position, otherwise, add it after.
+prependTextBlockCursorFormat :: TextBlockCursor -> String -> IO Bool
+prependTextBlockCursorFormat cur fmt = toBool <$> withCString fmt (_prependTextBlockCursorFormat cur)
+
+foreign import ccall "evas_textblock_cursor_format_prepend" _prependTextBlockCursorFormat :: TextBlockCursor -> CString -> IO EinaBool
+
+-- | Delete the character at the location of the cursor. If there's a format pointing to this position, delete it as well.
+foreign import ccall "evas_textblock_cursor_char_delete" deleteTextBlockCursorChar :: TextBlockCursor -> IO ()
+
+-- | Delete the range between cur1 and cur2
+foreign import ccall "evas_textblock_cursor_range_delete" deleteTextBlockCursorRange :: TextBlockCursor -> TextBlockCursor -> IO ()
+
+-- | Return the text of the paragraph cur points to - returns the text in markup.
+foreign import ccall "evas_textblock_cursor_paragraph_text_get" getTextBlockCursorParagraphText :: TextBlockCursor -> IO CString
+
+-- | Return the length of the paragraph, cheaper the eina_unicode_strlen()
+foreign import ccall "evas_textblock_cursor_paragraph_text_length_get" getTextBlockCursorParagraphTextLength :: TextBlockCursor -> IO Int
+
+-- | Return the currently visible range
+getTextBlockCursorVisibleRange :: TextBlockCursor -> TextBlockCursor -> IO Bool
+getTextBlockCursorVisibleRange cur1 cur2 = toBool <$> _getTextBlockCursorVisibleRange cur1 cur2
+
+foreign import ccall "evas_textblock_cursor_visible_range_get" _getTextBlockCursorVisibleRange :: TextBlockCursor -> TextBlockCursor -> IO EinaBool
+
+-- | Return the format nodes in the range between cur1 and cur2
+foreign import ccall "evas_textblock_cursor_range_formats_get" getTextBlockCursorRangeFormats :: TextBlockCursor -> TextBlockCursor -> IO (EinaList TextBlockNodeFormat)
+
+-- | Return the text in the range between cur1 and cur2
+foreign import ccall "evas_textblock_cursor_range_text_get" getTextBlockCursorRangeText :: TextBlockCursor -> TextBlockCursor -> IO CString
+
+-- | Return the content of the cursor
+foreign import ccall "evas_textblock_cursor_content_get" getTextBlockCursorContent :: TextBlockCursor -> IO CString
+
+-- | Return the geometry of the cursor. Depends on the type of cursor requested.
+-- This should be used instead of char_geometry_get because there are weird special cases with BiDi text.
+getTextBlockCursorGeometry :: TextBlockCursor -> TextDirection -> TextBlockCursorType -> IO (Coord,Coord,Coord,Coord,Int)
+getTextBlockCursorGeometry cur dir ctype = get4_ex_helper f
+   where
+      f cx cy cw ch = _getTextBlockCursorGeometry cur cx cy cw ch (fromEnum dir) ctype
+
+      
+
+foreign import ccall "evas_textblock_cursor_geometry_get" _getTextBlockCursorGeometry :: TextBlockCursor -> Ptr Coord -> Ptr Coord -> Ptr Coord -> Ptr Coord -> Int -> TextBlockCursorType -> IO Int
+
+-- | Return the geometry of the char at cur
+foreign import ccall "evas_textblock_cursor_char_geometry_get" getTextBlockCursorCharGeometry :: TextBlockCursor -> Ptr Coord -> Ptr Coord -> Ptr Coord -> Ptr Coord -> IO Int
+
+-- | Return the geometry of the pen at cur
+foreign import ccall "evas_textblock_cursor_pen_geometry_get" getTextBlockCursorPenGeometry :: TextBlockCursor -> Ptr Coord -> Ptr Coord -> Ptr Coord -> Ptr Coord -> IO Int
+
+-- | Return the geometry of the line at cur
+foreign import ccall "evas_textblock_cursor_line_geometry_get" getTextBlockCursorLineGeometry :: TextBlockCursor -> Ptr Coord -> Ptr Coord -> Ptr Coord -> Ptr Coord -> IO Int
+
+-- | Return the geometry of a range
+foreign import ccall "evas_textblock_cursor_range_geometry_get" getTextBlockCursorRangeGeometry :: TextBlockCursor -> TextBlockCursor -> IO (EinaList Coord)
+
+-- | Return the geometry of a format item
+foreign import ccall "evas_textblock_cursor_format_item_geometry_get" getTextBlockCursorFormatItemGeometry :: TextBlockCursor -> Ptr Coord -> Ptr Coord -> Ptr Coord -> Ptr Coord -> IO EinaBool
+
+-- | Set the position of the cursor according to the X and Y coordinates
+foreign import ccall "evas_textblock_cursor_char_coord_set" setTextBlockCursorCharCoord :: TextBlockCursor -> Coord -> Coord -> IO EinaBool
+
+-- | Set the cursor position according to the y coord
+foreign import ccall "evas_textblock_cursor_line_coord_set" setTextBlockCursorLineCoord :: TextBlockCursor -> Coord -> IO Int
+
+-- | Check if the cursor points to the end of the line
+isTextBlockCursorEndOfLine :: TextBlockCursor -> IO Bool
+isTextBlockCursorEndOfLine cur = toBool <$> _isTextBlockCursorEndOfLine cur
+
+foreign import ccall "evas_textblock_cursor_eol_get" _isTextBlockCursorEndOfLine :: TextBlockCursor -> IO EinaBool
+
+-- | Return the geometry of the given line
+foreign import ccall "evas_object_textblock_line_number_geometry_get" getTextBlockLineGeometry :: Object -> Int -> Ptr Coord -> Ptr Coord -> Ptr Coord -> Ptr Coord -> IO EinaBool
+
+-- | Clear the textblock object
+foreign import ccall "evas_object_textblock_clear" clearTextBlock :: Object -> IO ()
+
+-- | Get the formatted width and height
+foreign import ccall "evas_object_textblock_size_formatted_get" getTextBlockFormattedSize :: Object -> Ptr Coord -> Ptr Coord -> IO ()
+
+-- | Get the native width and height
+foreign import ccall "evas_object_textblock_size_native_get" getTextBlockNativeSize :: Object -> Ptr Coord -> Ptr Coord -> IO ()

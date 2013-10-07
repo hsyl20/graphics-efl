@@ -47,9 +47,11 @@ main = do
 
       tr <- createMap 4
                # populateMapPointsFromObject img
-   --   setMap img tr
-   --   enableMap img
+      setMap tr img
+      enableMap img
       freeMap tr
+
+      zoomFit img canvas
 
 
       onKeyDown bg $ \case 
@@ -68,7 +70,6 @@ refresh :: Object -> Canvas -> IO ()
 refresh img canvas = do
   zoomFit img canvas
   centerImage img canvas
-  renderCanvas canvas
 
 
 rotate :: Object -> Double -> IO ()
@@ -76,7 +77,7 @@ rotate img angle = do
    (x,y,w,h) <- getGeometry img
    tr <- dupMap =<< getMap img
    rotateMap angle (x + w `div` 2) (y + h `div` 2) tr
-   setMap img tr
+   setMap tr img
    enableMap img
    freeMap tr
 

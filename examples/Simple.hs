@@ -1,8 +1,18 @@
 import Graphics.Efl.Simple
 
+import Control.Concurrent
+import Control.Applicative
+
 main :: IO ()
 main = do
-   withDefaultWindow $ \ _ canvas -> do
+   initWindowingSystem
+   engines <- getEngines
+   putStrLn (show engines)
+
+   withDefaultWindow (Just "opengl_x11") $ \ win canvas -> do
+      putStrLn =<< ("Using engine " ++) <$> getEngineName win
+
+      setWindowTitle "Simple Haskell-EFL Example" win
 
       r <- addRectangle canvas
             # resize 100 40
@@ -10,7 +20,7 @@ main = do
             # setColor 255 0 0 255
             # uncover
 
-      t <- addText canvas
+      _ <- addText canvas
             # setText "Haskell-EFL!!"
             # resize 200 10
             # move 25 50
@@ -19,20 +29,20 @@ main = do
             # setColor 0 255 0 255
             # uncover
 
-      renderCanvas canvas
-
       let center o = do
             (x,y,w,h) <- getGeometry o
             return (w `div` 2 + x, h `div` 2 + y)
             
-
-      (cx,cy) <- center t
-
+      (cx,cy) <- center r
       m <- createMap 4
             # populateMapPointsFromObject r
-            # rotateMap 5 cx cy
-
       setMap m r
       enableMap r
 
-      return ()
+      let run = do
+               rotateMap 5 cx cy m
+               setMap m r
+               threadDelay (1000 * 1000 * 1)
+               run
+
+      run

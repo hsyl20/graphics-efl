@@ -20,6 +20,7 @@ library
       Graphics.Efl.Simple,
       Graphics.Efl.Helpers,
       Graphics.Efl.Window,
+      Graphics.Efl.Window.Types,
       Graphics.Efl.Canvas,
       Graphics.Efl.Canvas.Types,
       Graphics.Efl.Canvas.BasicObject,

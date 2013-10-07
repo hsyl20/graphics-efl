@@ -4,7 +4,9 @@
 module Graphics.Efl.Window (
    Window,
    initWindowingSystem, shutdownWindowingSystem,
+   isEngineSupported, getEngines, getEngineName,
    createWindow, destroyWindow, showWindow,
+   setWindowTitle, getWindowTitle,
    getWindowCanvas, getWindowGeometry,
    setWindowResizeCallback
 ) where
@@ -18,6 +20,8 @@ import Control.Monad
 
 import Graphics.Efl.Canvas
 import Graphics.Efl.Helpers
+import Graphics.Efl.Window.Types
+import Graphics.Efl.Eina
 
 #include <Ecore_Evas.h>
 
@@ -37,6 +41,29 @@ foreign import ccall "ecore_evas_init" initWindowingSystem_ :: IO Int
 -- | Shut down the windowing system
 foreign import ccall "ecore_evas_shutdown" shutdownWindowingSystem :: IO ()
 
+-- | Indicate if an engine is supported
+isEngineSupported :: EngineType -> IO Bool
+isEngineSupported engine = (> 0) <$> _isEngineSupported (fromEnum engine)
+
+foreign import ccall "ecore_evas_engine_type_supported_get" _isEngineSupported :: Int -> IO Int
+
+-- | Return a list of supported engines names
+getEngines :: IO [String]
+getEngines = do
+   xs <- _getEngines
+   r <- mapM peekCString =<< toList xs
+   _freeEngines xs
+   return r
+
+foreign import ccall "ecore_evas_engines_get" _getEngines :: IO (EinaList CString)
+foreign import ccall "ecore_evas_engines_free" _freeEngines :: EinaList CString -> IO ()
+
+-- | Get the name of the engine used by the window
+getEngineName :: Window -> IO String
+getEngineName win = peekCString =<< _getEngineName win
+
+foreign import ccall "ecore_evas_engine_name_get" _getEngineName :: Window -> IO CString
+
 -- | Create a new window
 createWindow :: Maybe String -> Int -> Int -> Int -> Int -> Maybe String -> IO Window
 createWindow engine x y w h options = do
@@ -52,6 +79,19 @@ foreign import ccall "ecore_evas_new" createWindow_ :: CString -> Int -> Int -> 
 
 -- | Destroy a window
 foreign import ccall "ecore_evas_free" destroyWindow :: Window -> IO ()
+
+
+-- | Set window title
+setWindowTitle :: String -> Window -> IO ()
+setWindowTitle title win = withCString title (_setWindowTitle win)
+
+foreign import ccall "ecore_evas_title_set" _setWindowTitle :: Window -> CString -> IO ()
+
+-- | Get window title
+getWindowTitle :: Window -> IO String
+getWindowTitle win = peekCString =<< _getWindowTitle win
+
+foreign import ccall "ecore_evas_title_get" _getWindowTitle :: Window -> IO CString
 
 -- | Display a window
 foreign import ccall "ecore_evas_show" showWindow :: Window -> IO ()

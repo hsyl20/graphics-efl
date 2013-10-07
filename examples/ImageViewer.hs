@@ -21,7 +21,7 @@ backgroundColor = (64,64,64,255)
 
 main :: IO ()
 main = do
-   withDefaultWindow $ \win canvas -> do
+   withDefaultWindow Nothing $ \win canvas -> do
 
       bg <- configureBackground win canvas
 

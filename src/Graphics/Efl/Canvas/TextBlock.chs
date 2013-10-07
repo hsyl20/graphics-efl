@@ -131,7 +131,10 @@ getTextBlockLegacyNewline obj = toBool <$> _getTextBlockLegacyNewline obj
 foreign import ccall "evas_object_textblock_legacy_newline_get" _getTextBlockLegacyNewline :: Object -> IO EinaBool
 
 -- | Set the tetxblock's text to the markup text
-foreign import ccall "evas_object_textblock_text_markup_set" setTextBlockTextMarkup :: Object -> CString -> IO ()
+setTextBlockTextMarkup :: String -> Object -> IO ()
+setTextBlockTextMarkup s obj = withCString s (_setTextBlockTextMarkup obj)
+
+foreign import ccall "evas_object_textblock_text_markup_set" _setTextBlockTextMarkup :: Object -> CString -> IO ()
 
 -- | Prepend markup to the cursor cur
 foreign import ccall "evas_object_textblock_text_markup_prepend" prependTextBlockTextMarkup :: TextBlockCursor -> CString -> IO ()

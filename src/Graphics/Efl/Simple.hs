@@ -42,6 +42,8 @@ withDefaultWindow engine f = do
    showWindow w
    _ <- forkIO (f w c)
    beginMainLoop
+   destroyWindow w
+   shutdownWindowingSystem
 
 
 (#) :: IO Object -> (Object -> IO ()) -> IO Object

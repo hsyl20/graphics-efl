@@ -34,7 +34,7 @@ main = do
 
       img <- addFilledImage canvas
 
-      showImage img $ images ! 0
+      showImage win img $ images ! 0
 
       enableEventPassing img
       uncover img
@@ -42,22 +42,16 @@ main = do
       onWindowResize win $ do
          (_,_,w,h) <- getWindowGeometry win
          resize w h bg
-         --refresh img canvas
+         refresh img canvas win
 
 
-      tr <- createMap 4
-               # populateMapPointsFromObject img
-      setMap tr img
-      enableMap img
-      freeMap tr
-
-      zoomFit img canvas
+      refresh img canvas win
 
 
       onKeyDown bg $ \case 
-         "space" -> nextImage img currentImage images
-         "n" -> nextImage img currentImage images
-         "p" -> previousImage img currentImage images
+         "space" -> nextImage win img currentImage images
+         "n" -> nextImage win img currentImage images
+         "p" -> previousImage win img currentImage images
          "t" -> rotate img 90.0
          "q" -> quitMainLoop
          _ -> return ()
@@ -66,10 +60,31 @@ main = do
          putStrLn "Mouse down"
 
 -- Refresh current display
-refresh :: Object -> Canvas -> IO ()
-refresh img canvas = do
-  zoomFit img canvas
-  centerImage img canvas
+refresh :: Object -> Canvas -> Window -> IO ()
+refresh img canvas win = do
+   disableMap img
+
+   (_,_,cw,ch) <- getWindowGeometry win
+   (iw,ih) <- getImageSize img
+
+   let ratioH = (fromIntegral ch) / (fromIntegral ih)
+       ratioW = (fromIntegral cw) / (fromIntegral iw)
+       ratio = min 1.0 (min ratioH ratioW)
+       w = floor $ (ratio * fromIntegral iw :: Double)
+       h = floor $ (ratio * fromIntegral ih :: Double)
+       x = floor $ max 0 ((fromIntegral cw - fromIntegral w :: Double) / 2)
+       y = floor $ max 0 ((fromIntegral ch - fromIntegral h :: Double) / 2)
+  
+   putStrLn (show [cw,ch,iw,ih,x,y,w,h])
+   resize w h img
+   move x y img
+
+--   tr <- createMap 4
+--            # populateMapPointsFromGeometry x y w h 1
+--   setMap tr img
+--   enableMap img
+--   freeMap tr
+
 
 
 rotate :: Object -> Double -> IO ()
@@ -82,29 +97,29 @@ rotate img angle = do
    freeMap tr
 
 -- Switch to next image
-nextImage :: Object -> TVar Int -> Vector String -> IO ()
-nextImage img current images = do
+nextImage :: Window -> Object -> TVar Int -> Vector String -> IO ()
+nextImage win img current images = do
    let f x = if x+1 < Vector.length images then x+1 else x
 
    c <- atomically $ do
       modifyTVar current f
       readTVar current
-   showImage img (images ! c)
+   showImage win img (images ! c)
 
 -- Switch to previous image
-previousImage :: Object -> TVar Int -> Vector String -> IO ()
-previousImage img current images = do
+previousImage :: Window -> Object -> TVar Int -> Vector String -> IO ()
+previousImage win img current images = do
    let f x = if x > 0 then x-1 else x
 
    c <- atomically $ do
       modifyTVar current f
       readTVar current
 
-   showImage img (images ! c)
+   showImage win img (images ! c)
 
 -- Show the image whose path is given as a parameter
-showImage :: Object -> String -> IO ()
-showImage img path = do
+showImage :: Window -> Object -> String -> IO ()
+showImage win img path = do
   canvas <- getCanvas img
   putStrLn (printf "Show image %s" (show path))
   setImageFile path Nothing img
@@ -112,33 +127,8 @@ showImage img path = do
   case err of
     EvasLoadErrorNone -> return ()
     _ -> putStrLn =<< peekCString =<< loadErrorString (fromEnum err)
-  (w,h) <- getImageSize img
-  resize w h img
-  refresh img canvas
 
--- Zoom the image so that it fits in the canvas
-zoomFit :: Object -> Canvas -> IO ()
-zoomFit img canvas = do
-  (cw,ch) <- getCanvasOutputSize canvas
-  (iw,ih) <- getImageSize img
-  
-  let ratioH = (fromIntegral ch) / (fromIntegral ih)
-      ratioW = (fromIntegral cw) / (fromIntegral iw)
-      ratio = min 1.0 (min ratioH ratioW)
-      w = floor $ (ratio * fromIntegral iw :: Double)
-      h = floor $ (ratio * fromIntegral ih :: Double)
-
-  resize w h img
-
--- Center the image on the canvas
-centerImage :: Object -> Canvas -> IO ()
-centerImage img canvas = do
-  (cw,ch) <- getCanvasOutputSize canvas
-  (_,_,iw,ih) <- getGeometry img
-  let w = floor $ (fromIntegral cw - fromIntegral iw :: Double) / 2
-      h = floor $ (fromIntegral ch - fromIntegral ih :: Double) / 2
-  
-  move w h img
+  refresh img canvas win
 
 onMouseDown :: Object -> IO () -> IO ()
 onMouseDown = onEvent EvasCallbackMouseDown
@@ -154,9 +144,6 @@ onEvent :: CallbackType -> Object -> IO () -> IO ()
 onEvent evType obj cb = do
   wcb <- wrapEventCallback $ \_ _ _ _ -> cb
   void $ addEventCallback obj evType wcb nullPtr
-
-onWindowResize :: Window -> IO () -> IO ()
-onWindowResize win cb = setWindowResizeCallback win (const cb)
 
 -- Configure background with "backgroundColor"
 configureBackground :: Window -> Canvas -> IO Object

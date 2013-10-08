@@ -5,7 +5,7 @@ import Graphics.Efl.Simple
 
 import Control.Applicative ((<$>))
 import Control.Concurrent.STM
-import Control.Monad (void)
+import Control.Monad (void,when)
 import Foreign.Ptr
 import System.Environment (getArgs)
 import System.Exit
@@ -29,7 +29,9 @@ main = do
 
       putStrLn (printf "%d images to show" (Vector.length images))
 
-      if Vector.length images == 0 then (quitMainLoop >> exitSuccess) else return ()
+      when (Vector.length images == 0) $ do
+         quitMainLoop
+         exitSuccess
 
       img <- addFilledImage canvas
 
@@ -52,7 +54,6 @@ main = do
          "space" -> nextImage win img currentImage images
          "n" -> nextImage win img currentImage images
          "p" -> previousImage win img currentImage images
-         "t" -> rotate img 90.0
          "q" -> quitMainLoop
          _ -> return ()
 
@@ -76,47 +77,31 @@ refresh img _ win = do
        x = floor $ max 0 ((fromIntegral cw - fromIntegral w :: Double) / 2)
        y = floor $ max 0 ((fromIntegral ch - fromIntegral h :: Double) / 2)
   
-   putStrLn (show [cw,ch,iw,ih,x,y,w,h])
    resize w h img
    move x y img
 
---   tr <- createMap 4
---            # populateMapPointsFromGeometry x y w h 1
---   setMap tr img
---   enableMap img
---   freeMap tr
+-- | Select the next image to show given the current one
+selectImage :: (Int -> Int) -> Window -> Object -> TVar Int -> Vector String -> IO ()
+selectImage f win img current images = do
+   (c,c') <- atomically $ do
+      curr <- readTVar current
+      let curr' = f curr
+      writeTVar current curr'
+      return (curr, curr')
 
+   when (c /= c') $ showImage win img (images ! c')
 
-
-rotate :: Object -> Double -> IO ()
-rotate img angle = do
-   (x,y,w,h) <- getGeometry img
-   tr <- dupMap =<< getMap img
-   rotateMap angle (x + w `div` 2) (y + h `div` 2) tr
-   setMap tr img
-   enableMap img
-   freeMap tr
 
 -- Switch to next image
 nextImage :: Window -> Object -> TVar Int -> Vector String -> IO ()
-nextImage win img current images = do
-   let f x = if x+1 < Vector.length images then x+1 else x
+nextImage win img current images = selectImage f win img current images
+   where f x = if x+1 < Vector.length images then x+1 else x
 
-   c <- atomically $ do
-      modifyTVar current f
-      readTVar current
-   showImage win img (images ! c)
 
 -- Switch to previous image
 previousImage :: Window -> Object -> TVar Int -> Vector String -> IO ()
-previousImage win img current images = do
-   let f x = if x > 0 then x-1 else x
-
-   c <- atomically $ do
-      modifyTVar current f
-      readTVar current
-
-   showImage win img (images ! c)
+previousImage = selectImage f
+   where  f x = if x > 0 then x-1 else x
 
 -- Show the image whose path is given as a parameter
 showImage :: Window -> Object -> String -> IO ()

@@ -3,7 +3,7 @@ module Graphics.Efl.Animator (
    Animator,
    createAnimator, setAnimatorPeriod, setAnimatorFrameRate,
    addAnimation, seconds,
-   addAnimationLinear, addAnimationBounce
+   addAnimationLinear, addAnimationBounce, addAnimationSinusoidal
 ) where
 
 import Control.Concurrent
@@ -87,16 +87,17 @@ setAnimatorFrameRate :: Int -> Animator -> IO ()
 setAnimatorFrameRate n = setAnimatorPeriod (seconds p)
    where p = 1.0 / (fromIntegral n :: Double)
 
+-- | Convert seconds to DiffTime
+seconds :: Double -> DiffTime
+seconds = picosecondsToDiffTime . floor . (* 1e12)
+
+
 -- | Add a new animation
 addAnimation :: Animator -> DiffTime -> Maybe Int -> (Double -> Double) -> (Double -> IO ()) -> IO ()
 addAnimation ator dur reps modif f = do
    t0 <- clockGetTime (clock ator)
    let anim = Animation t0 dur modif reps f
    atomically $ modifyTVar (animations ator) (anim:)
-
--- | Convert seconds to DiffTime
-seconds :: Double -> DiffTime
-seconds = picosecondsToDiffTime . floor . (* 1e12)
 
 -- | Add an animation with linear steps
 addAnimationLinear :: Animator -> DiffTime -> Maybe Int -> (Double -> IO ()) -> IO ()
@@ -107,3 +108,9 @@ addAnimationBounce :: Animator -> DiffTime -> Maybe Int -> (Double -> IO ()) -> 
 addAnimationBounce ator dur reps f = addAnimation ator dur reps g f
    where g x | x <= 0.5  = 2.0 * x
              | otherwise = 2.0 * (1.0 - x)
+
+-- | Add an animation with sinusoidal steps
+addAnimationSinusoidal :: Animator -> Int -> DiffTime -> Maybe Int -> (Double -> IO ()) -> IO ()
+addAnimationSinusoidal ator periods dur reps f = addAnimation ator dur reps g f
+   where g x = abs . sin $ 2.0 * pi * p' * x
+         p' = fromIntegral periods :: Double

@@ -14,6 +14,7 @@ main = do
 
       bg <- addRectangle canvas
             # setColor 0 0 0 255
+            # setLayer (-1)
             # uncover
 
       onWindowResize win $ do
@@ -32,6 +33,12 @@ main = do
             # setColor 128 128 0 255
             # uncover
 
+      po <- addPolygon canvas
+            # addPolygonPoints [(-5,0),(0,5),(5,0),(0,-5)]
+            # setColor 128 128 128 255
+            # move 200 200
+            # uncover
+
       _ <- addText canvas
             # setText "Haskell-EFL!!"
             # resize 200 10
@@ -47,7 +54,7 @@ main = do
             
 
       ator <- createAnimator
-               # setAnimatorFrameRate 60
+               # setAnimatorFrameRate 50
 
       (cx,cy) <- center r
 
@@ -67,5 +74,15 @@ main = do
          enableMap r2
 
       addAnimationBounce ator (seconds 1) (Just 2) $ \step -> do
-         let x'' = (100+(floor $ step * 200))
-         move x'' 100 r2
+         let x' = (100+(floor $ step * 200))
+         move x' 100 r2
+
+      addAnimationBounce ator (seconds 5) Nothing $ \step -> do
+         let x' = (100+(floor $ step * 400))
+         (_,y,_,_) <- getGeometry po
+         move x' y po
+
+      addAnimationSinusoidal ator 3 (seconds 50) Nothing $ \step -> do
+         let y' = (200+(floor $ step * 200))
+         (x,_,_,_) <- getGeometry po
+         move x y' po

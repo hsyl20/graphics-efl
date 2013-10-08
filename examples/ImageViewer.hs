@@ -38,13 +38,14 @@ main = do
       enableEventPassing img
       uncover img
 
-      onWindowResize win $ do
-         (_,_,w,h) <- getWindowGeometry win
-         resize w h bg
-         refresh img canvas win
+      let onWindowResizeHandler = do
+            (_,_,w,h) <- getWindowGeometry win
+            resize w h bg
+            refresh img canvas win
 
+      onWindowResize win onWindowResizeHandler
 
-      refresh img canvas win
+      onWindowResizeHandler
 
 
       onKeyDown bg $ \case 
@@ -57,6 +58,7 @@ main = do
 
       onMouseDown bg $ do
          putStrLn "Mouse down"
+
 
 -- Refresh current display
 refresh :: Object -> Canvas -> Window -> IO ()

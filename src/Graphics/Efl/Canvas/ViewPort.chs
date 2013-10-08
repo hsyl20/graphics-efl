@@ -8,18 +8,18 @@ module Graphics.Efl.Canvas.ViewPort (
 ) where
 
 import Foreign.Ptr
-
+import Foreign.C.Types
 import Graphics.Efl.Canvas.Types
 import Graphics.Efl.Helpers
 
 -- | Set the output size of the render engine of the given canvas
-foreign import ccall "evas_output_size_set" setCanvasOutputSize :: Canvas -> Int -> Int -> IO ()
+foreign import ccall "evas_output_size_set" setCanvasOutputSize :: Canvas -> CInt -> CInt -> IO ()
 
 -- | Retrieve the output size of the render engine of the given canvas
-getCanvasOutputSize :: Canvas -> IO (Int,Int)
+getCanvasOutputSize :: Canvas -> IO (CInt,CInt)
 getCanvasOutputSize canvas = get2_helper (_getCanvasOutputSize canvas)
 
-foreign import ccall "evas_output_size_get" _getCanvasOutputSize :: Canvas -> Ptr Int -> Ptr Int -> IO ()
+foreign import ccall "evas_output_size_get" _getCanvasOutputSize :: Canvas -> Ptr CInt -> Ptr CInt -> IO ()
 
 
 -- | Set the output viewport of the given evas in canvas units

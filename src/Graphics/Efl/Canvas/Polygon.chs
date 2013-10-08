@@ -4,6 +4,7 @@
 module Graphics.Efl.Canvas.Polygon where
 
 import Graphics.Efl.Canvas.Types
+import Foreign.C.Types
 
 -- | Add a polygon to the canvas
 foreign import ccall "evas_object_polygon_add" addPolygon :: Canvas -> IO Object

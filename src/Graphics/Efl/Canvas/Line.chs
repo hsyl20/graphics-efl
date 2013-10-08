@@ -7,6 +7,7 @@ module Graphics.Efl.Canvas.Line (
 
 import Graphics.Efl.Canvas.Types
 import Graphics.Efl.Helpers
+import Foreign.C.Types
 import Foreign.Ptr
 
 -- | Add a line to the canvas

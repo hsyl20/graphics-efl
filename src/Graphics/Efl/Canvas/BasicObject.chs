@@ -102,7 +102,7 @@ foreign import ccall "evas_object_ref" retain :: Object -> IO ()
 foreign import ccall "evas_object_unref" release :: Object -> IO ()
 
 -- | Get the object reference count
-foreign import ccall "evas_object_ref_get" getRefCount :: Object -> IO Int
+foreign import ccall "evas_object_ref_get" getRefCount :: Object -> IO CInt
 
 
 
@@ -147,15 +147,16 @@ foreign import ccall "evas_object_visible_get" object_visible_get_ :: Object -> 
 
 -- | Set the general/main color of the given Evas object to the given one
 setColor :: Int -> Int -> Int -> Int -> Object -> IO ()
-setColor r g b a obj = _setColor obj r g b a
+setColor r g b a obj = _setColor obj (fromIntegral r) (fromIntegral g) (fromIntegral b) (fromIntegral a)
 
-foreign import ccall "evas_object_color_set" _setColor :: Object -> Int -> Int -> Int -> Int -> IO ()
+foreign import ccall "evas_object_color_set" _setColor :: Object -> CInt -> CInt -> CInt -> CInt -> IO ()
 
 -- | Set the general/main color of the given Evas object to the given one
 getColor :: Object -> IO (Int,Int,Int,Int)
-getColor obj = get4_helper (_object_color_get obj)
+getColor obj = f <$> get4_helper (_object_color_get obj)
+   where f (r,g,b,a) = (fromIntegral r, fromIntegral g, fromIntegral b, fromIntegral a)
 
-foreign import ccall "evas_object_color_get" _object_color_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
+foreign import ccall "evas_object_color_get" _object_color_get :: Object -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CInt -> IO ()
 
 
 -- | Retrieve the Evas canvas that the given object lives on

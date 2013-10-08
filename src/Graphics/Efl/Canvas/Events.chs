@@ -22,30 +22,30 @@ import Graphics.Efl.Canvas.Types
 
 -- | Add (register) a callback function to a given Evas object event
 addEventCallback :: Object -> CallbackType -> ObjectEventCb -> Ptr () -> IO ()
-addEventCallback obj typ = _object_event_callback_add obj (fromEnum typ)
+addEventCallback obj typ = _object_event_callback_add obj (fromIntegral $ fromEnum typ)
 
-foreign import ccall "evas_object_event_callback_add" _object_event_callback_add :: Object -> Int -> ObjectEventCb -> Ptr () -> IO ()
+foreign import ccall "evas_object_event_callback_add" _object_event_callback_add :: Object -> CInt -> ObjectEventCb -> Ptr () -> IO ()
 
 
 -- | Add (register) a callback function to a given Evas object event with a non-default priority set
 addEventCallbackWithPriority :: Object -> CallbackType -> CallbackPriority -> ObjectEventCb -> Ptr () -> IO ()
-addEventCallbackWithPriority obj typ = _object_event_callback_priority_add obj (fromEnum typ)
+addEventCallbackWithPriority obj typ = _object_event_callback_priority_add obj (fromIntegral $ fromEnum typ)
 
-foreign import ccall "evas_object_event_callback_priority_add" _object_event_callback_priority_add :: Object -> Int -> CallbackPriority -> ObjectEventCb -> Ptr () -> IO ()
+foreign import ccall "evas_object_event_callback_priority_add" _object_event_callback_priority_add :: Object -> CInt -> CallbackPriority -> ObjectEventCb -> Ptr () -> IO ()
 
 
 -- | Delete a callback function from an object
 removeEventCallback :: Object -> CallbackType -> ObjectEventCb -> IO (Ptr ())
-removeEventCallback obj typ = _object_event_callback_del obj (fromEnum typ)
+removeEventCallback obj typ = _object_event_callback_del obj (fromIntegral $ fromEnum typ)
 
-foreign import ccall "evas_object_event_callback_del" _object_event_callback_del :: Object -> Int -> ObjectEventCb -> IO (Ptr ())
+foreign import ccall "evas_object_event_callback_del" _object_event_callback_del :: Object -> CInt -> ObjectEventCb -> IO (Ptr ())
 
 
 -- | Delete (unregister) a callback function registered to a given Evas object event
 removeEventCallbackFull :: Object -> CallbackType -> ObjectEventCb -> Ptr () -> IO (Ptr ())
-removeEventCallbackFull obj typ = _object_event_callback_del_full obj (fromEnum typ)
+removeEventCallbackFull obj typ = _object_event_callback_del_full obj (fromIntegral $ fromEnum typ)
 
-foreign import ccall "evas_object_event_callback_del_full" _object_event_callback_del_full :: Object -> Int -> ObjectEventCb -> Ptr () -> IO (Ptr ())
+foreign import ccall "evas_object_event_callback_del_full" _object_event_callback_del_full :: Object -> CInt -> ObjectEventCb -> Ptr () -> IO (Ptr ())
 
 
 -- | Set whether an Evas object is to pass (ignore) events
@@ -135,16 +135,16 @@ foreign import ccall "evas_object_freeze_events_get" _object_freeze_events_get :
 
 -- | Set the default set of flags an event begins with
 setDefaultEventFlags :: Canvas -> EventFlags -> IO ()
-setDefaultEventFlags canvas flags = _setDefaultEventFlags canvas (fromEnum flags)
+setDefaultEventFlags canvas flags = _setDefaultEventFlags canvas (fromIntegral $ fromEnum flags)
 
 
-foreign import ccall "evas_event_default_flags_set" _setDefaultEventFlags :: Canvas -> Int -> IO ()
+foreign import ccall "evas_event_default_flags_set" _setDefaultEventFlags :: Canvas -> CInt -> IO ()
 
 -- | Get the defaulty set of flags an event begins with
 getDefaultEventFlags :: Canvas -> IO EventFlags
-getDefaultEventFlags canvas = toEnum <$> _getDefaultEventFlags canvas
+getDefaultEventFlags canvas = toEnum . fromIntegral <$> _getDefaultEventFlags canvas
 
-foreign import ccall "evas_event_default_flags_get" _getDefaultEventFlags :: Canvas -> IO Int
+foreign import ccall "evas_event_default_flags_get" _getDefaultEventFlags :: Canvas -> IO CInt
 
 
 -- | Freeze all input events processing.
@@ -154,10 +154,10 @@ foreign import ccall "evas_event_freeze" freezeEvents :: Canvas -> IO ()
 foreign import ccall "evas_event_thaw" unfreezeEvents :: Canvas -> IO ()
 
 -- | Return the freeze count on input events of a given canvas
-foreign import ccall "evas_event_freeze_get" getEventFreezeCount :: Canvas -> IO Int
+foreign import ccall "evas_event_freeze_get" getEventFreezeCount :: Canvas -> IO CInt
 
 -- | After thaw of a canvas, re-evaluate the state of objects and call callbacks
 foreign import ccall "evas_event_thaw_eval" updateAfterEventUnfreezing :: Canvas -> IO ()
 
 -- | Get the number of mouse or multi presses currently active
-foreign import ccall "evas_event_down_count_get" getEventDownCount :: Canvas -> IO Int
+foreign import ccall "evas_event_down_count_get" getEventDownCount :: Canvas -> IO CInt

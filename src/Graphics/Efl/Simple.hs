@@ -7,6 +7,7 @@ module Graphics.Efl.Simple (
 
 import Graphics.Efl.Window as M
 import Graphics.Efl.Canvas as M
+import Graphics.Efl.Animator as M
 import Graphics.Efl.Core
 
 import Control.Concurrent
@@ -46,7 +47,7 @@ withDefaultWindow engine f = do
    shutdownWindowingSystem
 
 
-(#) :: IO Object -> (Object -> IO ()) -> IO Object
+(#) :: IO a -> (a -> IO ()) -> IO a
 (#) obj f = do
    o <- obj
    f o

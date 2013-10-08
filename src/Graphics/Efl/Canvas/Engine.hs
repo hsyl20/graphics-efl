@@ -16,10 +16,10 @@ import Graphics.Efl.Canvas.Types
 
 
 -- | Look up a numeric ID from a string name of a rendering engine.
-lookupEngine :: String -> IO Int
+lookupEngine :: String -> IO CInt
 lookupEngine name = withCString name _lookupEngine
 
-foreign import ccall "evas_render_method_lookup" _lookupEngine :: CString -> IO Int
+foreign import ccall "evas_render_method_lookup" _lookupEngine :: CString -> IO CInt
 
 -- | List all the rendering engines compiled into the copy of the Evas library
 listEngines :: IO [String]
@@ -34,10 +34,10 @@ foreign import ccall "evas_render_method_list" _listEngines :: IO (EinaList CStr
 foreign import ccall "evas_render_method_list_free" _freeEngineList :: (EinaList CString) -> IO ()
 
 -- | Set the output engine for the given canvas
-foreign import ccall "evas_output_method_set" setCanvasEngineById :: Canvas -> Int -> IO ()
+foreign import ccall "evas_output_method_set" setCanvasEngineById :: Canvas -> CInt -> IO ()
 
 -- | Get the output engine id for the given canvas
-foreign import ccall "evas_output_method_get" getCanvasEngineId :: Canvas -> IO Int
+foreign import ccall "evas_output_method_get" getCanvasEngineId :: Canvas -> IO CInt
 
 -- | Retrieves the current render engine info struct from the given canvas
 foreign import ccall "evas_engine_info_get" getCanvasEngineInfo :: Canvas -> IO EngineInfo
@@ -53,4 +53,4 @@ getCanvasEngineName :: Canvas -> IO String
 getCanvasEngineName canvas = do
    n <- getCanvasEngineId canvas
    es <- listEngines
-   return (es !! n)
+   return (es !! fromIntegral n)

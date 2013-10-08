@@ -59,7 +59,7 @@ foreign import ccall "evas_object_image_filled_add" addFilledImage :: Canvas -> 
 
 
 -- | Set the data for an image from memory to be loaded
-foreign import ccall "evas_object_image_memfile_set" setImageMemFile :: Object -> Ptr () -> Int -> CString -> CString -> IO ()
+foreign import ccall "evas_object_image_memfile_set" setImageMemFile :: Object -> Ptr () -> CInt -> CString -> CString -> IO ()
 
 -- | Set the source file from where an image object must fetch the real image data (it may be an Eet file, besides pure image ones)
 setImageFile :: String -> Maybe String -> Object -> IO ()
@@ -76,25 +76,25 @@ foreign import ccall "evas_object_image_file_get" getImageFile :: Object -> Ptr 
 
 
 -- | Set the dimensions for an image object's border, a region which won't ever be scaled together with its center
-foreign import ccall "evas_object_image_border_set" setImageBorder :: Object -> Int -> Int -> Int -> Int -> IO ()
+foreign import ccall "evas_object_image_border_set" setImageBorder :: Object -> CInt -> CInt -> CInt -> CInt -> IO ()
 
 -- | Retrieve the dimensions for an image object's border, a region which won't ever be scaled together with its center
-getImageBorder :: Object -> IO (Int,Int,Int,Int)
+getImageBorder :: Object -> IO (CInt,CInt,CInt,CInt)
 getImageBorder obj = get4_helper (_object_image_border_get obj)
 
-foreign import ccall "evas_object_image_border_get" _object_image_border_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
+foreign import ccall "evas_object_image_border_get" _object_image_border_get :: Object -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CInt -> IO ()
 
 -- | Set how the center part of the given image object (not the borders) should be drawn when Evas is rendering it
 setImageBorderCenterFill :: Object -> BorderFillMode -> IO ()
-setImageBorderCenterFill obj mode = _object_image_border_center_fill_set obj (fromEnum mode)
+setImageBorderCenterFill obj mode = _object_image_border_center_fill_set obj (fromIntegral $ fromEnum mode)
 
-foreign import ccall "evas_object_image_border_center_fill_set" _object_image_border_center_fill_set :: Object -> Int -> IO ()
+foreign import ccall "evas_object_image_border_center_fill_set" _object_image_border_center_fill_set :: Object -> CInt -> IO ()
 
 -- | Retrieve how the center part of the given image object (not the borders) is to be drawn when Evas is rendering it
 getImageBorderCenterFill :: Object -> IO BorderFillMode
-getImageBorderCenterFill obj = toEnum <$> _object_image_border_center_fill_get obj
+getImageBorderCenterFill obj = toEnum . fromIntegral <$> _object_image_border_center_fill_get obj
 
-foreign import ccall "evas_object_image_border_center_fill_get" _object_image_border_center_fill_get :: Object -> IO Int
+foreign import ccall "evas_object_image_border_center_fill_get" _object_image_border_center_fill_get :: Object -> IO CInt
 
 
 
@@ -135,40 +135,40 @@ foreign import ccall "evas_object_image_fill_get" _object_image_fill_get :: Obje
 
 -- | Sets the tiling mode for the given evas image object's fill
 setImageFillSpread :: Object -> FillSpread -> IO ()
-setImageFillSpread obj mode = _object_image_fill_spread_set obj (fromEnum mode)
+setImageFillSpread obj mode = _object_image_fill_spread_set obj (fromIntegral $ fromEnum mode)
 
-foreign import ccall "evas_object_image_fill_spread_set" _object_image_fill_spread_set :: Object -> Int -> IO ()
+foreign import ccall "evas_object_image_fill_spread_set" _object_image_fill_spread_set :: Object -> CInt -> IO ()
 
 -- | Retrieve the spread (tiling mode) for the given image object's fill
 getImageFillSpread :: Object -> IO FillSpread
-getImageFillSpread obj = toEnum <$> _object_image_fill_spread_get obj
+getImageFillSpread obj = toEnum . fromIntegral <$> _object_image_fill_spread_get obj
 
-foreign import ccall "evas_object_image_fill_spread_get" _object_image_fill_spread_get :: Object -> IO Int
+foreign import ccall "evas_object_image_fill_spread_get" _object_image_fill_spread_get :: Object -> IO CInt
 
 
 
 
 -- | Set the size of the given image object
-foreign import ccall "evas_object_image_size_set" setImageSize :: Object -> Int -> Int -> IO ()
+foreign import ccall "evas_object_image_size_set" setImageSize :: Object -> CInt -> CInt -> IO ()
 
 -- | Retrieve the size of the given image object
-getImageSize :: Object -> IO (Int,Int)
+getImageSize :: Object -> IO (CInt,CInt)
 getImageSize obj = get2_helper (_object_image_size_get obj)
 
-foreign import ccall "evas_object_image_size_get" _object_image_size_get :: Object -> Ptr Int -> Ptr Int -> IO ()
+foreign import ccall "evas_object_image_size_get" _object_image_size_get :: Object -> Ptr CInt -> Ptr CInt -> IO ()
 
 
 
 -- | Retrieve the row stride of the given image object
-foreign import ccall "evas_object_image_stride_get" getImageStride :: Object -> IO Int
+foreign import ccall "evas_object_image_stride_get" getImageStride :: Object -> IO CInt
 
 
 
 -- | Retrieve a number representing any error that occurred during the last loading of the given image object's source image
 getImageLoadError :: Object -> IO LoadError
-getImageLoadError obj = toEnum <$> _object_image_load_error_get obj
+getImageLoadError obj = toEnum . fromIntegral <$> _object_image_load_error_get obj
 
-foreign import ccall "evas_object_image_load_error_get" _object_image_load_error_get :: Object -> IO Int
+foreign import ccall "evas_object_image_load_error_get" _object_image_load_error_get :: Object -> IO CInt
 
 
 
@@ -187,9 +187,9 @@ foreign import ccall "evas_object_image_data_get" _object_image_data_get :: Obje
 
 -- | Convert the raw image data of the given image object to the specified colorspace
 convertImageData :: Object -> ColorSpace -> IO (Ptr ())
-convertImageData obj to_cspace = _object_image_data_convert obj (fromEnum to_cspace)
+convertImageData obj to_cspace = _object_image_data_convert obj (fromIntegral $ fromEnum to_cspace)
 
-foreign import ccall "evas_object_image_data_convert" _object_image_data_convert :: Object -> Int -> IO (Ptr ())
+foreign import ccall "evas_object_image_data_convert" _object_image_data_convert :: Object -> CInt -> IO (Ptr ())
 
 
 
@@ -200,7 +200,7 @@ foreign import ccall "evas_object_image_data_copy_set" setImageDataCopy :: Objec
 
 
 -- | Mark a sub-region of the given image object to be redrawn
-foreign import ccall "evas_object_image_data_update_add" addImageDataUpdate :: Object -> Int -> Int -> Int -> Int -> IO ()
+foreign import ccall "evas_object_image_data_update_add" addImageDataUpdate :: Object -> CInt -> CInt -> CInt -> CInt -> IO ()
 
 
 
@@ -282,30 +282,30 @@ foreign import ccall "evas_object_image_load_dpi_set" setImageLoadDPI :: Object 
 foreign import ccall "evas_object_image_load_dpi_get" getImageLoadDPI :: Object -> IO Double
 
 -- | Set the size of a given image object's source image, when loading it
-foreign import ccall "evas_object_image_load_size_set" setImageLoadSize :: Object -> Int -> Int -> IO ()
+foreign import ccall "evas_object_image_load_size_set" setImageLoadSize :: Object -> CInt -> CInt -> IO ()
 
 -- | Get the size of a given image object's source image, when loading it
-getImageLoadSize :: Object -> IO (Int,Int)
+getImageLoadSize :: Object -> IO (CInt,CInt)
 getImageLoadSize obj = get2_helper (_object_image_load_size_get obj)
 
-foreign import ccall "evas_object_image_load_size_get" _object_image_load_size_get :: Object -> Ptr Int -> Ptr Int -> IO ()
+foreign import ccall "evas_object_image_load_size_get" _object_image_load_size_get :: Object -> Ptr CInt -> Ptr CInt -> IO ()
 
 
 -- | Set the scale down factor of a given image object's source image, when loading it
-foreign import ccall "evas_object_image_load_scale_down_set" setImageLoadScaleDownFactor :: Object -> Int -> IO ()
+foreign import ccall "evas_object_image_load_scale_down_set" setImageLoadScaleDownFactor :: Object -> CInt -> IO ()
 
 -- | Get the scale down factor of a given image object's source image, when loading it
-foreign import ccall "evas_object_image_load_scale_down_get" getImageLoadScaleDownFactor :: Object -> IO Int
+foreign import ccall "evas_object_image_load_scale_down_get" getImageLoadScaleDownFactor :: Object -> IO CInt
 
 
 -- | Inform a given image object to load a selective region of its source image
-foreign import ccall "evas_object_image_load_region_set" setImageLoadRegion :: Object -> Int -> Int -> IO ()
+foreign import ccall "evas_object_image_load_region_set" setImageLoadRegion :: Object -> CInt -> CInt -> IO ()
 
 -- | Retrieve the coordinates of a given image object's selective (source image) load region.
-getImageLoadRegion :: Object -> IO (Int,Int,Int,Int)
+getImageLoadRegion :: Object -> IO (CInt,CInt,CInt,CInt)
 getImageLoadRegion obj = get4_helper (_object_image_load_region_get obj)
 
-foreign import ccall "evas_object_image_load_region_get" _object_image_load_region_get :: Object -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
+foreign import ccall "evas_object_image_load_region_get" _object_image_load_region_get :: Object -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CInt -> IO ()
 
 
 -- | Define if the orientation information in the image file should be honored
@@ -323,15 +323,15 @@ foreign import ccall "evas_object_image_load_orientation_get" _object_image_load
 
 -- | Set the colorspace of a given image of the canvas
 setImageColorSpace :: Object -> ColorSpace -> IO ()
-setImageColorSpace obj cspace = _object_image_colorspace_set obj (fromEnum cspace)
+setImageColorSpace obj cspace = _object_image_colorspace_set obj (fromIntegral $ fromEnum cspace)
 
-foreign import ccall "evas_object_image_colorspace_set" _object_image_colorspace_set :: Object -> Int -> IO ()
+foreign import ccall "evas_object_image_colorspace_set" _object_image_colorspace_set :: Object -> CInt -> IO ()
 
 -- | Get the colorspace of a given image of the canvas
 getImageColorSpace :: Object -> IO ColorSpace
-getImageColorSpace obj = toEnum <$> _object_image_colorspace_get obj
+getImageColorSpace obj = toEnum . fromIntegral <$> _object_image_colorspace_get obj
 
-foreign import ccall "evas_object_image_colorspace_get" _object_image_colorspace_get :: Object -> IO Int
+foreign import ccall "evas_object_image_colorspace_get" _object_image_colorspace_get :: Object -> IO CInt
 
 
 -- | Get the support state of a given image
@@ -356,28 +356,28 @@ foreign import ccall "evas_object_image_video_surface_get" getImageVideoSurface 
 
 -- | Set the scale hint of a given image of the canvas
 setImageScaleHint :: Object -> ImageScaleHint -> IO ()
-setImageScaleHint obj hint = _object_image_scale_hint_set obj (fromEnum hint)
+setImageScaleHint obj hint = _object_image_scale_hint_set obj (fromIntegral $ fromEnum hint)
 
-foreign import ccall "evas_object_image_scale_hint_set" _object_image_scale_hint_set :: Object -> Int -> IO ()
+foreign import ccall "evas_object_image_scale_hint_set" _object_image_scale_hint_set :: Object -> CInt -> IO ()
 
 -- | Get the scale hint of a given image of the canvas
 getImageScaleHint :: Object -> IO ImageScaleHint
-getImageScaleHint obj = toEnum <$> _object_image_scale_hint_get obj
+getImageScaleHint obj = toEnum . fromIntegral <$> _object_image_scale_hint_get obj
 
-foreign import ccall "evas_object_image_scale_hint_get" _object_image_scale_hint_get :: Object -> IO Int
+foreign import ccall "evas_object_image_scale_hint_get" _object_image_scale_hint_get :: Object -> IO CInt
 
 
 -- | Set the content hint setting of a given image object of the canvas
 setImageContentHint :: Object -> ImageContentHint -> IO ()
-setImageContentHint obj hint = _object_image_content_hint_set obj (fromEnum hint)
+setImageContentHint obj hint = _object_image_content_hint_set obj (fromIntegral $ fromEnum hint)
 
-foreign import ccall "evas_object_image_content_hint_set" _object_image_content_hint_set :: Object -> Int -> IO ()
+foreign import ccall "evas_object_image_content_hint_set" _object_image_content_hint_set :: Object -> CInt -> IO ()
 
 -- | Get the content hint setting of a given image object of the canvas 
 getImageContentHint :: Object -> IO ImageContentHint
-getImageContentHint obj = toEnum <$> _object_image_content_hint_get obj
+getImageContentHint obj = toEnum .fromIntegral <$> _object_image_content_hint_get obj
 
-foreign import ccall "evas_object_image_content_hint_get" _object_image_content_hint_get :: Object -> IO Int
+foreign import ccall "evas_object_image_content_hint_get" _object_image_content_hint_get :: Object -> IO CInt
 
 
 -- | Enable an image to be used as an alpha mask
@@ -419,21 +419,21 @@ isImageAnimated obj = toBool <$> _object_image_animated_get obj
 foreign import ccall "evas_object_image_animated_get" _object_image_animated_get :: Object -> IO EinaBool
 
 -- | Get the total number of frames of the image object
-foreign import ccall "evas_object_image_animated_frame_count_get" getAnimatedImageFrameCount :: Object -> IO Int
+foreign import ccall "evas_object_image_animated_frame_count_get" getAnimatedImageFrameCount :: Object -> IO CInt
 
 
 -- | Get the kind of looping the image object does
 getAnimatedImageLoopType :: Object -> IO ImageAnimatedLoopType
-getAnimatedImageLoopType obj = toEnum <$> _object_image_animated_loop_type_get obj
+getAnimatedImageLoopType obj = toEnum . fromIntegral <$> _object_image_animated_loop_type_get obj
 
-foreign import ccall "evas_object_image_animated_loop_type_get" _object_image_animated_loop_type_get :: Object -> IO Int
+foreign import ccall "evas_object_image_animated_loop_type_get" _object_image_animated_loop_type_get :: Object -> IO CInt
 
 
 -- | Get the number times the animation of the object loops
-foreign import ccall "evas_object_image_animated_loop_count_get" getAnimatedImageLoopCount :: Object -> IO Int
+foreign import ccall "evas_object_image_animated_loop_count_get" getAnimatedImageLoopCount :: Object -> IO CInt
 
 -- | Get the duration of a sequence of frames
-foreign import ccall "evas_object_image_animated_frame_duration_get" getAnimatedImageFrameDuration :: Object -> Int -> Int -> IO Double
+foreign import ccall "evas_object_image_animated_frame_duration_get" getAnimatedImageFrameDuration :: Object -> CInt -> CInt -> IO Double
 
 -- | Set the frame to current frame of an image object
-foreign import ccall "evas_object_image_animated_frame_set" setAnimatedImageFrame :: Object -> Int -> IO ()
+foreign import ccall "evas_object_image_animated_frame_set" setAnimatedImageFrame :: Object -> CInt -> IO ()

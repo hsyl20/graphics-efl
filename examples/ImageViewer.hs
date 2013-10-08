@@ -6,7 +6,6 @@ import Graphics.Efl.Simple
 import Control.Applicative ((<$>))
 import Control.Concurrent.STM
 import Control.Monad (void)
-import Foreign.C.String
 import Foreign.Ptr
 import System.Environment (getArgs)
 import System.Exit
@@ -61,7 +60,7 @@ main = do
 
 -- Refresh current display
 refresh :: Object -> Canvas -> Window -> IO ()
-refresh img canvas win = do
+refresh img _ win = do
    disableMap img
 
    (_,_,cw,ch) <- getWindowGeometry win
@@ -126,7 +125,7 @@ showImage win img path = do
   err <- getImageLoadError img
   case err of
     EvasLoadErrorNone -> return ()
-    _ -> putStrLn =<< peekCString =<< loadErrorString (fromEnum err)
+    _ -> putStrLn =<< loadErrorString (fromEnum err)
 
   refresh img canvas win
 
@@ -147,7 +146,7 @@ onEvent evType obj cb = do
 
 -- Configure background with "backgroundColor"
 configureBackground :: Window -> Canvas -> IO Object
-configureBackground win canvas = do
+configureBackground _ canvas = do
   bg <- addRectangle canvas
   let (red, green, blue, alpha) = backgroundColor
   setColor red green blue alpha bg

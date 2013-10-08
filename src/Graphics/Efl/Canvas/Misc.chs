@@ -1,6 +1,9 @@
 {-# Language ForeignFunctionInterface #-}
 
-module Graphics.Efl.Canvas.Misc where
+module Graphics.Efl.Canvas.Misc (
+   loadErrorString,
+   wrapEventCallback, keyDownKeyname, keyDownKey
+) where
 
 import Foreign.Ptr
 import Foreign.C.String
@@ -15,9 +18,13 @@ import Graphics.Efl.Canvas.Types
 
 foreign import ccall "wrapper" wrapEventCallback :: (Ptr () -> Canvas -> Object -> Ptr () -> IO ()) -> IO ObjectEventCb
 
-foreign import ccall "evas_event_callback_add" addCanvasEventCallback :: Canvas -> Int -> ObjectEventCb -> Ptr () -> IO ()
+foreign import ccall "evas_event_callback_add" addCanvasEventCallback :: Canvas -> CInt -> ObjectEventCb -> Ptr () -> IO ()
 
-foreign import ccall "evas_load_error_str" loadErrorString :: Int -> IO CString
+-- | Return error string
+loadErrorString :: Int -> IO String
+loadErrorString n = peekCString =<< _loadErrorString (fromIntegral n)
+
+foreign import ccall "evas_load_error_str" _loadErrorString :: CInt -> IO CString
 
 
 keyDownKeyname :: Ptr () -> IO String

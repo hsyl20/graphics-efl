@@ -17,6 +17,7 @@ module Graphics.Efl.Canvas.Types (
 ) where
 
 import Foreign.Ptr
+import Foreign.C.Types
 import Data.Int (Int16)
 
 #include <Evas.h>
@@ -71,11 +72,11 @@ enum EventFlags
 
 type Canvas = Ptr ()
 type Object = Ptr ()
-type Coord = Int
+type Coord = CInt
 type PixelImportSource = Ptr ()
 type NativeSurface = Ptr ()
 type VideoSurface = Ptr ()
-type FontSize = Int
+type FontSize = CInt
 type CallbackPriority = Int16
 type Map = Ptr ()
 type EngineInfo = Ptr ()

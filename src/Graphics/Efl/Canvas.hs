@@ -32,7 +32,7 @@ import Control.Applicative
 import Graphics.Efl.Eina
 
 -- | Initialize the canvas manager. Consider using @getWindowCanvas@ instead
-foreign import ccall "evas_init" initCanvas :: IO Int
+foreign import ccall "evas_init" initCanvas :: IO CInt
 
 -- | Shutdown the canvas manager.
 foreign import ccall "evas_shutdown" shutdownCanvas :: IO ()
@@ -71,10 +71,10 @@ foreign import ccall "evas_data_attach_set" attachCanvasData :: Canvas -> Ptr ()
 foreign import ccall "evas_data_attach_get" getCanvasAttachedData :: Canvas -> IO (Ptr ())
 
 -- | Add a damage rectangle
-foreign import ccall "evas_damage_rectangle_add" addDamageRectangle :: Canvas -> Int -> Int -> Int -> Int -> IO ()
+foreign import ccall "evas_damage_rectangle_add" addDamageRectangle :: Canvas -> CInt -> CInt -> CInt -> CInt -> IO ()
 
 -- | Add an obscured rectangle
-foreign import ccall "evas_obscured_rectangle_add" addObscuredRectangle :: Canvas -> Int -> Int -> Int -> Int -> IO ()
+foreign import ccall "evas_obscured_rectangle_add" addObscuredRectangle :: Canvas -> CInt -> CInt -> CInt -> CInt -> IO ()
 
 -- | Clear obscured regions
 foreign import ccall "evas_obscured_clear" clearObscuredRegions :: Canvas -> IO ()

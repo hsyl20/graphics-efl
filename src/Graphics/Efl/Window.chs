@@ -13,6 +13,7 @@ module Graphics.Efl.Window (
 
 import Foreign.Ptr
 import Foreign.C.String
+import Foreign.C.Types
 import Foreign.Marshal.Alloc
 import Data.Maybe
 import Control.Applicative
@@ -36,16 +37,16 @@ initWindowingSystem = do
       0 -> error "Error during initialization"
       _ -> return ()
 
-foreign import ccall "ecore_evas_init" initWindowingSystem_ :: IO Int
+foreign import ccall "ecore_evas_init" initWindowingSystem_ :: IO CInt
 
 -- | Shut down the windowing system
 foreign import ccall "ecore_evas_shutdown" shutdownWindowingSystem :: IO ()
 
 -- | Indicate if an engine is supported
 isEngineSupported :: EngineType -> IO Bool
-isEngineSupported engine = (> 0) <$> _isEngineSupported (fromEnum engine)
+isEngineSupported engine = (> 0) <$> _isEngineSupported (fromIntegral $ fromEnum engine)
 
-foreign import ccall "ecore_evas_engine_type_supported_get" _isEngineSupported :: Int -> IO Int
+foreign import ccall "ecore_evas_engine_type_supported_get" _isEngineSupported :: CInt -> IO CInt
 
 -- | Return a list of supported engines names
 getEngines :: IO [String]
@@ -65,7 +66,7 @@ getEngineName win = peekCString =<< _getEngineName win
 foreign import ccall "ecore_evas_engine_name_get" _getEngineName :: Window -> IO CString
 
 -- | Create a new window
-createWindow :: Maybe String -> Int -> Int -> Int -> Int -> Maybe String -> IO Window
+createWindow :: Maybe String -> CInt -> CInt -> CInt -> CInt -> Maybe String -> IO Window
 createWindow engine x y w h options = do
    let wrap s = fromMaybe (return nullPtr) (newCAString <$> s)
    engine' <- wrap engine
@@ -75,7 +76,7 @@ createWindow engine x y w h options = do
    when (options' /= nullPtr) (free options')
    return win
 
-foreign import ccall "ecore_evas_new" createWindow_ :: CString -> Int -> Int -> Int -> Int -> CString -> IO Window
+foreign import ccall "ecore_evas_new" createWindow_ :: CString -> CInt -> CInt -> CInt -> CInt -> CString -> IO Window
 
 -- | Destroy a window
 foreign import ccall "ecore_evas_free" destroyWindow :: Window -> IO ()
@@ -100,10 +101,10 @@ foreign import ccall "ecore_evas_show" showWindow :: Window -> IO ()
 foreign import ccall "ecore_evas_get" getWindowCanvas :: Window -> IO Canvas
 
 -- | Retrieve the position and (rectangular) size of the given canvas object
-getWindowGeometry :: Window -> IO (Int,Int,Int,Int)
+getWindowGeometry :: Window -> IO (CInt,CInt,CInt,CInt)
 getWindowGeometry win = get4_helper (_getWindowGeometry win)
 
-foreign import ccall "ecore_evas_geometry_get" _getWindowGeometry :: Window -> Ptr Int -> Ptr Int -> Ptr Int -> Ptr Int -> IO ()
+foreign import ccall "ecore_evas_geometry_get" _getWindowGeometry :: Window -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CInt -> IO ()
 
 -- | Associate a callback to the "resize" event
 onWindowResize :: Window -> IO () -> IO ()

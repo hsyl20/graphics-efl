@@ -2,8 +2,11 @@
 
 -- | EFL Core
 module Graphics.Efl.Core (
+   module M,
    beginMainLoop, quitMainLoop
 ) where
+
+import Graphics.Efl.Core.Animator as M
 
 #include <Ecore.h>
 

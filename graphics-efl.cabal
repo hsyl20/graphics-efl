@@ -17,6 +17,8 @@ cabal-version:       >=1.8
 library
   exposed-modules:
       Graphics.Efl.Core,
+      Graphics.Efl.Core.Animator,
+      Graphics.Efl.Core.Types,
       Graphics.Efl.Simple,
       Graphics.Efl.Helpers,
       Graphics.Efl.Window,
@@ -36,8 +38,7 @@ library
       Graphics.Efl.Canvas.ViewPort,
       Graphics.Efl.Canvas.Pointer,
       Graphics.Efl.Canvas.Misc,
-      Graphics.Efl.Eina,
-      Graphics.Efl.Animator
+      Graphics.Efl.Eina
 
   PkgConfig-Depends:
     eina,
@@ -53,10 +54,7 @@ library
 
   build-depends:
       base ==4.6.*,
-      stm,
-      time,
-      vector ==0.10.*,
-      system-time-monotonic
+      vector ==0.10.*
 
   hs-source-dirs:      src
   build-tools:         c2hs

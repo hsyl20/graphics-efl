@@ -53,36 +53,42 @@ main = do
             return (w `div` 2 + x, h `div` 2 + y)
             
 
-      ator <- createAnimator
-               # setAnimatorFrameRate 50
+      setAnimatorFrameRate 50
 
       (cx,cy) <- center r
 
-      addAnimationLinear ator (seconds 4) Nothing $ \step -> do
+      _ <- addAnimationLinear Nothing $ \step -> do
          m <- createMap 4
                # populateMapPointsFromObject r
                # rotateMap (360.0 * step) cx cy
          setMap m r
          enableMap r
+         return True
 
-      addAnimationLinear ator (seconds 0.5) Nothing $ \step -> do
+      _ <- addAnimationLinear Nothing $ \step -> do
          (cx',cy') <- center r2
          m <- createMap 4
                # populateMapPointsFromObject r2
                # rotateMap (360.0 * step) cx' cy'
          setMap m r2
          enableMap r2
+         return True
 
-      addAnimationBounce ator (seconds 1) (Just 2) $ \step -> do
+      _ <- addAnimationBounce (Just 1) $ \step -> do
          let x' = (100+(floor $ step * 200))
          move x' 100 r2
+         return True
 
-      addAnimationBounce ator (seconds 5) Nothing $ \step -> do
+      _ <- addAnimationBounce (Just 4) $ \step -> do
          let x' = (100+(floor $ step * 400))
          (_,y,_,_) <- getGeometry po
          move x' y po
+         return True
 
-      addAnimationSinusoidal ator 3 (seconds 50) Nothing $ \step -> do
-         let y' = (200+(floor $ step * 200))
+      _ <- addAnimationSinusoidal 3 (Just 50) $ \step -> do
+         let y' = (200+(floor $ step * 100))
          (x,_,_,_) <- getGeometry po
          move x y' po
+         return True
+
+      return ()

@@ -7,8 +7,7 @@ module Graphics.Efl.Simple (
 
 import Graphics.Efl.Window as M
 import Graphics.Efl.Canvas as M
-import Graphics.Efl.Animator as M
-import Graphics.Efl.Core
+import Graphics.Efl.Core as M
 
 import Control.Concurrent
 

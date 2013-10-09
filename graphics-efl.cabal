@@ -54,7 +54,9 @@ library
 
   build-depends:
       base ==4.6.*,
-      vector ==0.10.*
+      vector ==0.10.*,
+      time,
+      system-time-monotonic
 
   hs-source-dirs:      src
   build-tools:         c2hs

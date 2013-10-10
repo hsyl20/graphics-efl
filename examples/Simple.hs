@@ -57,14 +57,14 @@ main = do
 
       (cx,cy) <- center r
 
-      _ <- addAnimationLinear 1.0 Nothing $ \step -> do
+      addAnimationLinear' 1.0 Nothing $ \step -> do
          m <- createMap 4
                |> populateMapPointsFromObject r
                |> rotateMap (360.0 * step) cx cy
          setMap m r
          enableMap r
 
-      _ <- addAnimationLinear 4.0 Nothing $ \step -> do
+      addAnimationLinear' 4.0 Nothing $ \step -> do
          (cx',cy') <- center r2
          m <- createMap 4
                |> populateMapPointsFromObject r2
@@ -72,16 +72,16 @@ main = do
          setMap m r2
          enableMap r2
 
-      _ <- addAnimationLinear 3.0 (Just 1) $ \step -> do
+      addAnimationLinear' 3.0 (Just 1) $ \step -> do
          let x' = (100+(floor $ step * 200))
          move x' 100 r2
 
-      _ <- addAnimationBounce 4 Nothing $ \step -> do
+      addAnimationBounce' 4 Nothing $ \step -> do
          let x' = (100+(floor $ step * 400))
          (_,y,_,_) <- getGeometry po
          move x' y po
 
-      _ <- addAnimationSinusoidal 6 8.0 Nothing $ \step -> do
+      addAnimationSinusoidal' 6 8.0 Nothing $ \step -> do
          let y' = (200+(floor $ step * 100))
          (x,_,_,_) <- getGeometry po
          move x y' po

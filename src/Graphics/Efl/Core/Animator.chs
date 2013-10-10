@@ -10,7 +10,9 @@ module Graphics.Efl.Core.Animator (
    setAnimatorCustomSourceTickEndCallback,
    tickAnimatorCustom,
    addAnimationI, addAnimationLinearI, addAnimationBounceI, addAnimationSinusoidalI,
-   addAnimation, addAnimationLinear, addAnimationBounce, addAnimationSinusoidal
+   addAnimation, addAnimationLinear, addAnimationBounce, addAnimationSinusoidal,
+   addAnimationLinearI', addAnimationBounceI', addAnimationSinusoidalI',
+   addAnimationLinear', addAnimationBounce', addAnimationSinusoidal'
 ) where
 
 import Foreign.Ptr
@@ -64,6 +66,14 @@ addAnimationLinear = addAnimation id
 addAnimationLinearI :: Double -> Maybe Int -> (Double -> IO Bool) -> IO Animator
 addAnimationLinearI = addAnimationI id
 
+-- | Add an animation with linear steps
+addAnimationLinear' :: Double -> Maybe Int -> (Double -> IO ()) -> IO ()
+addAnimationLinear' period reps f = void (addAnimationLinear period reps f)
+
+-- | Add an interruptible animation with linear steps
+addAnimationLinearI' :: Double -> Maybe Int -> (Double -> IO Bool) -> IO ()
+addAnimationLinearI' period reps f = void (addAnimationLinearI period reps f)
+
 -- | Add an animation with bouncing steps
 addAnimationBounce :: Double -> Maybe Int -> (Double -> IO ()) -> IO Animator
 addAnimationBounce = addAnimation bounce
@@ -71,6 +81,14 @@ addAnimationBounce = addAnimation bounce
 -- | Add an interruptible animation with bouncing steps
 addAnimationBounceI :: Double -> Maybe Int -> (Double -> IO Bool) -> IO Animator
 addAnimationBounceI = addAnimationI bounce
+
+-- | Add an animation with bouncing steps
+addAnimationBounce' :: Double -> Maybe Int -> (Double -> IO ()) -> IO ()
+addAnimationBounce' period reps f = void (addAnimationBounce period reps f)
+
+-- | Add an interruptible animation with bouncing steps
+addAnimationBounceI' :: Double -> Maybe Int -> (Double -> IO Bool) -> IO ()
+addAnimationBounceI' period reps f = void (addAnimationBounceI period reps f)
 
 bounce :: Double -> Double
 bounce x | x <= 0.5  = 2.0 * x
@@ -83,6 +101,14 @@ addAnimationSinusoidalI periods = addAnimationI (sino periods)
 -- | Add an animation with sinusoidal steps
 addAnimationSinusoidal :: Int -> Double -> Maybe Int -> (Double -> IO ()) -> IO Animator
 addAnimationSinusoidal periods = addAnimation (sino periods)
+
+-- | Add an interruptible animation with sinusoidal steps
+addAnimationSinusoidalI' :: Int -> Double -> Maybe Int -> (Double -> IO Bool) -> IO ()
+addAnimationSinusoidalI' periods period reps f = void (addAnimationSinusoidalI periods period reps f)
+
+-- | Add an animation with sinusoidal steps
+addAnimationSinusoidal' :: Int -> Double -> Maybe Int -> (Double -> IO ()) -> IO ()
+addAnimationSinusoidal' periods period reps f = void (addAnimationSinusoidal periods period reps f)
 
 sino :: Int -> Double -> Double
 sino periods x = abs . sin $ 2.0 * pi * p' * x

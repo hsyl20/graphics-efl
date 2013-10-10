@@ -1,7 +1,7 @@
 -- | Simple interface to create a window
 module Graphics.Efl.Simple (
    module M,
-   (#),
+   (|>),
    defaultWindow, defaultWindowEx, withDefaultWindow
 ) where
 
@@ -46,8 +46,8 @@ withDefaultWindow engine f = do
    shutdownWindowingSystem
 
 
-(#) :: IO a -> (a -> IO ()) -> IO a
-(#) obj f = do
+(|>) :: IO a -> (a -> IO ()) -> IO a
+(|>) obj f = do
    o <- obj
    f o
    return o

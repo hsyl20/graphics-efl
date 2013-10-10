@@ -13,40 +13,40 @@ main = do
       setWindowTitle "Simple Haskell-EFL Example" win
 
       bg <- addRectangle canvas
-            # setColor 0 0 0 255
-            # setLayer (-1)
-            # uncover
+            |> setColor 0 0 0 255
+            |> setLayer (-1)
+            |> uncover
 
       onWindowResize win $ do
          (_,_,w,h) <- getWindowGeometry win
          resize w h bg
 
       r <- addRectangle canvas
-            # resize 100 40
-            # move 20 40
-            # setColor 255 0 0 255
-            # uncover
+            |> resize 100 40
+            |> move 20 40
+            |> setColor 255 0 0 255
+            |> uncover
 
       r2 <- addRectangle canvas
-            # resize 100 40
-            # move 100 100
-            # setColor 128 128 0 255
-            # uncover
+            |> resize 100 40
+            |> move 100 100
+            |> setColor 128 128 0 255
+            |> uncover
 
       po <- addPolygon canvas
-            # addPolygonPoints [(-5,0),(0,5),(5,0),(0,-5)]
-            # setColor 128 128 128 255
-            # move 200 200
-            # uncover
+            |> addPolygonPoints [(-5,0),(0,5),(5,0),(0,-5)]
+            |> setColor 128 128 128 255
+            |> move 200 200
+            |> uncover
 
       _ <- addText canvas
-            # setText "Haskell-EFL!!"
-            # resize 200 10
-            # move 25 50
-            # setTextStyle TextStylePlain TextStyleShadowDirectionBottomRight
-            # setTextFont "DejaVu" 14
-            # setColor 0 255 0 255
-            # uncover
+            |> setText "Haskell-EFL!!"
+            |> resize 200 10
+            |> move 25 50
+            |> setTextStyle TextStylePlain TextStyleShadowDirectionBottomRight
+            |> setTextFont "DejaVu" 14
+            |> setColor 0 255 0 255
+            |> uncover
 
       let center o = do
             (x,y,w,h) <- getGeometry o
@@ -59,8 +59,8 @@ main = do
 
       _ <- addAnimationLinear 1.0 Nothing $ \step -> do
          m <- createMap 4
-               # populateMapPointsFromObject r
-               # rotateMap (360.0 * step) cx cy
+               |> populateMapPointsFromObject r
+               |> rotateMap (360.0 * step) cx cy
          setMap m r
          enableMap r
          return True
@@ -68,8 +68,8 @@ main = do
       _ <- addAnimationLinear 4.0 Nothing $ \step -> do
          (cx',cy') <- center r2
          m <- createMap 4
-               # populateMapPointsFromObject r2
-               # rotateMap (360.0 * step) cx' cy'
+               |> populateMapPointsFromObject r2
+               |> rotateMap (360.0 * step) cx' cy'
          setMap m r2
          enableMap r2
          return True

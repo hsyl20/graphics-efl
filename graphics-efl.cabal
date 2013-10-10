@@ -18,6 +18,7 @@ library
   exposed-modules:
       Graphics.Efl.Core,
       Graphics.Efl.Core.Animator,
+      Graphics.Efl.Core.Job,
       Graphics.Efl.Core.Types,
       Graphics.Efl.Simple,
       Graphics.Efl.Helpers,

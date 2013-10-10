@@ -26,9 +26,6 @@ import Graphics.Efl.Core.Types
 type AnimationCb = Ptr () -> Double -> IO EinaBool
 type AnimationCbP = FunPtr AnimationCb
 
-type CoreCallback = Ptr () -> IO ()
-type CoreCallbackP = FunPtr CoreCallback
-
 wrapCallback' :: (Double -> IO Bool) -> IO AnimationCbP
 wrapCallback' cb = wrapCallback (\ _ pos -> fromBool <$> cb pos)
 

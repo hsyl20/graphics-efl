@@ -7,6 +7,7 @@ module Graphics.Efl.Core (
 ) where
 
 import Graphics.Efl.Core.Animator as M
+import Graphics.Efl.Core.Job as M
 
 #include <Ecore.h>
 

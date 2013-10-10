@@ -40,7 +40,7 @@ withDefaultWindow engine f = do
    w <- createWindow engine 0 0 800 600 Nothing
    c <- getWindowCanvas w
    showWindow w
-   _ <- forkIO (f w c)
+   _ <- createJob (f w c)
    beginMainLoop
    destroyWindow w
    shutdownWindowingSystem

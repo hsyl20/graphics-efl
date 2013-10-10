@@ -9,8 +9,8 @@ module Graphics.Efl.Core.Animator (
    setAnimatorCustomSourceTickBeginCallback,
    setAnimatorCustomSourceTickEndCallback,
    tickAnimatorCustom,
-   addAnimation, addAnimationLinear, addAnimationBounce,
-   addAnimationSinusoidal
+   addAnimationI, addAnimationLinearI, addAnimationBounceI, addAnimationSinusoidalI,
+   addAnimation, addAnimationLinear, addAnimationBounce, addAnimationSinusoidal
 ) where
 
 import Foreign.Ptr
@@ -31,9 +31,14 @@ wrapCallback' cb = wrapCallback (\ _ pos -> fromBool <$> cb pos)
 
 foreign import ccall "wrapper" wrapCallback :: AnimationCb -> IO AnimationCbP
 
+
 -- | Add a new animation
-addAnimation :: (Double -> Double) -> Double -> Maybe Int -> (Double -> IO Bool) -> IO Animator
-addAnimation modif period (Just r) f = do
+addAnimation :: (Double -> Double) -> Double -> Maybe Int -> (Double -> IO ()) -> IO Animator
+addAnimation  modif period reps f = addAnimationI modif period reps (\x -> f x >> return True)
+
+-- | Add a new interruptible animation
+addAnimationI :: (Double -> Double) -> Double -> Maybe Int -> (Double -> IO Bool) -> IO Animator
+addAnimationI modif period (Just r) f = do
 
    let normalize :: Double -> Double
        normalize 1.0 = 1.0
@@ -42,7 +47,7 @@ addAnimation modif period (Just r) f = do
 
    addTimedAnimator (period * fromIntegral r) g
 
-addAnimation modif period Nothing f = do
+addAnimationI modif period Nothing f = do
    clk <- newClock
    t0 <- clockGetTime clk
 
@@ -52,20 +57,36 @@ addAnimation modif period Nothing f = do
    addAnimator (f <=< g)
 
 -- | Add an animation with linear steps
-addAnimationLinear :: Double -> Maybe Int -> (Double -> IO Bool) -> IO Animator
+addAnimationLinear :: Double -> Maybe Int -> (Double -> IO ()) -> IO Animator
 addAnimationLinear = addAnimation id
 
+-- | Add an interruptible animation with linear steps
+addAnimationLinearI :: Double -> Maybe Int -> (Double -> IO Bool) -> IO Animator
+addAnimationLinearI = addAnimationI id
+
 -- | Add an animation with bouncing steps
-addAnimationBounce :: Double -> Maybe Int -> (Double -> IO Bool) -> IO Animator
-addAnimationBounce = addAnimation g
-   where g x | x <= 0.5  = 2.0 * x
-             | otherwise = 2.0 * (1.0 - x)
+addAnimationBounce :: Double -> Maybe Int -> (Double -> IO ()) -> IO Animator
+addAnimationBounce = addAnimation bounce
+
+-- | Add an interruptible animation with bouncing steps
+addAnimationBounceI :: Double -> Maybe Int -> (Double -> IO Bool) -> IO Animator
+addAnimationBounceI = addAnimationI bounce
+
+bounce :: Double -> Double
+bounce x | x <= 0.5  = 2.0 * x
+         | otherwise = 2.0 * (1.0 - x)
+
+-- | Add an interruptible animation with sinusoidal steps
+addAnimationSinusoidalI :: Int -> Double -> Maybe Int -> (Double -> IO Bool) -> IO Animator
+addAnimationSinusoidalI periods = addAnimationI (sino periods)
 
 -- | Add an animation with sinusoidal steps
-addAnimationSinusoidal :: Int -> Double -> Maybe Int -> (Double -> IO Bool) -> IO Animator
-addAnimationSinusoidal periods = addAnimation g
-   where g x = abs . sin $ 2.0 * pi * p' * x
-         p' = fromIntegral periods :: Double
+addAnimationSinusoidal :: Int -> Double -> Maybe Int -> (Double -> IO ()) -> IO Animator
+addAnimationSinusoidal periods = addAnimation (sino periods)
+
+sino :: Int -> Double -> Double
+sino periods x = abs . sin $ 2.0 * pi * p' * x
+   where p' = fromIntegral periods :: Double
 
 
 -- | Add an animator to call  func at every animation tick during main

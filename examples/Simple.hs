@@ -63,7 +63,6 @@ main = do
                |> rotateMap (360.0 * step) cx cy
          setMap m r
          enableMap r
-         return True
 
       _ <- addAnimationLinear 4.0 Nothing $ \step -> do
          (cx',cy') <- center r2
@@ -72,23 +71,19 @@ main = do
                |> rotateMap (360.0 * step) cx' cy'
          setMap m r2
          enableMap r2
-         return True
 
       _ <- addAnimationLinear 3.0 (Just 1) $ \step -> do
          let x' = (100+(floor $ step * 200))
          move x' 100 r2
-         return True
 
       _ <- addAnimationBounce 4 Nothing $ \step -> do
          let x' = (100+(floor $ step * 400))
          (_,y,_,_) <- getGeometry po
          move x' y po
-         return True
 
       _ <- addAnimationSinusoidal 6 8.0 Nothing $ \step -> do
          let y' = (200+(floor $ step * 100))
          (x,_,_,_) <- getGeometry po
          move x y' po
-         return True
 
       return ()

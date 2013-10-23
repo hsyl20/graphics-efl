@@ -34,6 +34,7 @@ library
       Graphics.Efl.Canvas.Text,
       Graphics.Efl.Canvas.TextBlock,
       Graphics.Efl.Canvas.Events,
+      Graphics.Efl.Canvas.MouseEvents,
       Graphics.Efl.Canvas.Map,
       Graphics.Efl.Canvas.Engine,
       Graphics.Efl.Canvas.ViewPort,
@@ -60,7 +61,7 @@ library
       system-time-monotonic
 
   hs-source-dirs:      src
-  build-tools:         c2hs
+  build-tools:         c2hs, hsc2hs
   ghc-options: -Wall -threaded
 
 Test-Suite test-evas

@@ -1,7 +1,7 @@
 {-# Language MultiWayIf,LambdaCase #-}
 
 import Graphics.Efl.Core
-import Graphics.Efl.Simple
+import Graphics.Efl.Simple hiding (onEvent)
 
 import Control.Applicative ((<$>))
 import Control.Concurrent.STM
@@ -57,7 +57,7 @@ main = do
          "q" -> quitMainLoop
          _ -> return ()
 
-      onMouseDown bg $ do
+      flip onMouseDown bg $ \ _ _ -> do
          putStrLn "Mouse down"
 
 
@@ -116,9 +116,6 @@ showImage win img path = do
 
   refresh img canvas win
 
-onMouseDown :: Object -> IO () -> IO ()
-onMouseDown = onEvent EvasCallbackMouseDown
-
 onKeyDown :: Object -> (String -> IO ()) -> IO ()
 onKeyDown obj cb = do 
   wcb <- wrapEventCallback $ \_ _ _ info -> do
@@ -126,11 +123,6 @@ onKeyDown obj cb = do
     cb keyName
   void $ addEventCallback obj EvasCallbackKeyDown wcb nullPtr
   
-onEvent :: CallbackType -> Object -> IO () -> IO ()
-onEvent evType obj cb = do
-  wcb <- wrapEventCallback $ \_ _ _ _ -> cb
-  void $ addEventCallback obj evType wcb nullPtr
-
 -- Configure background with "backgroundColor"
 configureBackground :: Window -> Canvas -> IO Object
 configureBackground _ canvas = do

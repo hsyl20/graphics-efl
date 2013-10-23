@@ -6,19 +6,26 @@ module Graphics.Efl.Canvas.Types (
    BorderFillMode(..), FillSpread(..), LoadError(..),
    ColorSpace(..), ImageScaleHint(..), ImageContentHint(..),
    ImageAnimatedLoopType(..), TextDirection(..),
-   Canvas, Object, Coord,
+   Canvas, Object, Coord, ModifierKeys, LockKeys, Device,
    PixelImportSource, NativeSurface, VideoSurface,
    FontSize, CallbackPriority, Map, EngineInfo,
    TextBlockStyle, TextBlockCursor,
    TextBlockNodeFormat, TextBlockCursorType,
-   CallbackType(..), 
+   CallbackType(..), wrapEventCallback,
    ObjectEventCb, ObjectImagePixelsGetCb,
-   EventFlags(..)
+   Point(..), EventFlags, ButtonFlags,
+   MouseDownEvent, MouseUpEvent, MouseInEvent, MouseOutEvent,
+   MouseMoveEvent, MouseWheelEvent,
+   eventFlagIsScrolling, eventFlagIsHolding,
+   buttonFlagIsDoubleClick, buttonFlagIstripleClick
 ) where
 
 import Foreign.Ptr
+import Foreign.Storable
 import Foreign.C.Types
+import Control.Applicative
 import Data.Int (Int16)
+import Data.Bits
 
 #include <Evas.h>
 
@@ -55,19 +62,11 @@ enum TextDirection
    BIDI_DIRECTION_RTL
 };
 
-enum EventFlags
-{
-   EVENT_FLAG_NONE = 0,
-   EVENT_FLAG_ON_HOLD = (1 << 0),
-   EVENT_FLAG_ON_SCROLL = (1 << 1)
-};
-
 #endc
 
 -- We use custom enums as the original is in fact a bitset
 {#enum TextStyle {underscoreToCase} deriving (Eq,Show) #}
 {#enum TextShadowStyle {underscoreToCase} deriving (Eq,Show) #}
-{#enum EventFlags {underscoreToCase} deriving (Eq,Show) #}
 {#enum TextDirection {underscoreToCase} deriving (Eq,Show) #}
 
 type Canvas = Ptr ()
@@ -84,6 +83,17 @@ type TextBlockStyle  = Ptr ()
 type TextBlockCursor  = Ptr ()
 type TextBlockNodeFormat  = Ptr ()
 type TextBlockCursorType  = Ptr ()
+type MouseDownEvent = Ptr ()
+type MouseUpEvent = Ptr ()
+type MouseInEvent = Ptr ()
+type MouseOutEvent = Ptr ()
+type MouseMoveEvent = Ptr ()
+type MouseWheelEvent = Ptr ()
+type ModifierKeys = Ptr ()
+type LockKeys = Ptr ()
+type Device = Ptr ()
+type EventFlags = CInt
+type ButtonFlags = CInt
 
 {#enum _Evas_Border_Fill_Mode as BorderFillMode {underscoreToCase} deriving (Eq,Show) #}
 {#enum _Evas_Fill_Spread as FillSpread {underscoreToCase} deriving (Eq,Show) #}
@@ -97,4 +107,36 @@ type TextBlockCursorType  = Ptr ()
 
 type ObjectEventCb = FunPtr (Ptr () -> Canvas -> Object -> Ptr () -> IO ())
 
+foreign import ccall "wrapper" wrapEventCallback :: (Ptr () -> Canvas -> Object -> Ptr () -> IO ()) -> IO ObjectEventCb
+
+
 type ObjectImagePixelsGetCb = FunPtr (Ptr () -> Object -> IO ())
+
+
+data Point = Point CInt CInt deriving (Eq,Show)
+
+instance Storable Point where
+   alignment = sizeOf
+   sizeOf _ = {# sizeof Evas_Point #}
+   peek p = Point 
+      <$> {# get Evas_Point->x #} p
+      <*> {# get Evas_Point->y #} p
+   poke p (Point x y) = do
+      {# set Evas_Point->x #} p x
+      {# set Evas_Point->y #} p y
+
+-- | Test if Holding flag is set
+eventFlagIsHolding :: EventFlags -> Bool
+eventFlagIsHolding = flip testBit 1
+
+-- | Test if Scrolling flag is set
+eventFlagIsScrolling :: EventFlags -> Bool
+eventFlagIsScrolling = flip testBit 2
+
+-- | Test if second click of a double-click
+buttonFlagIsDoubleClick :: ButtonFlags -> Bool
+buttonFlagIsDoubleClick = flip testBit 1
+
+-- | Test if second click of a triple-click
+buttonFlagIstripleClick :: ButtonFlags -> Bool
+buttonFlagIstripleClick = flip testBit 2

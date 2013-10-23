@@ -1,5 +1,6 @@
 import Graphics.Efl.Simple
 
+
 main :: IO ()
 main = do
    initWindowingSystem
@@ -21,17 +22,35 @@ main = do
          (_,_,w,h) <- getWindowGeometry win
          resize w h bg
 
+      let clickHandler obj ev = do
+            name <- getName obj
+            btn <- mouseDownButton ev
+            putStrLn $ "You clicked on " ++ name ++ " with button " ++ show btn
+
       r <- addRectangle canvas
+            |> setName "First rectangle"
             |> resize 100 40
             |> move 20 40
             |> setColor 255 0 0 255
             |> uncover
+            |> onMouseDown clickHandler
+            |> onMouseMove (\_ _ -> putStrLn "Move!")
 
       r2 <- addRectangle canvas
+            |> setName "Second rectangle"
             |> resize 100 40
             |> move 100 100
             |> setColor 128 128 0 255
             |> uncover
+            |> onMouseIn (\_ ev -> do
+                  wxy <- mouseInWorldXY ev
+                  cxy <- mouseInCanvasXY ev
+                  t <- mouseInTimestamp ev
+                  putStrLn (show wxy ++ ";" ++ show cxy ++ ";" ++ show t))
+            |> onMouseDown clickHandler
+            |> onMouseOut (\ _ _-> putStrLn "Out!")
+            |> onMouseUp (\ _ _-> putStrLn "Up!")
+            |> onMouseWheel (\ _ _-> putStrLn "Wheel!")
 
       po <- addPolygon canvas
             |> addPolygonPoints [(-5,0),(0,5),(5,0),(0,-5)]
@@ -46,6 +65,13 @@ main = do
             |> setTextStyle TextStylePlain TextStyleShadowDirectionBottomRight
             |> setTextFont "DejaVu" 14
             |> setColor 0 255 0 255
+            |> uncover
+
+      _ <- addTextBlock canvas
+            |> setTextBlockTextMarkup "Yo !!!!"
+            |> resize 400 400
+            |> move 10 150
+            |> setColor 255 255 255 255
             |> uncover
 
       let center o = do
@@ -85,5 +111,6 @@ main = do
          let y' = (200+(floor $ step * 100))
          (x,_,_,_) <- getGeometry po
          move x y' po
+
 
       return ()

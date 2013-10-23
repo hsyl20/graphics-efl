@@ -2,7 +2,7 @@
 
 module Graphics.Efl.Canvas.Misc (
    loadErrorString,
-   wrapEventCallback, keyDownKeyname, keyDownKey
+   keyDownKeyname, keyDownKey
 ) where
 
 import Foreign.Ptr
@@ -10,15 +10,9 @@ import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Storable
 
-import Graphics.Efl.Canvas.Types
-
 #include <Evas.h>
 
 {- FIXME: put this somewhere else... -}
-
-foreign import ccall "wrapper" wrapEventCallback :: (Ptr () -> Canvas -> Object -> Ptr () -> IO ()) -> IO ObjectEventCb
-
-foreign import ccall "evas_event_callback_add" addCanvasEventCallback :: Canvas -> CInt -> ObjectEventCb -> Ptr () -> IO ()
 
 -- | Return error string
 loadErrorString :: Int -> IO String

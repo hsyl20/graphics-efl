@@ -89,7 +89,9 @@ foreign import ccall "evas_object_name_set" _object_name_set :: Object -> CStrin
 
 -- | Retrieve the name of the given Evas object
 getName :: Object -> IO String
-getName obj = peekCString =<< _object_name_get obj
+getName obj = do
+   ptr <- _object_name_get obj
+   if ptr == nullPtr then return "" else peekCString ptr
 
 foreign import ccall "evas_object_name_get" _object_name_get :: Object -> IO CString
 

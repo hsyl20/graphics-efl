@@ -9,7 +9,9 @@ module Graphics.Efl.Canvas.Events (
    enableEventFreezing, disableEventFreezing, isFreezingEvents,
    setDefaultEventFlags, getDefaultEventFlags,
    freezeEvents, unfreezeEvents, getEventFreezeCount, updateAfterEventUnfreezing,
-   getEventDownCount 
+   getEventDownCount,
+   onEvent, onMouseDown, onMouseUp, onMouseIn, onMouseOut,
+   onMouseMove, onMouseWheel
 ) where
 
 import Foreign.Ptr
@@ -19,6 +21,37 @@ import Control.Applicative
 
 import Graphics.Efl.Eina
 import Graphics.Efl.Canvas.Types
+
+#include <Evas.h>
+
+-- | Mouse Down event setter
+onMouseDown :: (Object -> MouseDownEvent -> IO ()) -> Object -> IO ()
+onMouseDown = onEvent EvasCallbackMouseDown
+
+-- | Mouse Up event setter
+onMouseUp :: (Object -> MouseUpEvent -> IO ()) -> Object -> IO ()
+onMouseUp = onEvent EvasCallbackMouseUp
+
+
+-- | Mouse In event setter
+onMouseIn :: (Object -> MouseInEvent -> IO ()) -> Object -> IO ()
+onMouseIn = onEvent EvasCallbackMouseIn
+
+-- | Mouse Out event setter
+onMouseOut :: (Object -> MouseOutEvent -> IO ()) -> Object -> IO ()
+onMouseOut = onEvent EvasCallbackMouseOut
+
+-- | Mouse Move event setter
+onMouseMove :: (Object -> MouseMoveEvent -> IO ()) -> Object -> IO ()
+onMouseMove = onEvent EvasCallbackMouseMove
+
+-- | Mouse Wheel event setter
+onMouseWheel :: (Object -> MouseWheelEvent -> IO ()) -> Object -> IO ()
+onMouseWheel = onEvent EvasCallbackMouseWheel
+
+-- | Generic event setter
+onEvent :: CallbackType -> (Object -> Ptr a -> IO ()) -> Object -> IO ()
+onEvent typ cb obj = flip (addEventCallback obj typ) nullPtr =<< wrapEventCallback (\_ _ o i -> cb o (castPtr i))
 
 -- | Add (register) a callback function to a given Evas object event
 addEventCallback :: Object -> CallbackType -> ObjectEventCb -> Ptr () -> IO ()

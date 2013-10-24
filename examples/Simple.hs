@@ -1,5 +1,6 @@
 import Graphics.Efl.Simple
 
+import Paths_graphics_efl
 
 main :: IO ()
 main = do
@@ -13,8 +14,10 @@ main = do
 
       setWindowTitle "Simple Haskell-EFL Example" win
 
-      bg <- addRectangle canvas
-            |> setColor 0 0 0 255
+      bgfile <- getDataFileName "examples/Red_Giant_Earth_warm.jpg"
+
+      bg <- addFilledImage canvas
+            |> setImageFile bgfile Nothing
             |> setLayer (-1)
             |> uncover
 

@@ -76,49 +76,48 @@ main = do
             |> uncover
 
       style <- createTextBlockStyle
-            |> configureTextBlockStyle "DEFAULT='font=DejaVuSans-Bold font_size=20 align=left color=#000000 wrap=word style=soft_outline outline_color=#3779cb' NewLine= '+\n'"
+            |> configureTextBlockStyle "DEFAULT='font=DejaVuSans-Bold font_size=26 align=center color=#000000 wrap=word style=soft_outline outline_color=#3779cb' NewLine= '+\n'"
 
 
       _ <- addTextBlock canvas
             |> setTextBlockStyle style
             |> setTextBlockTextMarkup "Welcome to the <b>Haskell-EFL</b> demo!!!"
             |> resize 500 400
-            |> move 400 10
+            |> move 300 10
             |> setColor 255 255 255 255
+            |> enableEventPassing
             |> uncover
 
 
-      let lipsum = "Duplexque isdem diebus acciderat malum, quod et Theophilum insontem \
-                   \atrox interceperat casus, et Serenianus dignus exsecratione cunctorum, \
-                   \innoxius, modo non reclamante publico vigore, discessit.\
-                   \<br/><br/>\
-                   \Quam ob rem cave Catoni anteponas ne istum quidem ipsum, quem Apollo, \
-                   \ut ais, sapientissimum iudicavit; huius enim facta, illius dicta laudantur. \
-                   \De me autem, ut iam cum utroque vestrum loquar, sic habetote.\
-                   \<br/><br/>\
-                   \Et quoniam apud eos ut in capite mundi morborum acerbitates celsius dominantur, \
-                   \ad quos vel sedandos omnis professio medendi torpescit, excogitatum est \
-                   \adminiculum sospitale nequi amicum perferentem similia videat, additumque \
-                   \est cautionibus paucis remedium aliud satis validum, ut famulos percontatum \
-                   \missos quem ad modum valeant noti hac aegritudine colligati, non ante \
-                   \recipiant domum quam lavacro purgaverint corpus. ita etiam alienis oculis \
-                   \visa metuitur labes."
+      let lipsum = "In this demo, you can:<br/>\
+                  \  - click on objects (with any button)<br/>\
+                  \  - scroll this text with the mouse wheel<br/>\
+                  \<br/><br/>\
+                  \Press \"q\" to quit\
+                  \"
 
       style2 <- createTextBlockStyle
-                  |> configureTextBlockStyle "DEFAULT='font=DejaVuSans-Bold font_size=20 align=center color=#000000 wrap=word style=soft_shadow shadow_color=#CCCCCC' NewLine= '+\n'"
+                  |> configureTextBlockStyle "DEFAULT='font=DejaVuSans-Bold font_size=20 align=left color=#000000 wrap=word style=soft_shadow shadow_color=#CCCCCC' NewLine= '+\n'"
 
-      _ <- addTextBlock canvas
+      lipsumTxt <- addTextBlock canvas
             |> setTextBlockStyle style2
             |> setTextBlockTextMarkup lipsum
             |> resize 500 400
             |> move 20 400
+            |> enableEventPassing
             |> uncover
+
+      flip onMouseWheel bg $ \ _ ev -> do
+         dir <- mouseWheelDirection ev
+         off <- mouseWheelOffset ev
+         (x,y,_,_) <- getGeometry lipsumTxt
+         when (dir == 0) $ move x (y + fromIntegral (-10 * off)) lipsumTxt
+         when (dir == 1) $ move (x + fromIntegral (10 * off)) y lipsumTxt
 
       let center o = do
             (x,y,w,h) <- getGeometry o
             return (w `div` 2 + x, h `div` 2 + y)
             
-
       --setAnimatorFrameRate 4
 
       (cx,cy) <- center r
@@ -154,6 +153,5 @@ main = do
          let y' = (200+(floor $ step * 100))
          (x,_,_,_) <- getGeometry po
          move x y' po
-
 
       return ()

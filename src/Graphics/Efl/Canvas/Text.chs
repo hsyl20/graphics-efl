@@ -68,7 +68,9 @@ foreign import ccall "evas_object_text_text_set" _object_text_text_set :: Object
 
 -- | Retrieve the text string currently being displayed by the given text object
 getText :: Object -> IO String
-getText obj = peekCString =<< _object_text_text_get obj
+getText obj = do
+   s <- _object_text_text_get obj
+   if s == nullPtr then return "" else peekCString s
 
 foreign import ccall "evas_object_text_text_get" _object_text_text_get :: Object -> IO CString
 

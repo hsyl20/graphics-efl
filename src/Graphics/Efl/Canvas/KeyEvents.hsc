@@ -38,11 +38,15 @@ keyDownKey = peekCString <=< #{peek Evas_Event_Key_Down, key}
 
 -- | A UTF8 string if this keystroke has produced a visible string to be ADDED
 keyDownString :: KeyDownEvent -> IO String
-keyDownString = peekCString <=< #{peek Evas_Event_Key_Down, string}
+keyDownString ev = do
+   s <- #{peek Evas_Event_Key_Down, string} ev
+   if s == nullPtr then return "" else peekCString s
 
 -- | A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one
 keyDownCompose :: KeyDownEvent -> IO String
-keyDownCompose = peekCString <=< #{peek Evas_Event_Key_Down, compose}
+keyDownCompose ev = do
+   s <- #{peek Evas_Event_Key_Down, compose} ev
+   if s == nullPtr then return "" else peekCString s
 
 -- | Timestamp
 keyDownTimestamp :: KeyDownEvent -> IO CUInt

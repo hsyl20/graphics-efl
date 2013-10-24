@@ -80,13 +80,19 @@ foreign import ccall "evas_textblock_style_new" createTextBlockStyle :: IO TextB
 foreign import ccall "evas_textblock_style_free" destroyTextBlockStyle :: TextBlockStyle -> IO ()
 
 -- | Configure textblock style
-foreign import ccall "evas_textblock_style_set" configureTextBlockStyle :: TextBlockStyle -> CString -> IO ()
+configureTextBlockStyle :: String -> TextBlockStyle -> IO ()
+configureTextBlockStyle s sty = withCString s (_configureTextBlockStyle sty)
+
+foreign import ccall "evas_textblock_style_set" _configureTextBlockStyle :: TextBlockStyle -> CString -> IO ()
 
 -- | Get textblock style configuration
 foreign import ccall "evas_textblock_style_get" getTextBlockStyleConfiguration :: TextBlockStyle -> IO CString
 
 -- | Set text block style
-foreign import ccall "evas_object_textblock_style_set" setTextBlockStyle :: Object -> TextBlockStyle -> IO ()
+setTextBlockStyle :: TextBlockStyle -> Object -> IO ()
+setTextBlockStyle = flip _setTextBlockStyle
+
+foreign import ccall "evas_object_textblock_style_set" _setTextBlockStyle :: Object -> TextBlockStyle -> IO ()
 
 -- | Get text block style
 foreign import ccall "evas_object_textblock_style_get" getTextBlockStyle :: Object -> IO TextBlockStyle

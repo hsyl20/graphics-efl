@@ -67,10 +67,15 @@ main = do
             |> setColor 0 255 0 255
             |> uncover
 
+      style <- createTextBlockStyle
+            |> configureTextBlockStyle "DEFAULT='font=DejaVuSans-Bold font_size=20 align=left color=#000000 wrap=word style=soft_outline outline_color=#3779cb' NewLine= '+\n'"
+
+
       _ <- addTextBlock canvas
-            |> setTextBlockTextMarkup "Yo !!!!"
-            |> resize 400 400
-            |> move 10 150
+            |> setTextBlockStyle style
+            |> setTextBlockTextMarkup "Welcome to the <b>Haskell-EFL</b> demo!!!"
+            |> resize 500 400
+            |> move 400 10
             |> setColor 255 255 255 255
             |> uncover
 

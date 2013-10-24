@@ -11,7 +11,9 @@ module Graphics.Efl.Canvas.Events (
    freezeEvents, unfreezeEvents, getEventFreezeCount, updateAfterEventUnfreezing,
    getEventDownCount,
    onEvent, onMouseDown, onMouseUp, onMouseIn, onMouseOut,
-   onMouseMove, onMouseWheel
+   onMouseMove, onMouseWheel,
+   onMultiDown, onMultiUp, onMultiMove,
+   onKeyDown, onKeyUp
 ) where
 
 import Foreign.Ptr
@@ -24,6 +26,26 @@ import Graphics.Efl.Canvas.Types
 
 #include <Evas.h>
 
+-- | Key Down event setter
+onKeyDown :: (Object -> KeyDownEvent -> IO ()) -> Object -> IO ()
+onKeyDown = onEvent EvasCallbackKeyDown
+
+-- | Key Up event setter
+onKeyUp :: (Object -> KeyUpEvent -> IO ()) -> Object -> IO ()
+onKeyUp = onEvent EvasCallbackKeyUp
+
+-- | Multi Down event setter
+onMultiDown :: (Object -> MultiDownEvent -> IO ()) -> Object -> IO ()
+onMultiDown = onEvent EvasCallbackMultiDown
+
+-- | Multi Up event setter
+onMultiUp :: (Object -> MultiUpEvent -> IO ()) -> Object -> IO ()
+onMultiUp = onEvent EvasCallbackMultiUp
+
+-- | Multi Move event setter
+onMultiMove :: (Object -> MultiMoveEvent -> IO ()) -> Object -> IO ()
+onMultiMove = onEvent EvasCallbackMultiMove
+
 -- | Mouse Down event setter
 onMouseDown :: (Object -> MouseDownEvent -> IO ()) -> Object -> IO ()
 onMouseDown = onEvent EvasCallbackMouseDown
@@ -31,7 +53,6 @@ onMouseDown = onEvent EvasCallbackMouseDown
 -- | Mouse Up event setter
 onMouseUp :: (Object -> MouseUpEvent -> IO ()) -> Object -> IO ()
 onMouseUp = onEvent EvasCallbackMouseUp
-
 
 -- | Mouse In event setter
 onMouseIn :: (Object -> MouseInEvent -> IO ()) -> Object -> IO ()

@@ -20,6 +20,7 @@ import Graphics.Efl.Canvas.Image as M
 import Graphics.Efl.Canvas.Events as M
 import Graphics.Efl.Canvas.MouseEvents as M
 import Graphics.Efl.Canvas.MultiEvents as M
+import Graphics.Efl.Canvas.KeyEvents as M
 import Graphics.Efl.Canvas.Misc as M
 import Graphics.Efl.Canvas.Text as M
 import Graphics.Efl.Canvas.TextBlock as M

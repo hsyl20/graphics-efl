@@ -37,6 +37,7 @@ library
       Graphics.Efl.Canvas.Events,
       Graphics.Efl.Canvas.MouseEvents,
       Graphics.Efl.Canvas.MultiEvents,
+      Graphics.Efl.Canvas.KeyEvents,
       Graphics.Efl.Canvas.Map,
       Graphics.Efl.Canvas.Engine,
       Graphics.Efl.Canvas.ViewPort,

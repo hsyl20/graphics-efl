@@ -5,8 +5,7 @@ import Graphics.Efl.Simple hiding (onEvent)
 
 import Control.Applicative ((<$>))
 import Control.Concurrent.STM
-import Control.Monad (void,when)
-import Foreign.Ptr
+import Control.Monad (when)
 import System.Environment (getArgs)
 import System.Exit
 import Text.Printf
@@ -50,7 +49,7 @@ main = do
       onWindowResizeHandler
 
 
-      onKeyDown bg $ \case 
+      flip onKeyDown bg $ \ _ ev -> keyDownKey ev >>= \case 
          "space" -> nextImage win img currentImage images
          "n" -> nextImage win img currentImage images
          "p" -> previousImage win img currentImage images
@@ -116,13 +115,6 @@ showImage win img path = do
 
   refresh img canvas win
 
-onKeyDown :: Object -> (String -> IO ()) -> IO ()
-onKeyDown obj cb = do 
-  wcb <- wrapEventCallback $ \_ _ _ info -> do
-    keyName <- keyDownKey info
-    cb keyName
-  void $ addEventCallback obj EvasCallbackKeyDown wcb nullPtr
-  
 -- Configure background with "backgroundColor"
 configureBackground :: Window -> Canvas -> IO Object
 configureBackground _ canvas = do

@@ -11,8 +11,9 @@ category:            Graphics
 build-type:          Simple
 cabal-version:       >=1.8
 
+-- License: http://commons.wikimedia.org/wiki/File:Red_Giant_Earth_warm.jpg
 data-files:
-   examples/Red_Giant_Earth_warm.jpg
+   examples/Red_Giant_Earth_warm.jpg 
 
 library
   exposed-modules:
@@ -35,6 +36,7 @@ library
       Graphics.Efl.Canvas.TextBlock,
       Graphics.Efl.Canvas.Events,
       Graphics.Efl.Canvas.MouseEvents,
+      Graphics.Efl.Canvas.MultiEvents,
       Graphics.Efl.Canvas.Map,
       Graphics.Efl.Canvas.Engine,
       Graphics.Efl.Canvas.ViewPort,

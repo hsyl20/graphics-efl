@@ -1,5 +1,6 @@
 import Graphics.Efl.Simple
 import Control.Monad (when)
+import Control.Applicative
 
 import Paths_graphics_efl
 
@@ -9,13 +10,25 @@ main = do
    engines <- getEngines
    putStrLn (show engines)
 
-   withDefaultWindow (Just "opengl_x11") $ \ win canvas -> do
+   --withDefaultWindow (Just "opengl_x11") $ \ win canvas -> do
+   withDefaultWindow Nothing $ \ win canvas -> do
       engineName <- getEngineName win
       putStrLn $ "Using engine " ++ engineName
 
       setWindowTitle "Simple Haskell-EFL Example" win
 
       bgfile <- getDataFileName "examples/Red_Giant_Earth_warm.jpg"
+
+      inTxt <- addText canvas
+            |> setText "You text: "
+            |> resize 200 10
+            |> move 25 200
+            |> setTextStyle TextStylePlain TextStyleShadowDirectionBottomRight
+            |> setTextFont "DejaVu" 14
+            |> setColor 255 255 255 255
+            |> enableEventPassing
+            |> uncover
+
 
       bg <- addFilledImage canvas
             |> setImageFile bgfile Nothing
@@ -24,7 +37,13 @@ main = do
             |> setFocus True
             |> onKeyDown (\ _ ev -> do
                   name <- keyDownKeyName ev
-                  when (name == "q") quitMainLoop)
+                  old <- getText inTxt
+                  new <- case name of
+                     "Escape" -> quitMainLoop >> return old
+                     "BackSpace" -> return $ if null old then old else init old
+                     _ -> (old ++) <$> keyDownString ev
+                  setText new inTxt
+                  )
 
       onWindowResize win $ do
          (_,_,w,h) <- getWindowGeometry win
@@ -66,15 +85,6 @@ main = do
             |> move 200 200
             |> uncover
 
-      _ <- addText canvas
-            |> setText "Haskell-EFL!!"
-            |> resize 200 10
-            |> move 25 50
-            |> setTextStyle TextStylePlain TextStyleShadowDirectionBottomRight
-            |> setTextFont "DejaVu" 14
-            |> setColor 0 255 0 255
-            |> uncover
-
       style <- createTextBlockStyle
             |> configureTextBlockStyle "DEFAULT='font=DejaVuSans-Bold font_size=26 align=center color=#000000 wrap=word style=soft_outline outline_color=#3779cb' NewLine= '+\n'"
 
@@ -92,8 +102,9 @@ main = do
       let lipsum = "In this demo, you can:<br/>\
                   \  - click on objects (with any button)<br/>\
                   \  - scroll this text with the mouse wheel<br/>\
+                  \  - enter some text<br/>\
                   \<br/><br/>\
-                  \Press \"q\" to quit\
+                  \Press \"Escape\" to quit\
                   \"
 
       style2 <- createTextBlockStyle

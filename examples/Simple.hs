@@ -20,7 +20,7 @@ main = do
       bgfile <- getDataFileName "examples/Red_Giant_Earth_warm.jpg"
 
       inTxt <- addText canvas
-            |> setText "You text: "
+            |> setText "Your text: "
             |> resize 200 10
             |> move 25 200
             |> setTextStyle TextStylePlain TextStyleShadowDirectionBottomRight
@@ -79,8 +79,16 @@ main = do
             |> onMouseUp (\ _ _-> putStrLn "Up!")
             |> onMouseWheel (\ _ _-> putStrLn "Wheel!")
 
+      let
+         poly :: Int -> Double -> [(Coord,Coord)]
+         poly n w = [(round $ x*w, round $ y*w) | (x,y) <- (map cos angles `zip` map sin angles)]
+            where 
+               angles :: [Double]
+               angles = map ((*c) . fromIntegral) [0..(n-1)]
+               c = 2.0 * pi / fromIntegral n
+
       po <- addPolygon canvas
-            |> addPolygonPoints [(-5,0),(0,5),(5,0),(0,-5)]
+            |> addPolygonPoints (poly 8 10)
             |> setColor 128 128 128 255
             |> move 200 200
             |> uncover

@@ -17,7 +17,7 @@ module Graphics.Efl.Canvas.Types (
    MouseDownEvent, MouseUpEvent, MouseInEvent, MouseOutEvent,
    MouseMoveEvent, MouseWheelEvent, 
    MultiDownEvent, MultiUpEvent, MultiMoveEvent,
-   KeyDownEvent, KeyUpEvent,
+   KeyDownEvent, KeyUpEvent, HoldEvent,
    eventFlagIsScrolling, eventFlagIsHolding,
    buttonFlagIsDoubleClick, buttonFlagIstripleClick
 ) where
@@ -96,6 +96,7 @@ type MultiUpEvent = Ptr ()
 type MultiMoveEvent = Ptr ()
 type KeyDownEvent = Ptr ()
 type KeyUpEvent = Ptr ()
+type HoldEvent = Ptr ()
 type ModifierKeys = Ptr ()
 type LockKeys = Ptr ()
 type Device = Ptr ()

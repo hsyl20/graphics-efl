@@ -13,7 +13,7 @@ module Graphics.Efl.Canvas.Events (
    onEvent, onMouseDown, onMouseUp, onMouseIn, onMouseOut,
    onMouseMove, onMouseWheel,
    onMultiDown, onMultiUp, onMultiMove,
-   onKeyDown, onKeyUp
+   onKeyDown, onKeyUp, onHold
 ) where
 
 import Foreign.Ptr
@@ -33,6 +33,10 @@ onKeyDown = onEvent EvasCallbackKeyDown
 -- | Key Up event setter
 onKeyUp :: (Object -> KeyUpEvent -> IO ()) -> Object -> IO ()
 onKeyUp = onEvent EvasCallbackKeyUp
+
+-- | Hold change event
+onHold :: (Object -> HoldEvent -> IO ()) -> Object -> IO ()
+onHold = onEvent EvasCallbackHold
 
 -- | Multi Down event setter
 onMultiDown :: (Object -> MultiDownEvent -> IO ()) -> Object -> IO ()

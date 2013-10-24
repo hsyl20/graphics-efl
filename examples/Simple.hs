@@ -87,6 +87,33 @@ main = do
             |> setColor 255 255 255 255
             |> uncover
 
+
+      let lipsum = "Duplexque isdem diebus acciderat malum, quod et Theophilum insontem \
+                   \atrox interceperat casus, et Serenianus dignus exsecratione cunctorum, \
+                   \innoxius, modo non reclamante publico vigore, discessit.\
+                   \<br/><br/>\
+                   \Quam ob rem cave Catoni anteponas ne istum quidem ipsum, quem Apollo, \
+                   \ut ais, sapientissimum iudicavit; huius enim facta, illius dicta laudantur. \
+                   \De me autem, ut iam cum utroque vestrum loquar, sic habetote.\
+                   \<br/><br/>\
+                   \Et quoniam apud eos ut in capite mundi morborum acerbitates celsius dominantur, \
+                   \ad quos vel sedandos omnis professio medendi torpescit, excogitatum est \
+                   \adminiculum sospitale nequi amicum perferentem similia videat, additumque \
+                   \est cautionibus paucis remedium aliud satis validum, ut famulos percontatum \
+                   \missos quem ad modum valeant noti hac aegritudine colligati, non ante \
+                   \recipiant domum quam lavacro purgaverint corpus. ita etiam alienis oculis \
+                   \visa metuitur labes."
+
+      style2 <- createTextBlockStyle
+                  |> configureTextBlockStyle "DEFAULT='font=DejaVuSans-Bold font_size=20 align=center color=#000000 wrap=word style=soft_shadow shadow_color=#CCCCCC' NewLine= '+\n'"
+
+      _ <- addTextBlock canvas
+            |> setTextBlockStyle style2
+            |> setTextBlockTextMarkup lipsum
+            |> resize 500 400
+            |> move 20 400
+            |> uncover
+
       let center o = do
             (x,y,w,h) <- getGeometry o
             return (w `div` 2 + x, h `div` 2 + y)

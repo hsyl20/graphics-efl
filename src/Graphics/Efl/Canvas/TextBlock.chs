@@ -50,6 +50,7 @@ import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr
 import Control.Applicative
+import Control.Monad
 
 import Graphics.Efl.Canvas.Types
 import Graphics.Efl.Eina
@@ -146,7 +147,10 @@ foreign import ccall "evas_object_textblock_text_markup_set" _setTextBlockTextMa
 foreign import ccall "evas_object_textblock_text_markup_prepend" prependTextBlockTextMarkup :: TextBlockCursor -> CString -> IO ()
 
 -- | Return the markup of the object
-foreign import ccall "evas_object_textblock_text_markup_get" getTextBlockTextMarkup :: Object -> IO CString
+getTextBlockTextMarkup :: Object -> IO String
+getTextBlockTextMarkup = peekCString <=< _getTextBlockTextMarkup
+
+foreign import ccall "evas_object_textblock_text_markup_get" _getTextBlockTextMarkup :: Object -> IO CString
 
 -- | Return the object's main cursor
 foreign import ccall "evas_object_textblock_cursor_get" getTextBlockCursor :: Object -> IO TextBlockCursor

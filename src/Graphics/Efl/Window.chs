@@ -67,12 +67,12 @@ getEngineName win = peekCString =<< _getEngineName win
 foreign import ccall "ecore_evas_engine_name_get" _getEngineName :: Window -> IO CString
 
 -- | Create a new window
-createWindow :: Maybe String -> CInt -> CInt -> CInt -> CInt -> Maybe String -> IO Window
+createWindow :: Maybe String -> Int -> Int -> Int -> Int -> Maybe String -> IO Window
 createWindow engine x y w h options = do
    let wrap s = fromMaybe (return nullPtr) (newCAString <$> s)
    engine' <- wrap engine
    options' <- wrap options
-   win <- createWindow_ engine' x y w h options'
+   win <- createWindow_ engine'(fromIntegral x) (fromIntegral y) (fromIntegral w) (fromIntegral h) options'
    when (engine' /= nullPtr) (free engine')
    when (options' /= nullPtr) (free options')
    return win

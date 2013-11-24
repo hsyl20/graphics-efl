@@ -7,7 +7,8 @@ module Graphics.Efl.Window (
    isEngineSupported, getEngines, getEngineName,
    createWindow, destroyWindow, showWindow,
    setWindowTitle, getWindowTitle,
-   getWindowCanvas, getWindowGeometry,
+   getWindowCanvas, getWindowGeometry, setWindowGeometry,
+   resizeWindow,moveWindow,
    onWindowResize, onWindowResizeEx
 ) where
 
@@ -105,6 +106,24 @@ getWindowGeometry :: Window -> IO (CInt,CInt,CInt,CInt)
 getWindowGeometry win = get4_helper (_getWindowGeometry win)
 
 foreign import ccall "ecore_evas_geometry_get" _getWindowGeometry :: Window -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CInt -> IO ()
+
+-- | Set the position and (rectangular) size of the given canvas object
+setWindowGeometry :: (CInt,CInt,CInt,CInt) -> Window -> IO ()
+setWindowGeometry (x,y,w,h) win = _setWindowGeometry win x y w h
+
+foreign import ccall "ecore_evas_move_resize" _setWindowGeometry :: Window ->  CInt ->  CInt ->  CInt ->  CInt -> IO ()
+
+-- | Resize window
+resizeWindow :: (CInt,CInt) -> Window -> IO ()
+resizeWindow (w,h) win = _resizeWindow win w h
+
+foreign import ccall "ecore_evas_resize" _resizeWindow :: Window ->  CInt ->  CInt ->  IO ()
+
+-- | Move window
+moveWindow :: (CInt,CInt) -> Window -> IO ()
+moveWindow (x,y) win = _moveWindow win x y
+
+foreign import ccall "ecore_evas_move" _moveWindow :: Window ->  CInt ->  CInt ->  IO ()
 
 -- | Associate a callback to the "resize" event
 onWindowResize :: Window -> IO () -> IO ()

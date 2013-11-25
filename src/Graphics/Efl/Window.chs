@@ -5,11 +5,16 @@ module Graphics.Efl.Window (
    Window,
    initWindowingSystem, shutdownWindowingSystem,
    isEngineSupported, getEngines, getEngineName,
-   createWindow, destroyWindow, showWindow,
+   createWindow, destroyWindow,
+   showWindow, hideWindow, setWindowVisible, getWindowVisible,
+   onWindowHide, onWindowHideEx,
+   onWindowShow, onWindowShowEx,
    setWindowTitle, getWindowTitle,
    getWindowCanvas, getWindowGeometry, setWindowGeometry,
-   resizeWindow,moveWindow,
-   onWindowResize, onWindowResizeEx
+   getWindowSize, getWindowPosition,
+   resizeWindow, onWindowResize, onWindowResizeEx,
+   moveWindow, onWindowMove, onWindowMoveEx,
+   getWindowFocus, setWindowFocus, onWindowFocusIn, onWindowFocusOut
 ) where
 
 import Foreign.Ptr
@@ -95,15 +100,43 @@ getWindowTitle win = peekCString =<< _getWindowTitle win
 
 foreign import ccall "ecore_evas_title_get" _getWindowTitle :: Window -> IO CString
 
--- | Display a window
+-- | Show a window
 foreign import ccall "ecore_evas_show" showWindow :: Window -> IO ()
+
+-- | Hide a window
+foreign import ccall "ecore_evas_hide" hideWindow :: Window -> IO ()
+
+-- | Show/hide a window
+setWindowVisible :: Bool -> Window -> IO ()
+setWindowVisible True = showWindow
+setWindowVisible False = hideWindow
+
+-- | Is the window visible?
+getWindowVisible :: Window -> IO Bool
+getWindowVisible win = (==1) <$> getWindowVisible_ win
+
+foreign import ccall "ecore_evas_visibility_get" getWindowVisible_ :: Window -> IO CInt
 
 -- | Get the rendering canvas of the window
 foreign import ccall "ecore_evas_get" getWindowCanvas :: Window -> IO Canvas
 
+-- | Get window size
+getWindowSize :: Window -> IO (Int,Int)
+getWindowSize win = do
+   (_,_,w,h) <- getWindowGeometry win
+   return (w,h)
+
+-- | Get window position
+getWindowPosition :: Window -> IO (Int,Int)
+getWindowPosition win = do
+   (x,y,_,_) <- getWindowGeometry win
+   return (x,y)
+
 -- | Retrieve the position and (rectangular) size of the given canvas object
-getWindowGeometry :: Window -> IO (CInt,CInt,CInt,CInt)
-getWindowGeometry win = get4_helper (_getWindowGeometry win)
+getWindowGeometry :: Window -> IO (Int,Int,Int,Int)
+getWindowGeometry win = do
+   (a,b,c,d) <- get4_helper (_getWindowGeometry win)
+   return (fromIntegral a, fromIntegral b, fromIntegral c, fromIntegral d)
 
 foreign import ccall "ecore_evas_geometry_get" _getWindowGeometry :: Window -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CInt -> IO ()
 
@@ -114,14 +147,14 @@ setWindowGeometry (x,y,w,h) win = _setWindowGeometry win x y w h
 foreign import ccall "ecore_evas_move_resize" _setWindowGeometry :: Window ->  CInt ->  CInt ->  CInt ->  CInt -> IO ()
 
 -- | Resize window
-resizeWindow :: (CInt,CInt) -> Window -> IO ()
-resizeWindow (w,h) win = _resizeWindow win w h
+resizeWindow :: (Int,Int) -> Window -> IO ()
+resizeWindow (w,h) win = _resizeWindow win (fromIntegral w) (fromIntegral h)
 
 foreign import ccall "ecore_evas_resize" _resizeWindow :: Window ->  CInt ->  CInt ->  IO ()
 
 -- | Move window
-moveWindow :: (CInt,CInt) -> Window -> IO ()
-moveWindow (x,y) win = _moveWindow win x y
+moveWindow :: (Int,Int) -> Window -> IO ()
+moveWindow (x,y) win = _moveWindow win (fromIntegral x) (fromIntegral y)
 
 foreign import ccall "ecore_evas_move" _moveWindow :: Window ->  CInt ->  CInt ->  IO ()
 
@@ -135,4 +168,67 @@ onWindowResizeEx win cb = setWindowResizeCallback_ win =<< wrapCallback cb
 
 foreign import ccall "ecore_evas_callback_resize_set" setWindowResizeCallback_ :: Window -> FunPtr (Window -> IO ()) -> IO ()
 
+-- | Associate a callback to the "move" event
+onWindowMove :: Window -> IO () -> IO ()
+onWindowMove win cb = onWindowMoveEx win (const cb)
+
+-- | Associate a callback to the "move" event
+onWindowMoveEx :: Window -> (Window -> IO ()) -> IO ()
+onWindowMoveEx win cb = setWindowMoveCallback_ win =<< wrapCallback cb
+
+foreign import ccall "ecore_evas_callback_move_set" setWindowMoveCallback_ :: Window -> FunPtr (Window -> IO ()) -> IO ()
+
+-- | Associate a callback to the "hide" event
+onWindowHide :: Window -> IO () -> IO ()
+onWindowHide win cb = onWindowHideEx win (const cb)
+
+-- | Associate a callback to the "hide" event
+onWindowHideEx :: Window -> (Window -> IO ()) -> IO ()
+onWindowHideEx win cb = setWindowHideCallback_ win =<< wrapCallback cb
+
+foreign import ccall "ecore_evas_callback_hide_set" setWindowHideCallback_ :: Window -> FunPtr (Window -> IO ()) -> IO ()
+
+-- | Associate a callback to the "show" event
+onWindowShow :: Window -> IO () -> IO ()
+onWindowShow win cb = onWindowShowEx win (const cb)
+
+-- | Associate a callback to the "show" event
+onWindowShowEx :: Window -> (Window -> IO ()) -> IO ()
+onWindowShowEx win cb = setWindowShowCallback_ win =<< wrapCallback cb
+
+foreign import ccall "ecore_evas_callback_show_set" setWindowShowCallback_ :: Window -> FunPtr (Window -> IO ()) -> IO ()
+
+-- | Associate a callback to the "focus_in" event
+onWindowFocusIn :: Window -> IO () -> IO ()
+onWindowFocusIn win cb = onWindowFocusInEx win (const cb)
+
+-- | Associate a callback to the "focus_in" event
+onWindowFocusInEx :: Window -> (Window -> IO ()) -> IO ()
+onWindowFocusInEx win cb = setWindowFocusInCallback_ win =<< wrapCallback cb
+
+foreign import ccall "ecore_evas_callback_focus_in_set" setWindowFocusInCallback_ :: Window -> FunPtr (Window -> IO ()) -> IO ()
+
+-- | Associate a callback to the "focus_out" event
+onWindowFocusOut :: Window -> IO () -> IO ()
+onWindowFocusOut win cb = onWindowFocusOutEx win (const cb)
+
+-- | Associate a callback to the "focus_out" event
+onWindowFocusOutEx :: Window -> (Window -> IO ()) -> IO ()
+onWindowFocusOutEx win cb = setWindowFocusOutCallback_ win =<< wrapCallback cb
+
+foreign import ccall "ecore_evas_callback_focus_out_set" setWindowFocusOutCallback_ :: Window -> FunPtr (Window -> IO ()) -> IO ()
+
 foreign import ccall "wrapper" wrapCallback :: (Window -> IO ()) -> IO (FunPtr (Window -> IO ()))
+
+
+-- | Set window focus
+setWindowFocus :: Bool -> Window -> IO ()
+setWindowFocus b w = _setWindowFocus w (fromBool b)
+
+foreign import ccall "ecore_evas_focus_set" _setWindowFocus :: Window -> EinaBool ->  IO ()
+
+-- | Get window focus
+getWindowFocus :: Window -> IO Bool
+getWindowFocus w = toBool <$> _getWindowFocus w
+
+foreign import ccall "ecore_evas_focus_get" _getWindowFocus :: Window -> IO EinaBool

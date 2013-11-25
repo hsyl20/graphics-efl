@@ -11,10 +11,14 @@ module Graphics.Efl.Canvas.BasicObject (
    delete,
    move, resize, getGeometry,
    cover, uncover, isVisible,
-   setColor, getColor,
    getCanvas, getType,
    raise, lower, stackAbove, stackBelow,
-   getObjectBelow, getObjectAbove
+   getObjectBelow, getObjectAbove,
+   setObjectColor, getObjectColor,
+   setObjectSize, getObjectSize,
+   setObjectPosition, getObjectPosition,
+   setObjectVisible, getObjectVisible,
+   setObjectFocus, getObjectFocus
 ) where
 
 import Foreign.Ptr
@@ -50,7 +54,13 @@ getClipees obj = toList =<< _object_clipees_get obj
 
 foreign import ccall "evas_object_clipees_get" _object_clipees_get :: Object -> IO (EinaList Object)
 
+-- | Set object focus attribute
+setObjectFocus :: Bool -> Object -> IO ()
+setObjectFocus = setFocus
 
+-- | Get object focus attribute
+getObjectFocus :: Object -> IO Bool
+getObjectFocus = isFocused
 
 -- | Set or unset a given object as the currently focused one on its canvas
 setFocus :: Bool -> Object -> IO ()
@@ -114,24 +124,55 @@ foreign import ccall "evas_object_del" delete :: Object -> IO ()
 
 
 -- | Move the given Evas object to the given location inside its canvas' viewport
-move :: Coord -> Coord -> Object -> IO ()
-move x y obj = _move obj x y
+move :: Int -> Int -> Object -> IO ()
+move x y obj = _move obj (fromIntegral x) (fromIntegral y)
 
 foreign import ccall "evas_object_move" _move :: Object -> Coord -> Coord -> IO ()
 
 -- | Change the size of the given Evas object
-resize :: Coord -> Coord -> Object -> IO ()
-resize w h obj = _resize obj w h
+resize :: Int -> Int -> Object -> IO ()
+resize w h obj = _resize obj (fromIntegral w) (fromIntegral h)
 
 foreign import ccall "evas_object_resize" _resize :: Object -> Coord -> Coord -> IO ()
 
+
+-- | Get object size
+getObjectSize :: Object -> IO (Int,Int)
+getObjectSize obj = do
+   (_,_,w,h) <- getGeometry obj
+   return (w,h)
+
+-- | Set object size
+setObjectSize :: (Int,Int) -> Object -> IO ()
+setObjectSize (w,h) = resize w h
+
+-- | Get object position
+getObjectPosition :: Object -> IO (Int,Int)
+getObjectPosition obj = do
+   (x,y,_,_) <- getGeometry obj
+   return (x,y)
+
+-- | Set object position
+setObjectPosition :: (Int,Int) -> Object -> IO ()
+setObjectPosition (x,y) = move x y
+
 -- | Retrieve the position and (rectangular) size of the given Evas object
-getGeometry :: Object -> IO (Coord,Coord,Coord,Coord)
-getGeometry obj = get4_helper (_object_geometry_get obj)
+getGeometry :: Object -> IO (Int,Int,Int,Int)
+getGeometry obj = do
+   (a,b,c,d) <- get4_helper (_object_geometry_get obj)
+   return (fromIntegral a, fromIntegral b, fromIntegral c, fromIntegral d)
 
 foreign import ccall "evas_object_geometry_get" _object_geometry_get :: Object -> Ptr Coord -> Ptr Coord -> Ptr Coord -> Ptr Coord -> IO ()
 
 
+-- | Set object visible attribute
+setObjectVisible :: Bool -> Object -> IO ()
+setObjectVisible True = uncover
+setObjectVisible False = cover
+
+-- | Get object visible attribute
+getObjectVisible :: Object -> IO Bool
+getObjectVisible = isVisible
 
 -- | Make the given Evas object visible
 foreign import ccall "evas_object_show" uncover :: Object -> IO ()
@@ -148,14 +189,14 @@ foreign import ccall "evas_object_visible_get" object_visible_get_ :: Object -> 
 
 
 -- | Set the general/main color of the given Evas object to the given one
-setColor :: Int -> Int -> Int -> Int -> Object -> IO ()
-setColor r g b a obj = _setColor obj (fromIntegral r) (fromIntegral g) (fromIntegral b) (fromIntegral a)
+setObjectColor :: (Int,Int,Int,Int) -> Object -> IO ()
+setObjectColor (r,g,b,a) obj = _setColor obj (fromIntegral r) (fromIntegral g) (fromIntegral b) (fromIntegral a)
 
 foreign import ccall "evas_object_color_set" _setColor :: Object -> CInt -> CInt -> CInt -> CInt -> IO ()
 
 -- | Set the general/main color of the given Evas object to the given one
-getColor :: Object -> IO (Int,Int,Int,Int)
-getColor obj = f <$> get4_helper (_object_color_get obj)
+getObjectColor :: Object -> IO (Int,Int,Int,Int)
+getObjectColor obj = f <$> get4_helper (_object_color_get obj)
    where f (r,g,b,a) = (fromIntegral r, fromIntegral g, fromIntegral b, fromIntegral a)
 
 foreign import ccall "evas_object_color_get" _object_color_get :: Object -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CInt -> IO ()

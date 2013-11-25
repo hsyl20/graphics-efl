@@ -13,7 +13,9 @@ module Graphics.Efl.Canvas.Events (
    onEvent, onMouseDown, onMouseUp, onMouseIn, onMouseOut,
    onMouseMove, onMouseWheel,
    onMultiDown, onMultiUp, onMultiMove,
-   onKeyDown, onKeyUp, onHold
+   onKeyDown, onKeyUp, onHold,
+   onObjectFocusIn, onObjectFocusOut,
+   onObjectShow, onObjectHide, onObjectMove, onObjectResize
 ) where
 
 import Foreign.Ptr
@@ -73,6 +75,30 @@ onMouseMove = onEvent EvasCallbackMouseMove
 -- | Mouse Wheel event setter
 onMouseWheel :: (Object -> MouseWheelEvent -> IO ()) -> Object -> IO ()
 onMouseWheel = onEvent EvasCallbackMouseWheel
+
+-- | Focus In
+onObjectFocusIn :: Object -> IO () -> IO ()
+onObjectFocusIn o f = onEvent EvasCallbackFocusIn (\_ _ -> f) o
+
+-- | Focus Out
+onObjectFocusOut :: Object -> IO () -> IO ()
+onObjectFocusOut o f = onEvent EvasCallbackFocusOut (\_ _ -> f) o
+
+-- | Show
+onObjectShow :: Object -> IO () -> IO ()
+onObjectShow o f = onEvent EvasCallbackShow (\_ _ -> f) o
+
+-- | Hide
+onObjectHide :: Object -> IO () -> IO ()
+onObjectHide o f = onEvent EvasCallbackHide (\_ _ -> f) o
+
+-- | Move
+onObjectMove :: Object -> IO () -> IO ()
+onObjectMove o f = onEvent EvasCallbackMove (\_ _ -> f) o
+
+-- | Resize
+onObjectResize :: Object -> IO () -> IO ()
+onObjectResize o f = onEvent EvasCallbackResize (\_ _ -> f) o
 
 -- | Generic event setter
 onEvent :: CallbackType -> (Object -> Ptr a -> IO ()) -> Object -> IO ()

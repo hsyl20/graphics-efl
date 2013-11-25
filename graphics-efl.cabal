@@ -40,7 +40,12 @@ library
       Graphics.Efl.Canvas.ViewPort,
       Graphics.Efl.Canvas.Pointer,
       Graphics.Efl.Canvas.Misc,
-      Graphics.Efl.Eina
+      Graphics.Efl.Eina,
+
+      Graphics.Efl.Widgets.Reactive,
+      Graphics.Efl.Widgets.Window,
+      Graphics.Efl.Widgets.Rectangle
+
 
   PkgConfig-Depends:
     eina,
@@ -57,7 +62,8 @@ library
   build-depends:
       base ==4.6.*,
       vector ==0.10.*,
-      system-time-monotonic == 0.2
+      transformers ==0.3.*,
+      system-time-monotonic ==0.2
 
   hs-source-dirs:      src
   build-tools:         c2hs, hsc2hs

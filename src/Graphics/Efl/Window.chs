@@ -141,8 +141,8 @@ getWindowGeometry win = do
 foreign import ccall "ecore_evas_geometry_get" _getWindowGeometry :: Window -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CInt -> IO ()
 
 -- | Set the position and (rectangular) size of the given canvas object
-setWindowGeometry :: (CInt,CInt,CInt,CInt) -> Window -> IO ()
-setWindowGeometry (x,y,w,h) win = _setWindowGeometry win x y w h
+setWindowGeometry :: (Int,Int,Int,Int) -> Window -> IO ()
+setWindowGeometry (x,y,w,h) win = _setWindowGeometry win (fromIntegral x) (fromIntegral y) (fromIntegral w) (fromIntegral h)
 
 foreign import ccall "ecore_evas_move_resize" _setWindowGeometry :: Window ->  CInt ->  CInt ->  CInt ->  CInt -> IO ()
 

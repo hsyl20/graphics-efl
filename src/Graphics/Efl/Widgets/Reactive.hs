@@ -89,6 +89,9 @@ triggerSignal (Signal ev ref) v = do
 
 data Transition s = forall a . Transition (Signal a) (a -> Auto s)
 
+(-->) :: Signal a -> (a -> Auto s) -> Transition s
+(-->) = Transition
+
 data Auto s = Auto s [Transition s]
 
 runAutomaton :: Auto s -> (s -> a) -> IO (Property a)

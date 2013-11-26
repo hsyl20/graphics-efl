@@ -24,10 +24,10 @@ createButton win = do
    -- Button pressed automaton
    let 
       unpressed = Auto False [
-            Transition (rectangleMouseDown bg) (const pressed)
+            rectangleMouseDown bg --> const pressed
          ]
       pressed = Auto True [
-            Transition (rectangleMouseUp bg) (const unpressed)
+            rectangleMouseUp bg --> const unpressed
          ]
 
    btn <- Button bg

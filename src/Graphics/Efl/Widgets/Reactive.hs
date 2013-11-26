@@ -14,7 +14,7 @@ data Property a = Property {
    setValue :: a -> IO (),       -- ^ Property internal setter
    getValue :: IO a,             -- ^ Property internal getter
    propEvent :: Event,           -- ^ Event triggered when the property is set
-   propSources :: IORef [Event]  -- ^ Events that trigger reevaluation of the property
+   propSources :: IORef [Callback]  -- ^ Callbacks that trigger reevaluation of the property
 }
 
 newProperty :: (a -> IO ()) -> IO a -> IO (Property a)
@@ -61,20 +61,18 @@ instance MonadIO Binding where
    liftIO f = Binding $ (([],) <$> f)
 
 (=&) :: Property a -> Binding a -> IO ()
-(=&) prop (Binding f) = do
-   let cb = do
+(=&) prop (Binding f) = cb
+   where 
+      cb = do
          (evs,val) <- f
-         -- set sources
-         writeIORef (propSources prop) evs
+         -- Remove old callbacks
+         oldCbs <- readIORef (propSources prop)
+         forM_ oldCbs deleteCallback
+         -- Assign new callbacks
+         cbs <- forM evs (addCallback (void cb))
+         writeIORef (propSources prop) cbs
          -- set value
          writeProperty prop val
-         return evs
-
-   -- Set initial value
-   evs <- cb
-
-   -- Assign callback
-   forM_ evs (addCallback (void cb))
 
 
 data Signal a = Signal Event (IORef (Maybe a))

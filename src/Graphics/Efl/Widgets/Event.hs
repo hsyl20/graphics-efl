@@ -6,9 +6,9 @@ import Data.Foldable
 import Data.IntMap as IntMap
 
 
-newtype Event = Event (IORef (IntMap (IO ())))
+newtype Event = Event (IORef (IntMap (IO ()))) deriving (Eq)
 
-newtype Callback = Callback (Event,Int)
+newtype Callback = Callback (Event,Int) deriving (Eq)
 
 newEvent :: IO Event
 newEvent = Event <$> newIORef IntMap.empty

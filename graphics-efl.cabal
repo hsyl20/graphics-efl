@@ -42,6 +42,7 @@ library
       Graphics.Efl.Canvas.Misc,
       Graphics.Efl.Eina,
 
+      Graphics.Efl.Widgets.Event,
       Graphics.Efl.Widgets.Reactive,
       Graphics.Efl.Widgets.Window,
       Graphics.Efl.Widgets.Rectangle

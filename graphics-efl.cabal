@@ -64,7 +64,8 @@ library
       base ==4.6.*,
       vector ==0.10.*,
       transformers ==0.3.*,
-      system-time-monotonic ==0.2
+      system-time-monotonic ==0.2,
+      containers ==0.5.*
 
   hs-source-dirs:      src
   build-tools:         c2hs, hsc2hs

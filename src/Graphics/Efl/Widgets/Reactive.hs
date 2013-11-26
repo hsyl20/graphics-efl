@@ -8,6 +8,7 @@ import Data.IORef
 import Control.Monad (forM_,void)
 import Control.Monad.IO.Class
 import Data.Maybe
+import Data.Traversable
 
 data Property a = Property {
    setValue :: a -> IO (),       -- ^ Property internal setter
@@ -97,12 +98,15 @@ runAutomaton (Auto initState ts) f = do
 
    prop <- newIORefProperty (f initState)
 
-   let runAutomaton' trs = 
-         forM_ trs $ \(Transition (Signal ev ref) g) -> flip addCallback ev $ do
+   let runAutomaton' trs = do
+         -- allocate callback placeholders
+         cbs <- forM trs $ \(Transition (Signal ev _) _) -> addCallback (return ()) ev
+
+         forM_ (cbs `zip` trs) $ \(cb,(Transition (Signal _ ref) g)) -> updateCallback cb $ do
             Auto state' trs' <- g . fromJust <$> readIORef ref
             writeProperty prop (f state')
-            --FIXME: remove old transition callbacks
-            -- forM_ trs $ \(Transition (Signal ev _) _) -> removeCallback ev
+            -- remove old transition callbacks
+            forM_ cbs deleteCallback
             runAutomaton' trs'
    
    runAutomaton' ts

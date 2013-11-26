@@ -44,8 +44,8 @@ getTextFontSource obj = peekCString =<< _object_text_font_source_get obj
 foreign import ccall "evas_object_text_font_source_get" _object_text_font_source_get :: Object -> IO CString
 
 -- | Set the font family and size on a given text object
-setTextFont :: String -> FontSize -> Object -> IO ()
-setTextFont font size obj = withCString font (flip (_object_text_font_set obj) size)
+setTextFont :: (String, FontSize) -> Object -> IO ()
+setTextFont (font,size) obj = withCString font (flip (_object_text_font_set obj) size)
 
 foreign import ccall "evas_object_text_font_set" _object_text_font_set :: Object -> CString -> FontSize -> IO ()
 
@@ -54,7 +54,7 @@ foreign import ccall "evas_object_text_font_set" _object_text_font_set :: Object
 getTextFont :: Object -> IO (String,FontSize)
 getTextFont obj = do
    (cfont, size) <- get2_helper (_object_text_font_get obj)
-   font <- peekCString cfont
+   font <- if cfont == nullPtr then return "" else peekCString cfont
    return (font,size)
 
 foreign import ccall "evas_object_text_font_get" _object_text_font_get :: Object -> Ptr CString -> Ptr FontSize -> IO ()
@@ -110,8 +110,8 @@ foreign import ccall "evas_object_text_style_get" _object_text_style_get :: Obje
 
 
 -- | Set the style to apply on the given text object
-setTextStyle :: TextStyle -> TextShadowStyle -> Object -> IO ()
-setTextStyle style shadow obj = _object_text_style_set obj (fromIntegral (fromEnum style) .|. fromIntegral (fromEnum shadow))
+setTextStyle :: (TextStyle,TextShadowStyle) -> Object -> IO ()
+setTextStyle (style,shadow) obj = _object_text_style_set obj (fromIntegral (fromEnum style) .|. fromIntegral (fromEnum shadow))
 
 foreign import ccall "evas_object_text_style_set" _object_text_style_set :: Object -> CInt -> IO ()
 
@@ -168,8 +168,10 @@ foreign import ccall "evas_object_text_outline_color_get" _object_text_outline_c
 
 
 -- | Gets the text style pad of a text object
-getTextStylePad :: Object -> IO (CInt, CInt, CInt, CInt)
-getTextStylePad obj = get4_helper (_object_text_style_pad_get obj)
+getTextStylePad :: Object -> IO (Int, Int, Int, Int)
+getTextStylePad obj = do
+   (a,b,c,d) <- get4_helper (_object_text_style_pad_get obj)
+   return (fromIntegral a, fromIntegral b, fromIntegral c, fromIntegral d)
 
 foreign import ccall "evas_object_text_style_pad_get" _object_text_style_pad_get :: Object -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CInt -> IO ()
 

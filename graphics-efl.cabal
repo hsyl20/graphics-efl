@@ -46,6 +46,7 @@ library
       Graphics.Efl.Widgets.Reactive,
       Graphics.Efl.Widgets.Window,
       Graphics.Efl.Widgets.Rectangle,
+      Graphics.Efl.Widgets.Text,
       Graphics.Efl.Widgets.Button
 
 

@@ -3,7 +3,8 @@
 module Graphics.Efl.Canvas.Events (
    addEventCallback, addEventCallbackWithPriority,
    removeEventCallback, removeEventCallbackFull,
-   enableEventPassing, disableEventPassing, isPassingEvents,
+   enableEventPassing, disableEventPassing, 
+   setObjectPassEvents, getObjectPassEvents,
    enableEventRepeating, disableEventRepeating, isRepeatingEvents,
    enableEventPropagating, disableEventPropagating, isPropagatingEvents,
    enableEventFreezing, disableEventFreezing, isFreezingEvents,
@@ -133,23 +134,23 @@ foreign import ccall "evas_object_event_callback_del_full" _object_event_callbac
 
 
 -- | Set whether an Evas object is to pass (ignore) events
-setPassEvents :: Object -> Bool -> IO ()
-setPassEvents obj b = _object_pass_events_set obj (fromBool b)
+setObjectPassEvents :: Bool -> Object -> IO ()
+setObjectPassEvents b obj = _object_pass_events_set obj (fromBool b)
 
 -- | Enable event passing
 enableEventPassing :: Object -> IO ()
-enableEventPassing obj = setPassEvents obj True
+enableEventPassing = setObjectPassEvents True
 
 -- | Disable event passing
 disableEventPassing :: Object -> IO ()
-disableEventPassing obj = setPassEvents obj False
+disableEventPassing = setObjectPassEvents False
 
 foreign import ccall "evas_object_pass_events_set" _object_pass_events_set :: Object -> EinaBool -> IO ()
 
 
 -- | Determine whether an object is set to pass (ignore) events
-isPassingEvents :: Object -> IO Bool
-isPassingEvents obj = toBool <$> _object_pass_events_get obj 
+getObjectPassEvents :: Object -> IO Bool
+getObjectPassEvents obj = toBool <$> _object_pass_events_get obj 
 
 foreign import ccall "evas_object_pass_events_get" _object_pass_events_get :: Object -> IO EinaBool
 

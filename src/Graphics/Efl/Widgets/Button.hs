@@ -4,6 +4,8 @@ import Graphics.Efl.Widgets.Reactive
 import Graphics.Efl.Widgets.Window
 import Graphics.Efl.Widgets.Rectangle
 import Graphics.Efl.Widgets.Text
+import Graphics.Efl.Widgets.Widget
+import Graphics.Efl.Widgets.Layout
 import qualified Graphics.Efl.Canvas as Peer
 import Control.Applicative
 
@@ -18,6 +20,11 @@ data Button = Button {
 
    buttonPressed :: Property Bool
 }
+
+instance Widget Button where
+   widgetSize = buttonSize
+   widgetPosition = buttonPosition
+   widgetVisible = buttonVisible
 
 
 createButton :: Window -> IO Button
@@ -48,8 +55,7 @@ createButton win = do
 
    textString label =& readProperty (buttonText btn)
    textVisible label =& readProperty (buttonVisible btn)
-   textSize label =& readProperty (buttonSize btn)
-   textPosition label =& readProperty (buttonPosition btn)
+   label `alignCenter` btn
 
    textPassEvents label =& return True
    textStyle label =& return (Peer.TextStylePlain, Peer.TextStyleShadowDirectionBottomRight)

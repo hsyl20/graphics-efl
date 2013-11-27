@@ -2,6 +2,7 @@ module Graphics.Efl.Widgets.Rectangle where
 
 import Graphics.Efl.Widgets.Reactive
 import Graphics.Efl.Widgets.Window
+import Graphics.Efl.Widgets.Widget
 import qualified Graphics.Efl.Canvas as Peer
 import Control.Applicative
 
@@ -18,6 +19,11 @@ data Rectangle = Rectangle {
    rectangleMouseDown :: Signal Peer.MouseDownEvent,
    rectangleMouseUp :: Signal Peer.MouseUpEvent
 }
+
+instance Widget Rectangle where
+   widgetSize = rectangleSize
+   widgetPosition = rectanglePosition
+   widgetVisible = rectangleVisible
 
 createRectangle :: Window -> IO Rectangle
 createRectangle win = do

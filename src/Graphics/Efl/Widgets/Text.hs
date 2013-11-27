@@ -2,6 +2,7 @@ module Graphics.Efl.Widgets.Text where
 
 import Graphics.Efl.Widgets.Reactive
 import Graphics.Efl.Widgets.Window
+import Graphics.Efl.Widgets.Widget
 import qualified Graphics.Efl.Canvas as Peer
 import Control.Applicative
 import Control.Monad.IO.Class
@@ -25,6 +26,11 @@ data Text = Text {
    textMouseDown :: Signal Peer.MouseDownEvent,
    textMouseUp :: Signal Peer.MouseUpEvent
 }
+
+instance Widget Text where
+   widgetSize = textSize
+   widgetPosition = textPosition
+   widgetVisible = textVisible
 
 createText :: Window -> IO Text
 createText win = do

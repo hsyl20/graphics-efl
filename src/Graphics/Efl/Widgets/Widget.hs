@@ -1,5 +1,8 @@
 module Graphics.Efl.Widgets.Widget where
 
-class BasicObject o where
-   peerObject :: Object
-   clippingObject :: o -> Property (Maybe 
+import Graphics.Efl.Widgets.Reactive
+
+class Widget w where
+   widgetSize :: w -> Property (Int,Int)
+   widgetPosition :: w -> Property (Int,Int)
+   widgetVisible :: w -> Property Bool

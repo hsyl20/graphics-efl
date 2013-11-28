@@ -56,8 +56,8 @@ createText win = do
    Peer.onObjectMove peer (triggerPropertyEvent (textPosition rect))
    Peer.onObjectHide peer (triggerPropertyEvent (textVisible rect))
    Peer.onObjectShow peer (triggerPropertyEvent (textVisible rect))
-   Peer.onObjectFocusIn peer (triggerPropertyEvent (textFocus rect))
-   Peer.onObjectFocusOut peer (triggerPropertyEvent (textFocus rect))
+   Peer.onObjectFocusIn (triggerPropertyEvent (textFocus rect)) peer
+   Peer.onObjectFocusOut (triggerPropertyEvent (textFocus rect)) peer 
 
    textStylePad rect =& do
       _ <- readProperty (textStyle rect)

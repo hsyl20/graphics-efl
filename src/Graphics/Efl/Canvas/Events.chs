@@ -14,7 +14,7 @@ module Graphics.Efl.Canvas.Events (
    onEvent, onMouseDown, onMouseUp, onMouseIn, onMouseOut,
    onMouseMove, onMouseWheel,
    onMultiDown, onMultiUp, onMultiMove,
-   onKeyDown, onKeyUp, onHold,
+   onKeyDown, onKeyUp, onFree, onHold,
    onObjectFocusIn, onObjectFocusOut,
    onObjectShow, onObjectHide, onObjectMove, onObjectResize
 ) where
@@ -36,6 +36,10 @@ onKeyDown = onEvent EvasCallbackKeyDown
 -- | Key Up event setter
 onKeyUp :: (Object -> KeyUpEvent -> IO ()) -> Object -> IO ()
 onKeyUp = onEvent EvasCallbackKeyUp
+
+-- | Free change event
+onFree :: IO () -> Object -> IO ()
+onFree f = onEvent EvasCallbackFree (\_ _ -> f)
 
 -- | Hold change event
 onHold :: (Object -> HoldEvent -> IO ()) -> Object -> IO ()
@@ -78,12 +82,12 @@ onMouseWheel :: (Object -> MouseWheelEvent -> IO ()) -> Object -> IO ()
 onMouseWheel = onEvent EvasCallbackMouseWheel
 
 -- | Focus In
-onObjectFocusIn :: Object -> IO () -> IO ()
-onObjectFocusIn o f = onEvent EvasCallbackFocusIn (\_ _ -> f) o
+onObjectFocusIn :: IO () -> Object -> IO ()
+onObjectFocusIn f = onEvent EvasCallbackFocusIn (\_ _ -> f)
 
 -- | Focus Out
-onObjectFocusOut :: Object -> IO () -> IO ()
-onObjectFocusOut o f = onEvent EvasCallbackFocusOut (\_ _ -> f) o
+onObjectFocusOut :: IO () -> Object -> IO ()
+onObjectFocusOut f = onEvent EvasCallbackFocusOut (\_ _ -> f)
 
 -- | Show
 onObjectShow :: Object -> IO () -> IO ()

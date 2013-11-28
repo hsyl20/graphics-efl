@@ -47,6 +47,7 @@ library
       Graphics.Efl.Widgets.Window,
       Graphics.Efl.Widgets.Widget,
       Graphics.Efl.Widgets.Layout,
+      Graphics.Efl.Widgets.BasicObject,
       Graphics.Efl.Widgets.Rectangle,
       Graphics.Efl.Widgets.Text,
       Graphics.Efl.Widgets.Button

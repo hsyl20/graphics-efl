@@ -34,12 +34,9 @@ createButton win = do
    label <- createText win
 
    -- Button pressed automaton
-   let 
-      unpressed = Auto False [
-            rectangleMouseDown bg --> const (const pressed)
-         ]
-      pressed = Auto True [
-            rectangleMouseUp bg --> const (const unpressed)
+   let pressedAutomaton = Auto [
+            rectangleMouseDown bg -@> const (const True),
+            rectangleMouseUp bg -@> const (const False)
          ]
 
    btn <- Button bg label
@@ -47,7 +44,7 @@ createButton win = do
       <*> newIORefProperty (40,15)
       <*> newIORefProperty True
       <*> newIORefProperty "Press me"
-      <*> runAutomaton unpressed id
+      <*> runAutomaton pressedAutomaton id False
 
    rectangleSize bg =& readProperty (buttonSize btn)
    rectanglePosition bg =& readProperty (buttonPosition btn)

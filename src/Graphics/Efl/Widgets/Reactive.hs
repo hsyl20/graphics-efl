@@ -88,23 +88,23 @@ triggerSignal (Signal ev ref) v = do
 
 
 data Transition s = 
-     forall a . Transition (Signal a) (a -> s -> Auto s)
+     forall a . Transition (Signal a) (a -> s -> (s,Auto s))
    | forall a . LoopbackTransition (Signal a) (a -> s -> s)
 
 transitionEvent :: Transition s -> Event
 transitionEvent (Transition (Signal ev _) _) = ev
 transitionEvent (LoopbackTransition (Signal ev _) _) = ev
 
-(-->) :: Signal a -> (a -> s -> Auto s) -> Transition s
+(-->) :: Signal a -> (a -> s -> (s,Auto s)) -> Transition s
 (-->) = Transition
 
 (-@>) :: Signal a -> (a -> s -> s) -> Transition s
 (-@>) = LoopbackTransition
 
-data Auto s = Auto s [Transition s]
+data Auto s = Auto [Transition s]
 
-runAutomaton :: Auto s -> (s -> a) -> IO (Property a)
-runAutomaton (Auto initState ts) f = do
+runAutomaton :: Auto s -> (s -> a) -> s -> IO (Property a)
+runAutomaton (Auto ts) f initState = do
 
    stateProp <- newIORefProperty initState
    prop <- newIORefProperty (f initState)
@@ -117,7 +117,7 @@ runAutomaton (Auto initState ts) f = do
          forM_ (cbs `zip` trs) $ \(cb,transition) -> case transition of
 
                Transition (Signal _ ref) g -> updateCallback cb $ do
-                  Auto state' trs' <- g <$> (fromJust <$> readIORef ref) <*> getValue stateProp
+                  (state', Auto trs') <- g <$> (fromJust <$> readIORef ref) <*> getValue stateProp
                   writeProperty stateProp state'
                   -- remove old transition callbacks
                   forM_ cbs deleteCallback

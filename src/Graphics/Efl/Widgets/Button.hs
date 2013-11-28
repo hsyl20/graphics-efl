@@ -36,10 +36,10 @@ createButton win = do
    -- Button pressed automaton
    let 
       unpressed = Auto False [
-            rectangleMouseDown bg --> const pressed
+            rectangleMouseDown bg --> const (const pressed)
          ]
       pressed = Auto True [
-            rectangleMouseUp bg --> const unpressed
+            rectangleMouseUp bg --> const (const unpressed)
          ]
 
    btn <- Button bg label

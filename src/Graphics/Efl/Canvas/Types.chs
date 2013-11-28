@@ -121,17 +121,17 @@ foreign import ccall "wrapper" wrapEventCallback :: (Ptr () -> Canvas -> Object 
 type ObjectImagePixelsGetCb = FunPtr (Ptr () -> Object -> IO ())
 
 
-data Point = Point CInt CInt deriving (Eq,Show)
+data Point = Point Int Int deriving (Eq,Show)
 
 instance Storable Point where
    alignment = sizeOf
    sizeOf _ = {# sizeof Evas_Point #}
    peek p = Point 
-      <$> {# get Evas_Point->x #} p
-      <*> {# get Evas_Point->y #} p
+      <$> (fmap fromIntegral ({# get Evas_Point->x #} p :: IO CInt))
+      <*> (fmap fromIntegral ({# get Evas_Point->y #} p :: IO CInt))
    poke p (Point x y) = do
-      {# set Evas_Point->x #} p x
-      {# set Evas_Point->y #} p y
+      {# set Evas_Point->x #} p (fromIntegral x :: CInt)
+      {# set Evas_Point->y #} p (fromIntegral y :: CInt)
 
 -- | Test if Holding flag is set
 eventFlagIsHolding :: EventFlags -> Bool

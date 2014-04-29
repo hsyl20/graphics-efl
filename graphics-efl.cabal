@@ -11,6 +11,11 @@ category:            Graphics
 build-type:          Simple
 cabal-version:       >=1.8
 
+-- License: http://commons.wikimedia.org/wiki/File:Red_Giant_Earth_warm.jpg
+data-files:
+   examples/data/Red_Giant_Earth_warm.jpg 
+
+
 library
   exposed-modules:
       Graphics.Efl.Core,
@@ -81,3 +86,38 @@ Test-Suite test-evas
   main-is:        test-evas.hs
   hs-source-dirs: tests
   build-depends:  base, graphics-efl
+
+
+executable Simple
+  main-is: Simple.hs
+  other-modules: 
+      Paths_graphics_efl
+
+  build-depends: 
+    base,
+    graphics-efl
+
+  hs-source-dirs: examples
+  ghc-options: -Wall -threaded
+
+executable Simple2
+  main-is: Simple2.hs
+  other-modules: 
+
+  build-depends: 
+    base,
+    graphics-efl,
+    transformers
+
+  hs-source-dirs: examples
+  ghc-options: -Wall -threaded
+
+executable ImageViewer
+  main-is: ImageViewer.hs
+  build-depends: 
+    base,
+    graphics-efl,
+    vector,
+    stm
+  hs-source-dirs: examples
+  ghc-options: -Wall -threaded

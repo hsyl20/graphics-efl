@@ -71,9 +71,9 @@ library
     evas
 
   build-depends:
-      base ==4.6.*,
+      base ==4.7.*,
       vector ==0.10.*,
-      transformers ==0.3.*,
+      transformers ==0.4.*,
       system-time-monotonic ==0.2,
       containers ==0.5.*
 
@@ -87,6 +87,14 @@ Test-Suite test-evas
   hs-source-dirs: tests
   build-depends:  base, graphics-efl
 
+executable TextEditor
+  main-is: TextEditor.hs
+  other-modules: 
+  build-depends: 
+    base,
+    graphics-efl
+  hs-source-dirs: examples
+  ghc-options: -Wall -threaded
 
 executable Simple
   main-is: Simple.hs

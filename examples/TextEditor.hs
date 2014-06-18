@@ -61,22 +61,55 @@ data EditorEvent
    = EditorKeyDown KeyDownEvent
 
 data EditorState = EditorState {
+   editorMode :: EditorMode
 }
 
+data EditorMode
+   = CommandMode String
+   | InsertMode
+   | NormalMode
+
 initState :: EditorState
-initState = EditorState {}
+initState = EditorState 
+   { editorMode = NormalMode
+   }
 
 
 handleEvent :: Object -> EditorEvent -> EditorState -> IO EditorState
 handleEvent textArea event state = do
-   case event of
-      EditorKeyDown ev -> do
-         name <- keyDownKeyName ev
-         old <- getTextBlockTextMarkup textArea
-         new <- case name of
-            "Escape" -> quitMainLoop >> return old
-            "BackSpace" -> return $ if null old then old else init old
-            "Return" -> return (old ++ "<br/>")
-            _ -> (old ++) <$> keyDownString ev
-         setTextBlockTextMarkup new textArea
-         return state
+
+   case editorMode state of
+      InsertMode -> case event of
+         EditorKeyDown ev -> do
+            name <- keyDownKeyName ev
+            old <- getTextBlockTextMarkup textArea
+            case name of
+               "Escape" -> return $ EditorState $ NormalMode
+               s -> do
+                  new <- case s of
+                     "BackSpace" -> return $ if null old then old else init old
+                     "Return" -> return (old ++ "<br/>")
+                     _ -> (old ++) <$> keyDownString ev
+                  setTextBlockTextMarkup new textArea
+                  return state
+
+      CommandMode cmd -> case event of
+         EditorKeyDown ev -> do
+            name <- keyDownKeyName ev
+            case name of
+               "Escape"    -> return $ EditorState NormalMode
+               "BackSpace" -> return $ EditorState (CommandMode $ if null cmd then cmd else init cmd)
+               "Return"    -> case cmd of
+                                 "quit" -> quitMainLoop >> (return $ EditorState $ NormalMode)
+                                 "q"    -> quitMainLoop >> (return $ EditorState $ NormalMode)
+                                 c      -> putStrLn ("Unrecognized command " ++ c) >> (return $ EditorState $ NormalMode)
+               _           -> EditorState . CommandMode . (++) cmd <$> keyDownString ev
+
+      NormalMode -> case event of
+         EditorKeyDown ev -> do
+            name <- keyDownKeyName ev
+            str <- keyDownString ev
+            case (name,str) of
+               (_,":")     -> return $ EditorState $ CommandMode ""
+               (_,"i")     -> return $ EditorState $ InsertMode
+               _           -> return state

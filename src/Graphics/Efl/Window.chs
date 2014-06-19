@@ -80,7 +80,12 @@ createWindow engine x y w h options = do
    win <- createWindow_ engine'(fromIntegral x) (fromIntegral y) (fromIntegral w) (fromIntegral h) options'
    when (engine' /= nullPtr) (free engine')
    when (options' /= nullPtr) (free options')
-   return win
+   if win /= nullPtr 
+      then return win
+      else do
+         let eng = fromMaybe "Default" (fmap show engine)
+         putStrLn $ "Unable to create window with given engine (" ++ eng ++"). Falling back to default engine"
+         createWindow Nothing x y w h options
 
 foreign import ccall "ecore_evas_new" createWindow_ :: CString -> CInt -> CInt -> CInt -> CInt -> CString -> IO Window
 

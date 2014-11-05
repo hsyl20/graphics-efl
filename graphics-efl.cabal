@@ -18,43 +18,48 @@ data-files:
 
 library
   exposed-modules:
-      Graphics.Efl.Core,
-      Graphics.Efl.Core.Animator,
-      Graphics.Efl.Core.Job,
-      Graphics.Efl.Core.Types,
-      Graphics.Efl.Simple,
-      Graphics.Efl.Helpers,
-      Graphics.Efl.Window,
-      Graphics.Efl.Window.Types,
-      Graphics.Efl.Canvas,
-      Graphics.Efl.Canvas.Types,
-      Graphics.Efl.Canvas.BasicObject,
-      Graphics.Efl.Canvas.Image,
-      Graphics.Efl.Canvas.Rectangle,
-      Graphics.Efl.Canvas.Polygon,
-      Graphics.Efl.Canvas.Line,
-      Graphics.Efl.Canvas.Text,
-      Graphics.Efl.Canvas.TextBlock,
-      Graphics.Efl.Canvas.Events,
-      Graphics.Efl.Canvas.MouseEvents,
-      Graphics.Efl.Canvas.MultiEvents,
-      Graphics.Efl.Canvas.KeyEvents,
-      Graphics.Efl.Canvas.MiscEvents,
-      Graphics.Efl.Canvas.Map,
-      Graphics.Efl.Canvas.Engine,
-      Graphics.Efl.Canvas.ViewPort,
-      Graphics.Efl.Canvas.Pointer,
-      Graphics.Efl.Canvas.Misc,
-      Graphics.Efl.Eina,
+      Graphics.Efl.Core
+      Graphics.Efl.Core.Animator
+      Graphics.Efl.Core.Job
+      Graphics.Efl.Core.Types
+      Graphics.Efl.Core.Idle
 
-      Graphics.Efl.Widgets.Event,
-      Graphics.Efl.Widgets.Reactive,
-      Graphics.Efl.Widgets.Window,
-      Graphics.Efl.Widgets.Widget,
-      Graphics.Efl.Widgets.Layout,
-      Graphics.Efl.Widgets.BasicObject,
-      Graphics.Efl.Widgets.Rectangle,
-      Graphics.Efl.Widgets.Text,
+      Graphics.Efl.Eina
+
+      Graphics.Efl.Window
+      Graphics.Efl.Window.Types
+
+      Graphics.Efl.Simple
+      Graphics.Efl.Helpers
+
+      Graphics.Efl.Canvas
+      Graphics.Efl.Canvas.Types
+      Graphics.Efl.Canvas.BasicObject
+      Graphics.Efl.Canvas.Image
+      Graphics.Efl.Canvas.Rectangle
+      Graphics.Efl.Canvas.Polygon
+      Graphics.Efl.Canvas.Line
+      Graphics.Efl.Canvas.Text
+      Graphics.Efl.Canvas.TextBlock
+      Graphics.Efl.Canvas.Events
+      Graphics.Efl.Canvas.MouseEvents
+      Graphics.Efl.Canvas.MultiEvents
+      Graphics.Efl.Canvas.KeyEvents
+      Graphics.Efl.Canvas.MiscEvents
+      Graphics.Efl.Canvas.Map
+      Graphics.Efl.Canvas.Engine
+      Graphics.Efl.Canvas.ViewPort
+      Graphics.Efl.Canvas.Pointer
+      Graphics.Efl.Canvas.Misc
+
+      Graphics.Efl.Widgets.Event
+      Graphics.Efl.Widgets.Reactive
+      Graphics.Efl.Widgets.Window
+      Graphics.Efl.Widgets.Widget
+      Graphics.Efl.Widgets.Layout
+      Graphics.Efl.Widgets.BasicObject
+      Graphics.Efl.Widgets.Rectangle
+      Graphics.Efl.Widgets.Text
       Graphics.Efl.Widgets.Button
 
 
@@ -101,6 +106,16 @@ executable Simple
   other-modules: 
       Paths_graphics_efl
 
+  build-depends: 
+    base,
+    graphics-efl
+
+  hs-source-dirs: examples
+  ghc-options: -Wall -threaded
+
+executable Reactive
+  main-is: Reactive.hs
+  other-modules: 
   build-depends: 
     base,
     graphics-efl

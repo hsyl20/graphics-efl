@@ -33,8 +33,10 @@ main = do
             |> uncover
 
 
-      bg <- addFilledImage canvas
-            |> setImageFile bgfile Nothing
+      --bg <- addFilledImage canvas
+      --      |> setImageFile bgfile Nothing
+      bg <- addRectangle canvas
+            |> setObjectColor (0,0,0,255)
             |> setLayer (-1)
             |> uncover
             |> setFocus True

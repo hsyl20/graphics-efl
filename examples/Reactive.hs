@@ -1,11 +1,12 @@
 import Graphics.Efl.Simple
 import Control.Monad (when)
 import Control.Applicative
+import Data.Foldable (traverse_)
 
 import Graphics.Efl.Core.Idle
-import Graphics.Efl.Eina
 
 import Control.Concurrent.STM
+import qualified Data.STM.LinkedList as LL
 
 main :: IO ()
 main = do
@@ -23,7 +24,22 @@ main = do
 
       setWindowTitle "Simple Haskell-EFL Example" win
 
-      addIdleEnterer (putStrLn "Kikou" >> return (fromBool True))
+      ll <- atomically $ LL.empty
+
+      let deleteAll xs = do
+            e <- LL.start xs
+            case e of
+               Nothing -> return ()
+               Just x  -> LL.delete x >> deleteAll xs
+
+      _ <- addIdleEnterer $ do
+         elems <- atomically $ do
+            es <- LL.toList ll
+            deleteAll ll
+            return es
+
+         traverse_ id elems
+         return True
 
       inTxt <- addText canvas
             |> setText "Your text: "
@@ -58,7 +74,10 @@ main = do
       let clickHandler obj ev = do
             name <- getName obj
             btn <- mouseDownButton ev
-            putStrLn $ "You clicked on " ++ name ++ " with button " ++ show btn
+            _ <- atomically $ do
+               let str = "You clicked on " ++ name ++ " with button " ++ show btn
+               LL.append (print str) ll
+            return ()
 
       r <- addRectangle canvas
             |> setName "First rectangle"
@@ -67,6 +86,5 @@ main = do
             |> setObjectColor (255,0,0,255)
             |> uncover
             |> onMouseDown clickHandler
-            |> onMouseMove (\_ _ -> putStrLn "Move!")
 
       return ()

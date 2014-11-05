@@ -13,5 +13,5 @@ type IdleEnterer = Ptr ()
 foreign import ccall "ecore_idle_enterer_add" _idleEntererAdd :: TaskCallbackP -> Ptr () -> IO IdleEnterer
 
 -- | Add an idle enterer
-addIdleEnterer :: IO EinaBool -> IO IdleEnterer
-addIdleEnterer f = flip _idleEntererAdd nullPtr =<< wrapTaskCallback (const f)
+addIdleEnterer :: IO Bool -> IO IdleEnterer
+addIdleEnterer f = flip _idleEntererAdd nullPtr =<< wrapTaskCallback (fmap fromBool . const f)

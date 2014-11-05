@@ -118,7 +118,9 @@ executable Reactive
   other-modules: 
   build-depends: 
     base,
-    graphics-efl
+    graphics-efl,
+    stm == 2.4.*,
+    stm-linkedlist == 0.1.*
 
   hs-source-dirs: examples
   ghc-options: -Wall -threaded

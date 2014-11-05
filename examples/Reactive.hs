@@ -10,8 +10,10 @@ import Control.Concurrent
 import Control.Concurrent.STM
 import qualified Data.STM.LinkedList as LL
 
+data PropAction a = PropSet a | PropKill
+
 data Property a = Property
-   { propSource :: STM (Maybe a)
+   { propSource :: STM (PropAction a)
    , propSetter :: a -> STM ()
    , propValue :: TVar a
    }
@@ -30,30 +32,30 @@ initProperty p = void $ forkIO $ g
          old <- readTVar (propValue p)
          case (old,v) of
             -- this property is dead, do nothing
-            (_, Nothing) -> return False
+            (_, PropKill) -> return False
 
             -- a different value has been set
-            (x, Just y) | x /= y -> do
+            (x, PropSet y) | x /= y -> do
                writeTVar (propValue p) y
                propSetter p y
                return True
 
             -- the value is the same as the old one
-            (x, Just y) | otherwise -> retry
+            (x, PropSet y) | otherwise -> retry
 
 readProperty :: Property a -> STM a
 readProperty = readTVar . propValue
 
    
-createProperty :: Eq a => STM (Maybe a) -> (a -> STM ()) -> IO (Property a)
+createProperty :: Eq a => STM (PropAction a) -> (a -> STM ()) -> IO (Property a)
 createProperty src setter = do
    init' <- atomically $ src
-   init <- case init' of
-      Nothing -> error "Cannot obtain property initial value"
-      Just x  -> return x
+   init'' <- case init' of
+      PropKill -> error "Cannot obtain property initial value (instantaneously killed)"
+      PropSet x  -> return x
    p <- atomically $ do
-      setter init
-      Property src setter <$> newTVar init
+      setter init''
+      Property src setter <$> newTVar init''
    initProperty p
    return p
    
@@ -135,12 +137,12 @@ main = do
 
       -- r position
       p1 <- createProperty
-         (return (Just (20,40)))
+         (return (PropSet (20,40)))
          (\(x,y) -> act $ move x y r)
       
       -- r2 position
       p2 <- createProperty
-         (return (Just (300,40)))
+         (return (PropSet (300,40)))
          (\(x,y) -> act $ move x y r2)
 
       -- selr position
@@ -149,8 +151,8 @@ main = do
             s <- traverse readProperty =<< readTVar selectedPos
             case s of
                -- Nothing selected
-               Nothing -> return (Just (0,0))
-               Just (x,y)  -> return (Just (x-10,y-5))
+               Nothing -> return (PropSet (0,0))
+               Just (x,y)  -> return (PropSet (x-10,y-5))
          )
 
          (\(x,y) -> act $ move x y selr)
@@ -160,8 +162,8 @@ main = do
          (do
             s <- readTVar selectedPos
             case s of
-               Nothing -> return (Just False)
-               Just b  -> return (Just True)
+               Nothing -> return (PropSet False)
+               Just b  -> return (PropSet True)
          )
 
          (\visible -> when (visible) (act $ uncover selr))

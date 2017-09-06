@@ -1,6 +1,5 @@
 import Graphics.Efl.Simple
 import Control.Monad (void,when)
-import Control.Applicative
 import Data.Foldable (traverse_)
 import Data.Traversable (traverse)
 
@@ -20,7 +19,7 @@ data Property a = Property
 
 initProperty :: Eq a => Property a -> IO ()
 initProperty p = void $ forkIO $ g
-   where 
+   where
       g = do
          b <- f
          if b then g else return ()
@@ -46,7 +45,7 @@ initProperty p = void $ forkIO $ g
 readProperty :: Property a -> STM a
 readProperty = readTVar . propValue
 
-   
+
 createProperty :: Eq a => STM (PropAction a) -> (a -> STM ()) -> IO (Property a)
 createProperty src setter = do
    init' <- atomically $ src
@@ -58,7 +57,7 @@ createProperty src setter = do
       Property src setter <$> newTVar init''
    initProperty p
    return p
-   
+
 
 main :: IO ()
 main = do
@@ -66,7 +65,7 @@ main = do
    engines <- getEngines
    putStrLn (show engines)
 
-   let engine = if "opengl_x11" `elem` engines 
+   let engine = if "opengl_x11" `elem` engines
          then Just "opengl_x11"
          else Nothing
 
@@ -116,7 +115,7 @@ main = do
             |> setLayer 2
             |> setObjectColor (255,0,0,255)
             |> uncover
-      
+
       r2 <- addRectangle canvas
             |> setName "Second rectangle"
             |> resize 100 30
@@ -139,14 +138,14 @@ main = do
       p1 <- createProperty
          (return (PropSet (20,40)))
          (\(x,y) -> act $ move x y r)
-      
+
       -- r2 position
       p2 <- createProperty
          (return (PropSet (300,40)))
          (\(x,y) -> act $ move x y r2)
 
       -- selr position
-      void $ createProperty 
+      void $ createProperty
          (do
             s <- traverse readProperty =<< readTVar selectedPos
             case s of
@@ -156,9 +155,9 @@ main = do
          )
 
          (\(x,y) -> act $ move x y selr)
-      
+
       -- selr uncover
-      void $ createProperty 
+      void $ createProperty
          (do
             s <- readTVar selectedPos
             case s of
@@ -173,7 +172,7 @@ main = do
             (x,y) <- getObjectPosition obj
             btn <- mouseDownButton ev
             let str = "You clicked on " ++ name ++ " with button " ++ show btn
-            let actions = 
+            let actions =
                   [ print str
                   , atomically $ writeTVar selectedPos (Just p)
                   , uncover selr

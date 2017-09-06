@@ -1,6 +1,5 @@
 module Graphics.Efl.Widgets.Event where
 
-import Control.Applicative
 import Data.IORef
 import Data.Foldable
 import Data.IntMap as IntMap

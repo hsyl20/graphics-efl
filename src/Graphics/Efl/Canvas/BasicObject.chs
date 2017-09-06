@@ -25,7 +25,6 @@ import Foreign.Ptr
 import Foreign.C.String
 import Foreign.C.Types
 
-import Control.Applicative
 import Data.Int
 
 import Graphics.Efl.Helpers
@@ -44,7 +43,7 @@ getClippingObject :: Object -> IO (Maybe Object)
 getClippingObject obj = maybePtr <$> _object_clip_get obj
 
 foreign import ccall "evas_object_clip_get" _object_clip_get :: Object -> IO Object
-   
+
 -- | Disable/cease clipping on a clipped object
 foreign import ccall "evas_object_clip_unset" disableClipping :: Object -> IO ()
 
@@ -69,7 +68,7 @@ setFocus False obj = _object_focus_set obj 0
 
 foreign import ccall "evas_object_focus_set" _object_focus_set :: Object -> EinaBool -> IO ()
 
--- | Retrieve whether an object has the focus 
+-- | Retrieve whether an object has the focus
 isFocused :: Object -> IO Bool
 isFocused obj = (/= 0) <$> _object_focus_get obj
 

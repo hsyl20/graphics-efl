@@ -1,5 +1,5 @@
 {-# LANGUAGE BangPatterns,TupleSections #-}
-import Graphics.Efl.Widgets.Window 
+import Graphics.Efl.Widgets.Window
 import Graphics.Efl.Widgets.Rectangle
 import Graphics.Efl.Widgets.Button
 import Graphics.Efl.Widgets.Reactive
@@ -10,7 +10,6 @@ import Graphics.Efl.Canvas.Types (Point(..))
 import Graphics.Efl.Simple(initWindowingSystem, beginMainLoop, getEngines, createJob)
 import Text.Printf
 import System.IO.Unsafe
-import Control.Applicative
 
 main :: IO ()
 main = do
@@ -18,7 +17,7 @@ main = do
 
    engines <- getEngines
 
-   let engine = if "opengl_x11" `elem` engines 
+   let engine = if "opengl_x11" `elem` engines
          then Just "opengl_x11"
          else Nothing
 

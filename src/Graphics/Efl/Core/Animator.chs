@@ -17,7 +17,6 @@ module Graphics.Efl.Core.Animator (
 
 import Foreign.Ptr
 import Foreign.C.Types
-import Control.Applicative
 import Control.Monad
 
 import Data.Fixed (mod')

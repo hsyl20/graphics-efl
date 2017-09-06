@@ -9,7 +9,6 @@ module Graphics.Efl.Canvas.Engine (
 
 import Foreign.C.String
 import Foreign.C.Types
-import Control.Applicative ((<$>))
 
 import Graphics.Efl.Eina
 import Graphics.Efl.Canvas.Types

@@ -3,7 +3,7 @@
 module Graphics.Efl.Canvas.Events (
    addEventCallback, addEventCallbackWithPriority,
    removeEventCallback, removeEventCallbackFull,
-   enableEventPassing, disableEventPassing, 
+   enableEventPassing, disableEventPassing,
    setObjectPassEvents, getObjectPassEvents,
    enableEventRepeating, disableEventRepeating, isRepeatingEvents,
    enableEventPropagating, disableEventPropagating, isPropagatingEvents,
@@ -21,8 +21,6 @@ module Graphics.Efl.Canvas.Events (
 
 import Foreign.Ptr
 import Foreign.C.Types
-
-import Control.Applicative
 
 import Graphics.Efl.Eina
 import Graphics.Efl.Canvas.Types
@@ -154,7 +152,7 @@ foreign import ccall "evas_object_pass_events_set" _object_pass_events_set :: Ob
 
 -- | Determine whether an object is set to pass (ignore) events
 getObjectPassEvents :: Object -> IO Bool
-getObjectPassEvents obj = toBool <$> _object_pass_events_get obj 
+getObjectPassEvents obj = toBool <$> _object_pass_events_get obj
 
 foreign import ccall "evas_object_pass_events_get" _object_pass_events_get :: Object -> IO EinaBool
 
@@ -174,7 +172,7 @@ foreign import ccall "evas_object_repeat_events_set" _object_repeat_events_set :
 
 -- | Determine whether an object is set to repeat events
 isRepeatingEvents :: Object -> IO Bool
-isRepeatingEvents obj = toBool <$> _object_repeat_events_get obj 
+isRepeatingEvents obj = toBool <$> _object_repeat_events_get obj
 
 foreign import ccall "evas_object_repeat_events_get" _object_repeat_events_get :: Object -> IO EinaBool
 
@@ -195,7 +193,7 @@ foreign import ccall "evas_object_propagate_events_set" _object_propagate_events
 
 -- | Determine whether an object is set to propagate events
 isPropagatingEvents :: Object -> IO Bool
-isPropagatingEvents obj = toBool <$> _object_propagate_events_get obj 
+isPropagatingEvents obj = toBool <$> _object_propagate_events_get obj
 
 foreign import ccall "evas_object_propagate_events_get" _object_propagate_events_get :: Object -> IO EinaBool
 
@@ -216,7 +214,7 @@ foreign import ccall "evas_object_freeze_events_set" _object_freeze_events_set :
 
 -- | Determine whether an object is set to freeze events
 isFreezingEvents :: Object -> IO Bool
-isFreezingEvents obj = toBool <$> _object_freeze_events_get obj 
+isFreezingEvents obj = toBool <$> _object_freeze_events_get obj
 
 foreign import ccall "evas_object_freeze_events_get" _object_freeze_events_get :: Object -> IO EinaBool
 

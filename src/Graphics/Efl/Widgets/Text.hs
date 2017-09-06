@@ -4,7 +4,6 @@ import Graphics.Efl.Widgets.Reactive
 import Graphics.Efl.Widgets.Window
 import Graphics.Efl.Widgets.Widget
 import qualified Graphics.Efl.Canvas as Peer
-import Control.Applicative
 import Control.Monad.IO.Class
 
 type Color = (Int,Int,Int,Int)

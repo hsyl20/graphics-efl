@@ -18,8 +18,6 @@ module Graphics.Efl.Canvas.Map (
 import Foreign.Ptr
 import Foreign.C.Types
 
-import Control.Applicative
-
 import Graphics.Efl.Eina
 import Graphics.Efl.Canvas.Types
 import Graphics.Efl.Helpers

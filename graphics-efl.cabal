@@ -1,5 +1,5 @@
 name:                graphics-efl
-version:             0.1.0.0
+version:             0.2.0.0
 synopsis:            Bindings to EFL (Enlightenment Foundation Libraries)
 -- description:         
 license:             BSD3
@@ -76,11 +76,11 @@ library
     evas
 
   build-depends:
-      base ==4.7.*,
-      vector ==0.10.*,
-      transformers ==0.4.*,
-      system-time-monotonic ==0.2,
-      containers ==0.5.*
+      base,
+      vector,
+      transformers,
+      system-time-monotonic,
+      containers
 
   hs-source-dirs:      src
   build-tools:         c2hs, hsc2hs

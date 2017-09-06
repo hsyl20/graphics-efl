@@ -1,7 +1,5 @@
 import Graphics.Efl.Simple
 import Control.Monad (when)
-import Control.Applicative
-
 import Paths_graphics_efl
 
 main :: IO ()
@@ -10,7 +8,7 @@ main = do
    engines <- getEngines
    putStrLn (show engines)
 
-   let engine = if "opengl_x11" `elem` engines 
+   let engine = if "opengl_x11" `elem` engines
          then Just "opengl_x11"
          else Nothing
 
@@ -33,9 +31,9 @@ main = do
             |> uncover
 
 
-      --bg <- addFilledImage canvas
-      --      |> setImageFile bgfile Nothing
+      -- bg <- addFilledImage canvas
       bg <- addRectangle canvas
+            |> setImageFile bgfile Nothing
             |> setObjectColor (0,0,0,255)
             |> setLayer (-1)
             |> uncover
@@ -87,7 +85,7 @@ main = do
       let
          poly :: Int -> Double -> [(Coord,Coord)]
          poly n w = [(round $ x*w, round $ y*w) | (x,y) <- (map cos angles `zip` map sin angles)]
-            where 
+            where
                angles :: [Double]
                angles = map ((*c) . fromIntegral) [0..(n-1)]
                c = 2.0 * pi / fromIntegral n
@@ -141,7 +139,7 @@ main = do
       let center o = do
             (x,y,w,h) <- getGeometry o
             return (w `div` 2 + x, h `div` 2 + y)
-            
+
       --setAnimatorFrameRate 4
 
       (cx,cy) <- center r

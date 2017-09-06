@@ -3,7 +3,6 @@ module Graphics.Efl.Widgets.Reactive where
 
 import Graphics.Efl.Widgets.Event
 
-import Control.Applicative
 import Data.IORef
 import Control.Monad (forM_,void)
 import Control.Monad.IO.Class
@@ -48,6 +47,14 @@ instance Functor Binding where
    fmap f (Binding g) = Binding $ do
                            (evs,val) <- g
                            return (evs, f val)
+
+instance Applicative Binding where
+   pure a = Binding $ return  ([],a)
+   (Binding f) <*> (Binding x) =
+    Binding $
+      do (evf, f') <- f
+         (evx, x') <- x
+         return (evf ++ evx, f' x')
 
 instance Monad Binding where
    return a = Binding (return ([],a))

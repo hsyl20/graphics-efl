@@ -15,7 +15,7 @@ module Graphics.Efl.Canvas.Types (
    ObjectEventCb, ObjectImagePixelsGetCb,
    Point(..), EventFlags, ButtonFlags,
    MouseDownEvent, MouseUpEvent, MouseInEvent, MouseOutEvent,
-   MouseMoveEvent, MouseWheelEvent, 
+   MouseMoveEvent, MouseWheelEvent,
    MultiDownEvent, MultiUpEvent, MultiMoveEvent,
    KeyDownEvent, KeyUpEvent, HoldEvent,
    eventFlagIsScrolling, eventFlagIsHolding,
@@ -25,7 +25,6 @@ module Graphics.Efl.Canvas.Types (
 import Foreign.Ptr
 import Foreign.Storable
 import Foreign.C.Types
-import Control.Applicative
 import Data.Int (Int16)
 import Data.Bits
 
@@ -103,14 +102,14 @@ type Device = Ptr ()
 type EventFlags = CInt
 type ButtonFlags = CInt
 
-{#enum _Evas_Border_Fill_Mode as BorderFillMode {underscoreToCase} deriving (Eq,Show) #}
-{#enum _Evas_Fill_Spread as FillSpread {underscoreToCase} deriving (Eq,Show) #}
-{#enum _Evas_Load_Error as LoadError {underscoreToCase} deriving (Eq,Show) #}
-{#enum _Evas_Colorspace as ColorSpace {underscoreToCase} deriving (Eq,Show) #}
-{#enum _Evas_Image_Scale_Hint as ImageScaleHint {underscoreToCase} deriving (Eq,Show) #}
-{#enum _Evas_Image_Content_Hint as ImageContentHint {underscoreToCase} deriving (Eq,Show) #}
-{#enum _Evas_Image_Animated_Loop_Hint as ImageAnimatedLoopType {underscoreToCase} deriving (Eq,Show) #}
-{#enum _Evas_Callback_Type as CallbackType {underscoreToCase} deriving (Eq,Show) #}
+{#enum Evas_Border_Fill_Mode as BorderFillMode {underscoreToCase} deriving (Eq,Show) #}
+{#enum Evas_Fill_Spread as FillSpread {underscoreToCase} deriving (Eq,Show) #}
+{#enum Efl_Image_Load_Error as LoadError {underscoreToCase} deriving (Eq,Show) #}
+{#enum Evas_Colorspace as ColorSpace {underscoreToCase} deriving (Eq,Show) #}
+{#enum Evas_Image_Scale_Hint as ImageScaleHint {underscoreToCase} deriving (Eq,Show) #}
+{#enum Evas_Image_Content_Hint as ImageContentHint {underscoreToCase} deriving (Eq,Show) #}
+{#enum Evas_Image_Animated_Loop_Hint as ImageAnimatedLoopType {underscoreToCase} deriving (Eq,Show) #}
+{#enum Evas_Callback_Type as CallbackType {underscoreToCase} deriving (Eq,Show) #}
 
 
 type ObjectEventCb = FunPtr (Ptr () -> Canvas -> Object -> Ptr () -> IO ())
@@ -126,7 +125,7 @@ data Point = Point Int Int deriving (Eq,Show)
 instance Storable Point where
    alignment = sizeOf
    sizeOf _ = {# sizeof Evas_Point #}
-   peek p = Point 
+   peek p = Point
       <$> (fmap fromIntegral ({# get Evas_Point->x #} p :: IO CInt))
       <*> (fmap fromIntegral ({# get Evas_Point->y #} p :: IO CInt))
    poke p (Point x y) = do

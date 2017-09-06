@@ -32,7 +32,6 @@ import Graphics.Efl.Canvas.Pointer as M
 
 import Foreign.Ptr
 import Foreign.C.Types
-import Control.Applicative
 import Graphics.Efl.Eina
 
 -- | Initialize the canvas manager. Consider using @getWindowCanvas@ instead

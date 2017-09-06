@@ -7,7 +7,6 @@ import Graphics.Efl.Canvas.Types
 import Foreign.Storable
 import Foreign.C.Types
 import Foreign.Ptr
-import Control.Applicative
 
 #include <Evas.h>
 
@@ -191,7 +190,7 @@ mouseMoveButtons ev = fromIntegral <$> (#{peek Evas_Event_Mouse_Move, buttons} e
 mouseMoveWorldXY :: MouseMoveEvent -> IO Point
 mouseMoveWorldXY p = #{peek Evas_Position, output} cur
    where cur = #{ptr Evas_Event_Mouse_Move, cur} p
-   
+
 
 -- | X/Y location of the cursor in canvas coordinates
 mouseMoveCanvasXY :: MouseMoveEvent -> IO Point
@@ -202,13 +201,13 @@ mouseMoveCanvasXY p = #{peek Evas_Position, canvas} cur
 mouseMovePreviousWorldXY :: MouseMoveEvent -> IO Point
 mouseMovePreviousWorldXY p = #{peek Evas_Position, output} prev
    where prev = #{ptr Evas_Event_Mouse_Move, prev} p
-   
+
 
 -- | X/Y location of the prevsor in canvas coordinates
 mouseMovePreviousCanvasXY :: MouseMoveEvent -> IO Point
 mouseMovePreviousCanvasXY p = #{peek Evas_Position, canvas} prev
    where prev = #{ptr Evas_Event_Mouse_Move, prev} p
-   
+
 
 -- | Data
 mouseMoveData :: MouseMoveEvent -> IO (Ptr ())
@@ -277,4 +276,3 @@ mouseWheelFlags = #{peek Evas_Event_Mouse_Wheel, event_flags}
 -- | Device
 mouseWheelDevice :: MouseWheelEvent -> IO Device
 mouseWheelDevice = #{peek Evas_Event_Mouse_Wheel, dev}
-

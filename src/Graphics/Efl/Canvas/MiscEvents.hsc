@@ -7,7 +7,6 @@ import Graphics.Efl.Canvas.Types
 import Foreign.Storable
 import Foreign.C.Types
 import Foreign.Ptr
-import Control.Applicative
 
 #include <Evas.h>
 
@@ -34,4 +33,3 @@ holdFlags = #{peek Evas_Event_Hold, event_flags}
 -- | Device
 holdDevice :: HoldEvent -> IO Device
 holdDevice = #{peek Evas_Event_Hold, dev}
-

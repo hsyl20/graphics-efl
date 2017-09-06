@@ -7,7 +7,6 @@ import Graphics.Efl.Widgets.Text
 import Graphics.Efl.Widgets.Widget
 import Graphics.Efl.Widgets.Layout
 import qualified Graphics.Efl.Canvas as Peer
-import Control.Applicative
 
 data Button = Button {
    buttonBackground :: Rectangle,

@@ -21,7 +21,6 @@ import Foreign.Ptr
 import Foreign.C.String
 import Foreign.C.Types
 
-import Control.Applicative
 import Data.Bits
 
 import Graphics.Efl.Helpers
@@ -31,7 +30,7 @@ import Graphics.Efl.Canvas.Types
 -- | Create a new text object on the provided canvas
 foreign import ccall "evas_object_text_add" addText :: Canvas -> IO Object
 
--- | Set the font (source) file to be used on a given text object 
+-- | Set the font (source) file to be used on a given text object
 setTextFontSource :: String -> Object -> IO ()
 setTextFontSource font obj = withCString font (_object_text_font_source_set obj)
 
@@ -85,7 +84,7 @@ foreign import ccall "evas_object_text_bidi_delimiters_set" _object_text_bidi_de
 getTextBidiDelimiters :: Object -> IO String
 getTextBidiDelimiters obj = peekCString =<< _object_text_bidi_delimiters_get obj
 
-foreign import ccall "evas_object_text_bidi_delimiters_get" _object_text_bidi_delimiters_get :: Object -> IO CString 
+foreign import ccall "evas_object_text_bidi_delimiters_get" _object_text_bidi_delimiters_get :: Object -> IO CString
 
 
 -- | Retrieve position and dimension information of a character within a text Evas_Object
@@ -176,7 +175,7 @@ getTextStylePad obj = do
 foreign import ccall "evas_object_text_style_pad_get" _object_text_style_pad_get :: Object -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CInt -> IO ()
 
 
--- | Retrieve the direction of the text currently being displayed in the text object 
+-- | Retrieve the direction of the text currently being displayed in the text object
 getTextDirection :: Object -> IO TextDirection
 getTextDirection obj = toEnum . fromIntegral <$> _object_text_direction_get obj
 

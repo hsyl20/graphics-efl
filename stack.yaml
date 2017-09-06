@@ -1,0 +1,6 @@
+extra-deps:
+  - stm-linkedlist-0.1.0.0
+  - system-time-monotonic-0.2
+packages:
+  - .
+resolver: lts-9.3

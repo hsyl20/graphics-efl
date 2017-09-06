@@ -4,10 +4,7 @@
 module Graphics.Efl.Eina where
 
 import Foreign.Ptr
-import Foreign.Storable
 import Foreign.C.Types
-
-import Control.Applicative
 
 #include <Eina.h>
 

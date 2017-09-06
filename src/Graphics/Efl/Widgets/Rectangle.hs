@@ -5,7 +5,6 @@ import Graphics.Efl.Widgets.Window
 import Graphics.Efl.Widgets.Widget
 import Graphics.Efl.Widgets.BasicObject
 import qualified Graphics.Efl.Canvas as Peer
-import Control.Applicative
 
 type Color = (Int,Int,Int,Int)
 

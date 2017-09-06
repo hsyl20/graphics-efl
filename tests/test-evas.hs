@@ -3,7 +3,6 @@ module Main where
 import System.Exit (exitFailure, exitSuccess)
 
 import Control.Monad
-import Control.Applicative
 
 import Graphics.Efl.Core
 import Graphics.Efl.Window
@@ -43,11 +42,11 @@ check_object_clipping canvas = do
    r2 <- addRectangle canvas
    r3 <- addRectangle canvas
 
-   assertM "No initial clipping object" $ 
+   assertM "No initial clipping object" $
       (== Nothing) <$> getClippingObject r1
 
    assertM "Clipping object get . set == id" $ do
-      setClippingObject r2 r1 
+      setClippingObject r2 r1
       (== Just r2) <$> getClippingObject r1
 
    assertM "Clipping object unset" $ do

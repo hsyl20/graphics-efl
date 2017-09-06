@@ -22,7 +22,6 @@ import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Marshal.Alloc
 import Data.Maybe
-import Control.Applicative
 import Control.Monad
 
 import Graphics.Efl.Canvas
@@ -80,7 +79,7 @@ createWindow engine x y w h options = do
    win <- createWindow_ engine'(fromIntegral x) (fromIntegral y) (fromIntegral w) (fromIntegral h) options'
    when (engine' /= nullPtr) (free engine')
    when (options' /= nullPtr) (free options')
-   if win /= nullPtr 
+   if win /= nullPtr
       then return win
       else do
          let eng = fromMaybe "Default" (fmap show engine)

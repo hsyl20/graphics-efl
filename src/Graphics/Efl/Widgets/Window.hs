@@ -5,7 +5,6 @@ module Graphics.Efl.Widgets.Window (
 import Graphics.Efl.Widgets.Reactive
 import qualified Graphics.Efl.Window as Peer
 import qualified Graphics.Efl.Canvas as Peer
-import Control.Applicative
 
 data Window = Window {
    windowPeer :: Peer.Window,

@@ -7,7 +7,6 @@ import Graphics.Efl.Canvas.Types
 import Foreign.Storable
 import Foreign.C.Types
 import Foreign.Ptr
-import Control.Applicative
 
 #include <Evas.h>
 
@@ -175,7 +174,7 @@ multiMoveWorldXY p = #{peek Evas_Precision_Position, output} cur
 -- | X/Y location of the cursor in canvas coordinates
 multiMoveCanvasXY :: MultiMoveEvent -> IO Point
 multiMoveCanvasXY p = Point <$> x <*> y
-   where 
+   where
       x = #{peek Evas_Coord_Precision_Point, x} canvas
       y = #{peek Evas_Coord_Precision_Point, y} canvas
       canvas = #{ptr Evas_Precision_Position, canvas} cur
@@ -184,7 +183,7 @@ multiMoveCanvasXY p = Point <$> x <*> y
 -- | Precise X/Y location of the cursor in canvas coordinates
 multiMoveCanvasXYsub :: MultiMoveEvent -> IO (Double,Double)
 multiMoveCanvasXYsub p = (,) <$> x <*> y
-   where 
+   where
       x = #{peek Evas_Coord_Precision_Point, xsub} canvas
       y = #{peek Evas_Coord_Precision_Point, ysub} canvas
       canvas = #{ptr Evas_Precision_Position, canvas} cur
@@ -213,4 +212,3 @@ multiMoveFlags = #{peek Evas_Event_Multi_Move, event_flags}
 -- | Device
 multiMoveDevice :: MultiMoveEvent -> IO Device
 multiMoveDevice = #{peek Evas_Event_Multi_Move, dev}
-

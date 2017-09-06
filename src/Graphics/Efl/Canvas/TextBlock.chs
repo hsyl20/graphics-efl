@@ -2,7 +2,7 @@
 
 -- | Text
 module Graphics.Efl.Canvas.TextBlock (
-   addTextBlock, 
+   addTextBlock,
    unescapeTextBlockString, escapeTextBlockString,
    unescapeTextBlockStringRange,
    getTextBlockPlainText, getTextBlockMarkup,
@@ -30,7 +30,7 @@ module Graphics.Efl.Canvas.TextBlock (
    moveTextBlockCursorWordStart, moveTextBlockCursorWordEnd,
    moveTextBlockCursorParagraphFirstChar, moveTextBlockCursorParagraphLastChar,
    moveTextBlockCursorLineFirstChar, moveTextBlockCursorLineLastChar,
-   getTextBlockCursorPos, setTextBlockCursorPos, setTextBlockCursorLine, 
+   getTextBlockCursorPos, setTextBlockCursorPos, setTextBlockCursorLine,
    compareTextBlockCursors, copyTextBlockCursors,
    appendTextBlockCursorText, prependTextBlockCursorText,
    appendTextBlockCursorFormat, prependTextBlockCursorFormat,
@@ -49,7 +49,6 @@ module Graphics.Efl.Canvas.TextBlock (
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr
-import Control.Applicative
 import Control.Monad
 
 import Graphics.Efl.Canvas.Types
@@ -352,7 +351,7 @@ getTextBlockCursorGeometry cur dir ctype = get4_ex_helper f
    where
       f cx cy cw ch = _getTextBlockCursorGeometry cur cx cy cw ch (fromIntegral $ fromEnum dir) ctype
 
-      
+
 
 foreign import ccall "evas_textblock_cursor_geometry_get" _getTextBlockCursorGeometry :: TextBlockCursor -> Ptr Coord -> Ptr Coord -> Ptr Coord -> Ptr Coord -> CInt -> TextBlockCursorType -> IO CInt
 

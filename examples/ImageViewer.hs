@@ -2,8 +2,6 @@
 
 import Graphics.Efl.Core
 import Graphics.Efl.Simple hiding (onEvent)
-
-import Control.Applicative ((<$>))
 import Control.Concurrent.STM
 import Control.Monad (when)
 import System.Environment (getArgs)
@@ -49,7 +47,7 @@ main = do
       onWindowResizeHandler
 
 
-      flip onKeyDown bg $ \ _ ev -> keyDownKey ev >>= \case 
+      flip onKeyDown bg $ \ _ ev -> keyDownKey ev >>= \case
          "space" -> nextImage win img currentImage images
          "n" -> nextImage win img currentImage images
          "p" -> previousImage win img currentImage images
@@ -75,7 +73,7 @@ refresh img _ win = do
        h = floor $ (ratio * fromIntegral ih :: Double)
        x = floor $ max 0 ((fromIntegral cw - fromIntegral w :: Double) / 2)
        y = floor $ max 0 ((fromIntegral ch - fromIntegral h :: Double) / 2)
-  
+
    resize w h img
    move x y img
 
@@ -110,7 +108,7 @@ showImage win img path = do
   setImageFile path Nothing img
   err <- getImageLoadError img
   case err of
-    EvasLoadErrorNone -> return ()
+    EflImageLoadErrorNone -> return ()
     _ -> putStrLn =<< loadErrorString (fromEnum err)
 
   refresh img canvas win

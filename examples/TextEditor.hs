@@ -1,5 +1,4 @@
 import Graphics.Efl.Simple
-import Control.Applicative
 import Data.IORef
 
 main :: IO ()
@@ -8,7 +7,7 @@ main = do
    engines <- getEngines
    putStrLn (show engines)
 
-   let engine = if "opengl_x11" `elem` engines 
+   let engine = if "opengl_x11" `elem` engines
          then Just "opengl_x11"
          else Nothing
 
@@ -35,7 +34,7 @@ main = do
 
       state <- newIORef initState
 
-      let 
+      let
          runEvent :: Object -> EditorEvent -> IO ()
          runEvent self ev = readIORef state >>= handleEvent self ev >>= writeIORef state
 
@@ -70,7 +69,7 @@ data EditorMode
    | NormalMode
 
 initState :: EditorState
-initState = EditorState 
+initState = EditorState
    { editorMode = NormalMode
    }
 

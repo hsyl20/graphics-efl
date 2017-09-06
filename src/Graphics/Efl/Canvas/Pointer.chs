@@ -16,7 +16,6 @@ import Graphics.Efl.Helpers
 
 import Foreign.Ptr
 import Foreign.C.Types
-import Control.Applicative
 
 -- | Convert screen coordinates to canvas coordinates
 convertScreenToWorld :: Canvas -> CInt -> CInt -> IO (Coord,Coord)

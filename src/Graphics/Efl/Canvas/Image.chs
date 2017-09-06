@@ -12,7 +12,7 @@ module Graphics.Efl.Canvas.Image (
    setImageFillSpread, getImageFillSpread,
    setImageSize, getImageSize,
    getImageStride,
-   getImageLoadError, 
+   getImageLoadError,
    setImageData, getImageData, convertImageData,
    setImageDataCopy, addImageDataUpdate,
    setImageAlpha, getImageAlpha,
@@ -43,8 +43,6 @@ import Foreign.Ptr
 import Foreign.C.String
 import Foreign.C.Types
 
-import Control.Applicative
-
 import Graphics.Efl.Helpers
 import Graphics.Efl.Eina
 import Graphics.Efl.Canvas.Types
@@ -63,7 +61,7 @@ foreign import ccall "evas_object_image_memfile_set" setImageMemFile :: Object -
 
 -- | Set the source file from where an image object must fetch the real image data (it may be an Eet file, besides pure image ones)
 setImageFile :: String -> Maybe String -> Object -> IO ()
-setImageFile file key obj = 
+setImageFile file key obj =
    withCString file $ \file' -> case key of
       Nothing -> _setImageFile obj file' nullPtr
       Just k -> withCString k (\key' -> _setImageFile obj file' key')
@@ -250,7 +248,7 @@ foreign import ccall "evas_object_image_reload" reloadImage :: Object -> IO ()
 
 -- | Save the given image object's contents to an (image) file
 saveImage :: Object -> String -> String -> String -> IO Bool
-saveImage obj file key flags = 
+saveImage obj file key flags =
    withCString file $ \cfile ->
    withCString key $ \ckey ->
    withCString flags $ \cflags -> toBool <$> _object_image_save obj cfile ckey cflags
@@ -373,7 +371,7 @@ setImageContentHint obj hint = _object_image_content_hint_set obj (fromIntegral 
 
 foreign import ccall "evas_object_image_content_hint_set" _object_image_content_hint_set :: Object -> CInt -> IO ()
 
--- | Get the content hint setting of a given image object of the canvas 
+-- | Get the content hint setting of a given image object of the canvas
 getImageContentHint :: Object -> IO ImageContentHint
 getImageContentHint obj = toEnum .fromIntegral <$> _object_image_content_hint_get obj
 
@@ -391,7 +389,7 @@ foreign import ccall "evas_object_image_alpha_mask_set" _object_image_alpha_mask
 foreign import ccall "evas_object_image_source_set" setImageSource :: Object -> Object -> IO ()
 
 -- | Get the current source object of an image object
-foreign import ccall "evas_object_image_source_get" getImageSource :: Object -> IO Object 
+foreign import ccall "evas_object_image_source_get" getImageSource :: Object -> IO Object
 
 -- | Clear the source object on a proxy image object
 unsetImageSource :: Object -> IO Bool
